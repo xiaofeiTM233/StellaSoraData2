@@ -61,8 +61,6 @@ bin/CharacterUpgrade.bytes
 bin/CharacterVoiceControl.bytes
 bin/CharAffinityTemplate.bytes
 bin/CharGem.bytes
-bin/CharGemAttrGroup.bytes
-bin/CharGemAttrType.bytes
 bin/CharGemAttrValue.bytes
 bin/CharGemInstance.bytes
 bin/CharGemInstanceFloor.bytes
