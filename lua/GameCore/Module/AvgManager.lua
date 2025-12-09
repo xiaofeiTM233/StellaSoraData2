@@ -42,7 +42,7 @@ local OnEvent_AvgSTStart = function(_, sAvgId, sLanguage, sVoLan, sGroupId, nSta
   do
     bInAvg = true
     local func_DoStart = function()
-    -- function num : 0_2_0 , upvalues : sLanguage, _ENV, sVoLan, OnEvent_AvgBBEnd, _, objAvgPanel, sAvgId, sGroupId, nStartCMDID
+    -- function num : 0_2_0 , upvalues : sLanguage, _ENV, sVoLan, OnEvent_AvgBBEnd, _, objAvgPanel, sAvgId, sGroupId, nStartCMDID, nTransitionType
     if sLanguage == nil then
       sLanguage = Settings.sCurrentTxtLanguage
     end
@@ -54,6 +54,9 @@ local OnEvent_AvgSTStart = function(_, sAvgId, sLanguage, sVoLan, sGroupId, nSta
     objAvgPanel = (AvgPanel.new)((AllEnum.UI_SORTING_ORDER).AVG_ST, PanelId.AvgST, {sAvgId, sLanguage, sVoLan, sGroupId, nStartCMDID})
     objAvgPanel:_PreEnter()
     objAvgPanel:_Enter()
+    if nTransitionType == 12 then
+      nTransitionType = 0
+    end
   end
 
     local func_OnEvent_TransAnimInClear = function()
@@ -85,8 +88,13 @@ end
 
 local OnEvent_AvgSTEnd = function(_)
   -- function num : 0_3 , upvalues : _ENV, objAvgPanel, GameResourceLoader, bInAvg, nTransitionType
+  local func_AvgSTEnd = function()
+    -- function num : 0_3_0 , upvalues : _ENV
+    (EventManager.Hit)("AvgSTEnd")
+  end
+
   local func_DoEnd = function()
-    -- function num : 0_3_0 , upvalues : _ENV, objAvgPanel, GameResourceLoader, bInAvg
+    -- function num : 0_3_1 , upvalues : _ENV, objAvgPanel, GameResourceLoader, bInAvg
     (NovaAPI.DispatchEventWithData)("StoryDialog_DialogEnd")
     if objAvgPanel ~= nil then
       objAvgPanel:_PreExit()
@@ -107,21 +115,18 @@ local OnEvent_AvgSTEnd = function(_)
   end
 
   local func_OnEvent_TransAnimInClear = function()
-    -- function num : 0_3_1 , upvalues : _ENV, func_DoEnd
+    -- function num : 0_3_2 , upvalues : _ENV, func_DoEnd, func_AvgSTEnd
     (EventManager.Hit)(EventId.SetTransition)
     func_DoEnd()
+    func_AvgSTEnd()
   end
 
   if nTransitionType ~= 0 then
-    if nTransitionType == 12 then
-      func_DoEnd()
-    else
-      ;
-      (EventManager.Hit)(EventId.SetTransition, nTransitionType, func_OnEvent_TransAnimInClear)
-    end
+    (EventManager.Hit)(EventId.SetTransition, nTransitionType, func_OnEvent_TransAnimInClear)
     nTransitionType = 0
   else
     func_DoEnd()
+    func_AvgSTEnd()
   end
 end
 

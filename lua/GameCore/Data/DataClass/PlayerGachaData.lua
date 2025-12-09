@@ -458,6 +458,7 @@ PlayerGachaData.GetPoolProbData = function(self, nPoolId)
 
     ;
     (self._mapPoolProbCache)[nPoolId] = {tbProbUpItem = probUpItem, tbProbItem = probItem}
+    return (self._mapPoolProbCache)[nPoolId]
   end
 end
 

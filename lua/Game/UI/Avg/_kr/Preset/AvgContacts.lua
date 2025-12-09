@@ -29,6 +29,8 @@ return {
 , 
 {id = 127, icon = "Icon/Head/head_12701_S", name = "테레사", landmark = "벨린 10번가 9번지", signature = "하루에 한 가지 선행!"}
 , 
+{id = 130, icon = "Icon/Head/head_13001_S", name = "토나", landmark = "벨린 10번가 9번지", signature = "진심!"}
+, 
 {id = 132, icon = "Icon/Head/head_13201_S", name = "미네르바", landmark = "아모르 애시 에리어 수도교 아래", signature = "난, 강한 걸까, 아니면 버티는 걸까"}
 , 
 {id = 133, icon = "Icon/Head/head_13301_S", name = "나츠카", landmark = "필리에 외곽 동부 숲 하나사키 여단", signature = "누가 알까"}
@@ -68,6 +70,8 @@ return {
 {id = 994, icon = "Icon/Head/head_group_S", name = "타니카제 가사 대행-필리에 제1분대", landmark = "", signature = "차를 내어 손님을 맞이하고, 칼로 주군을 호위한다"}
 , 
 {id = 993, icon = "Icon/Head/head_group_S", name = "하나사키 여단 재건 토론회", landmark = "", signature = "성해를 무찌르고, 의뢰를 완수하자!"}
+, 
+{id = 992, icon = "Icon/Head/head_group_S", name = "오늘 배달했나요?", landmark = "", signature = "수령증에 꼭 서명해주세요!"}
 , 
 {id = 9152, icon = "Icon/Head/head_npc15201_S", name = "베스티나", landmark = "아모르 심상점 본사", signature = "정규직 전환 절차가 시작되었습니다~"}
 , 

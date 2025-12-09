@@ -678,7 +678,7 @@ AllEnum.StarTowerFastBattleBg = {Bg_L = "bg_fastBattle_%s_l", Bg_R = "bg_fastBat
 AllEnum.FateCardBundleIcon = {L = "_L", S = "_S"}
 AllEnum.WorldClassType = {LevelUp = 1, Advance = 2}
 AllEnum.ShopCondSource = {ResidentGoods = 1, ResidentShop = 2, MallShop = 3, MallPackage = 4}
-AllEnum.AnnType = {SystemAnn = 1, ActivityAnn = 2, Other1 = 3, Other2 = 4}
+AllEnum.AnnType = {ActivityAnn = 1, SystemAnn = 2, Other1 = 3, Other2 = 4}
 AllEnum.StarTowerTipsType = {ItemTip = 1, DiscTip = 2, FateCardTip = 3, NoteTip = 4, NPCAffinity = 5}
 AllEnum.UI_SORTING_ORDER = {AVG_Bubble = 298, AVG_ST = 299, Guide = 32000, GMMonsterAI = 32760, GMTool = 32760, Transition = 32761, ProVideo = 32762, MessageBox = 32763, BuiltinUICanvas = -32768, Tips = 32764, TipsEx = 32765, BuiltIn_Alert = 32766, BuiltIn_Connecting = 32767, BuiltIn_Block = 32767, Player_Info = 32764, LampNotice = 32764, MessageBoxOverlay = 32764, BlackEdge = 32765, _FPSCounter = 32766, TouchEffectUI = 32767}
 AllEnum.PhoneMsgType = {ReceiveMsg = 0, ReplyMsg = 1, ReplyChoiceMgs = 2, ReceiveImgMsg = 3, ReplyImgMsg = 4, SystemMsg = 5, InputingMsgLeft = 6, InputingMsgRight = 7}

@@ -103,9 +103,9 @@ return {
 , 
 {id = "avg1_157", name = "카린", name_bg_color = "#bb788e"}
 , 
-{id = "avg1_158", name = "라루", name_bg_color = "#c5bbb5"}
+{id = "avg1_158", name = "라루", name_bg_color = "#79092e"}
 , 
-{id = "avg1_159", name = "크루니스", name_bg_color = "#cfbf93"}
+{id = "avg1_159", name = "크루니스", name_bg_color = "#c553a5"}
 , 
 {id = "avg2_001", name = "우드모트 잔챙이", name_bg_color = "#0ABEC5"}
 , 
@@ -370,6 +370,8 @@ return {
 {id = "avg3_202", name = "이츠키", name_bg_color = "#d4ba8d"}
 , 
 {id = "avg3_203", name = "스즈노", name_bg_color = "#b5bdeb"}
+, 
+{id = "avg3_204", name = "마녀 언니", name_bg_color = "#ccc5b3"}
 , 
 {id = "avg3_205", name = "이그나", name_bg_color = "#4579b4"}
 , 
@@ -896,6 +898,12 @@ return {
 {id = "avg3_1254", name = "반생수A", name_bg_color = "#0ABEC5", reuse = "avg2_976"}
 , 
 {id = "avg3_1255", name = "반생수B", name_bg_color = "#0ABEC5", reuse = "avg2_976"}
+, 
+{id = "avg3_1256", name = "라루A", name_bg_color = "#79092e", reuse = "avg1_158"}
+, 
+{id = "avg3_1257", name = "라루B", name_bg_color = "#79092e", reuse = "avg1_158"}
+, 
+{id = "avg4_100", name = "빛나는 라루", name_bg_color = "#0ABEC5"}
 , 
 {id = "avg4_999", name = "비타", name_bg_color = "#0ABEC5"}
 }

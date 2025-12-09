@@ -168,6 +168,7 @@ CharBgPanel.Awake = function(self)
   self.tbCharList = {}
   self.panelStack = {}
   self.bSecondPanel = false
+  self.nUpgradeIndex = 1
   local tbParam = self._tbParam
   if type(tbParam) == "table" then
     self.nPanelId = tbParam[1]

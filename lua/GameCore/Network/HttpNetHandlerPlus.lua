@@ -156,9 +156,11 @@ HttpNetHandlerPlus.activity_mining_enter_layer_notify = function(mapMsgData)
   (EventManager.Hit)("Mining_UpdateLevelData", mapMsgData)
 end
 
-HttpNetHandlerPlus.activity_mining_grids_error_notify = function(mapMsgData)
+HttpNetHandlerPlus.activity_mining_dig_failed_ack = function(mapMsgData)
   -- function num : 0_26 , upvalues : _ENV
-  (EventManager.Hit)("Mining_Error")
+  if mapMsgData.Code == 110111 then
+    (EventManager.Hit)("Mining_Error", mapMsgData)
+  end
 end
 
 HttpNetHandlerPlus.activity_cookie_settle_succeed_ack = function(mapMsgData)
@@ -245,6 +247,13 @@ end
 HttpNetHandlerPlus.item_expired_change_notify = function(mapMsgData)
   -- function num : 0_40 , upvalues : _ENV
   (EventManager.Hit)(EventId.OpenMessageBox, (ConfigTable.GetUIText)("Item_Change_Expired_Tips"))
+end
+
+HttpNetHandlerPlus.player_destroy_succeed_ack = function(mapMsgData)
+  -- function num : 0_41 , upvalues : _ENV
+  if mapMsgData.NotifyUrl ~= nil then
+    (PlayerData.Base):SetDestoryUrl(mapMsgData.NotifyUrl)
+  end
 end
 
 return HttpNetHandlerPlus

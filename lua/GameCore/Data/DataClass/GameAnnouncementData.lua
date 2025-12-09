@@ -1,10 +1,5 @@
 local GameAnnouncementData = class("GameAnnouncementData")
 local LocalData = require("GameCore.Data.LocalData")
-local AnnServerChannel_CN = {[1] = "cn_android_official", [2] = "cn_ios_official", [4] = "cn_android_bilibili", [8] = "cn_harmony_official", [16] = "cn_pc_official", [32] = "cn_pc_bilibili"}
-local AnnServerChannel_JP = {[1] = "jp_android_official", [2] = "jp_ios_official", [4] = "jp_android_onestore", [8] = "jp_pc_official"}
-local AnnServerChannel_US = {[1] = "us_android_official", [2] = "us_ios_official", [4] = "us_android_onestore", [8] = "us_pc_official"}
-local AnnServerChannel_KR = {[1] = "kr_android_official", [2] = "kr_ios_official", [4] = "kr_android_onestore", [8] = "kr_pc_official"}
-local AnnServerChannel_TW = {[1] = "tw_android_official", [2] = "tw_ios_official", [4] = "tw_android_onestore", [8] = "tw_pc_official"}
 local htmlConfigId = 1
 GameAnnouncementData.ctor = function(self)
   -- function num : 0_0
@@ -165,53 +160,9 @@ GameAnnouncementData.AllAnnResponse = function(self, listData)
   self.tbTypeList = {}
   self.tbAnnContentCache = {}
   self.tbCurAnnList = {}
-  for i = 0, (listData.System).Length - 1 do
-    local v = (listData.System)[i]
-    -- DECOMPILER ERROR at PC33: Confused about usage of register: R7 in 'UnsetPending'
-
-    if (UTILS.CheckChannelList)(v.Channel) and v.ContentUrl ~= "" then
-      (self.tbAnnBaseInfo)[v.Id] = {info = v, nType = (AllEnum.AnnType).SystemAnn}
-      if (self.tbTypeList)[(AllEnum.AnnType).SystemAnn] == nil then
-        local list = {}
-        ;
-        (table.insert)(list, v)
-        -- DECOMPILER ERROR at PC51: Confused about usage of register: R8 in 'UnsetPending'
-
-        ;
-        (self.tbTypeList)[(AllEnum.AnnType).SystemAnn] = list
-      else
-        do
-          ;
-          (table.insert)((self.tbTypeList)[(AllEnum.AnnType).SystemAnn], v)
-          do
-            local bIsRead = false
-            if (LocalData.GetLocalData)("AnnouncementIsRead", tostring(v.Id)) == nil then
-              bIsRead = false
-            else
-              bIsRead = (LocalData.GetLocalData)("AnnouncementIsRead", tostring(v.Id))
-            end
-            ;
-            (RedDotManager.SetValid)(RedDotDefine.Announcement_Content, {(AllEnum.AnnType).SystemAnn, v.Id}, not bIsRead)
-            ;
-            (table.insert)(self.tbCurAnnList, v.Id)
-            -- DECOMPILER ERROR at PC97: LeaveBlock: unexpected jumping out DO_STMT
-
-            -- DECOMPILER ERROR at PC97: LeaveBlock: unexpected jumping out IF_ELSE_STMT
-
-            -- DECOMPILER ERROR at PC97: LeaveBlock: unexpected jumping out IF_STMT
-
-            -- DECOMPILER ERROR at PC97: LeaveBlock: unexpected jumping out IF_THEN_STMT
-
-            -- DECOMPILER ERROR at PC97: LeaveBlock: unexpected jumping out IF_STMT
-
-          end
-        end
-      end
-    end
-  end
   for i = 0, (listData.Activity).Length - 1 do
     local v = (listData.Activity)[i]
-    -- DECOMPILER ERROR at PC123: Confused about usage of register: R7 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC33: Confused about usage of register: R7 in 'UnsetPending'
 
     if (UTILS.CheckChannelList)(v.Channel) and v.ContentUrl ~= "" then
       (self.tbAnnBaseInfo)[v.Id] = {info = v, nType = (AllEnum.AnnType).ActivityAnn}
@@ -219,7 +170,7 @@ GameAnnouncementData.AllAnnResponse = function(self, listData)
         local list = {}
         ;
         (table.insert)(list, v)
-        -- DECOMPILER ERROR at PC141: Confused about usage of register: R8 in 'UnsetPending'
+        -- DECOMPILER ERROR at PC51: Confused about usage of register: R8 in 'UnsetPending'
 
         ;
         (self.tbTypeList)[(AllEnum.AnnType).ActivityAnn] = list
@@ -239,19 +190,63 @@ GameAnnouncementData.AllAnnResponse = function(self, listData)
               (RedDotManager.SetValid)(RedDotDefine.Announcement_Content, {(AllEnum.AnnType).ActivityAnn, v.Id}, not bIsRead)
               ;
               (table.insert)(self.tbCurAnnList, v.Id)
-              -- DECOMPILER ERROR at PC187: LeaveBlock: unexpected jumping out DO_STMT
+              -- DECOMPILER ERROR at PC97: LeaveBlock: unexpected jumping out DO_STMT
 
-              -- DECOMPILER ERROR at PC187: LeaveBlock: unexpected jumping out DO_STMT
+              -- DECOMPILER ERROR at PC97: LeaveBlock: unexpected jumping out DO_STMT
 
-              -- DECOMPILER ERROR at PC187: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+              -- DECOMPILER ERROR at PC97: LeaveBlock: unexpected jumping out IF_ELSE_STMT
 
-              -- DECOMPILER ERROR at PC187: LeaveBlock: unexpected jumping out IF_STMT
+              -- DECOMPILER ERROR at PC97: LeaveBlock: unexpected jumping out IF_STMT
 
-              -- DECOMPILER ERROR at PC187: LeaveBlock: unexpected jumping out IF_THEN_STMT
+              -- DECOMPILER ERROR at PC97: LeaveBlock: unexpected jumping out IF_THEN_STMT
 
-              -- DECOMPILER ERROR at PC187: LeaveBlock: unexpected jumping out IF_STMT
+              -- DECOMPILER ERROR at PC97: LeaveBlock: unexpected jumping out IF_STMT
 
             end
+          end
+        end
+      end
+    end
+  end
+  for i = 0, (listData.System).Length - 1 do
+    local v = (listData.System)[i]
+    -- DECOMPILER ERROR at PC123: Confused about usage of register: R7 in 'UnsetPending'
+
+    if (UTILS.CheckChannelList)(v.Channel) and v.ContentUrl ~= "" then
+      (self.tbAnnBaseInfo)[v.Id] = {info = v, nType = (AllEnum.AnnType).SystemAnn}
+      if (self.tbTypeList)[(AllEnum.AnnType).SystemAnn] == nil then
+        local list = {}
+        ;
+        (table.insert)(list, v)
+        -- DECOMPILER ERROR at PC141: Confused about usage of register: R8 in 'UnsetPending'
+
+        ;
+        (self.tbTypeList)[(AllEnum.AnnType).SystemAnn] = list
+      else
+        do
+          ;
+          (table.insert)((self.tbTypeList)[(AllEnum.AnnType).SystemAnn], v)
+          do
+            local bIsRead = false
+            if (LocalData.GetLocalData)("AnnouncementIsRead", tostring(v.Id)) == nil then
+              bIsRead = false
+            else
+              bIsRead = (LocalData.GetLocalData)("AnnouncementIsRead", tostring(v.Id))
+            end
+            ;
+            (RedDotManager.SetValid)(RedDotDefine.Announcement_Content, {(AllEnum.AnnType).SystemAnn, v.Id}, not bIsRead)
+            ;
+            (table.insert)(self.tbCurAnnList, v.Id)
+            -- DECOMPILER ERROR at PC187: LeaveBlock: unexpected jumping out DO_STMT
+
+            -- DECOMPILER ERROR at PC187: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+
+            -- DECOMPILER ERROR at PC187: LeaveBlock: unexpected jumping out IF_STMT
+
+            -- DECOMPILER ERROR at PC187: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+            -- DECOMPILER ERROR at PC187: LeaveBlock: unexpected jumping out IF_STMT
+
           end
         end
       end

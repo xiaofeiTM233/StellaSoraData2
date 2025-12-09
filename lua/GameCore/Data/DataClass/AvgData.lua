@@ -817,7 +817,7 @@ AvgData.SendMsg_STORY_ENTER = function(self, nStoryId, nBuildId, bNewestStory)
         do
           printLog("进AVG演出了 " .. mapCfgData_Story.AvgLuaName)
           ;
-          (EventManager.Add)("StoryDialog_DialogEnd", self, self.OnEvent_AvgSTEnd)
+          (EventManager.Add)("AvgSTEnd", self, self.OnEvent_AvgSTEnd)
           ;
           (EventManager.Hit)("StoryDialog_DialogStart", mapCfgData_Story.AvgLuaName, nil, nil, nil, nil, mapCfgData_Story.AvgMotion)
         end
@@ -1094,9 +1094,9 @@ AvgData.OnEvent_AvgSTEnd = function(self)
     self.mapTempPersonalityFactor = {}
     return 
   end
-  self:SendMsg_STORY_DONE()
   ;
-  (EventManager.Remove)("StoryDialog_DialogEnd", self, self.OnEvent_AvgSTEnd)
+  (EventManager.Remove)("AvgSTEnd", self, self.OnEvent_AvgSTEnd)
+  self:SendMsg_STORY_DONE()
 end
 
 AvgData.LevelEnd = function(self)

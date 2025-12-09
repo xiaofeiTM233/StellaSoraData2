@@ -141,7 +141,7 @@ CharacterAdvance = {Key = true}
 CharacterArchive = {Key = true}
 , 
 CharacterArchiveBaseInfo = {Key = true, 
-Lang = {"Title", "Content"}
+Lang = {"Title", "Content", "UpdateContent1"}
 }
 , 
 CharacterArchiveContent = {Key = true, 
@@ -551,7 +551,7 @@ Lang = {"Name"}
 }
 , 
 MallPackage = {Key = true, 
-Lang = {"Name", "DetailName"}
+Lang = {"Name", "DetailName", "SimpleName"}
 }
 , 
 MallPackagePage = {Key = true, 

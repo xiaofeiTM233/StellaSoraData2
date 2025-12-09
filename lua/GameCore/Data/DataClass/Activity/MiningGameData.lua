@@ -320,6 +320,7 @@ end
 MiningGameData.DoEnterResult = function(self)
   -- function num : 0_30
   self:DoResult(self.tbCurlevelEnterChange)
+  self.tbCurlevelEnterChange = nil
 end
 
 MiningGameData.DoResult = function(self, changeInfo)

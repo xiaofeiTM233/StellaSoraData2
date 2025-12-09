@@ -72,6 +72,8 @@ TutorialLevelData.FinishLevel = function(self, result)
   end
   if not result then
     (EventManager.Hit)(EventId.OpenPanel, PanelId.TutorialResult, 2, self.nlevelId, {}, nCurQuestCount, nMaxQuestCount, tbCharId, {}, false)
+    ;
+    (PlayerData.Build):DeleteTrialBuild()
   else
     local tbSkin = {}
     do

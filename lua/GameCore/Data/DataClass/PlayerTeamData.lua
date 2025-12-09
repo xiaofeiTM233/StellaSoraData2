@@ -47,6 +47,11 @@ tbTeamDiscId = {0, 0, 0}
         end
       end
     end
+    do
+      if mapData.Record ~= nil then
+        (PlayerData.StarTower):CacheFormationInfo(mapData.Record)
+      end
+    end
   end
 end
 

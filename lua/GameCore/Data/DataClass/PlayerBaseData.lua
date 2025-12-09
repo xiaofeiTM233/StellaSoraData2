@@ -38,6 +38,7 @@ PlayerBaseData.Init = function(self)
   self._tbHonorTitleList = nil
   self._nSendGiftCnt = 0
   self._nRenameTime = 0
+  self._sDestoryUrl = ""
   self._bWorldClassChange = false
   self.bNewDay = false
   self.bNeedHotfix = false
@@ -1220,14 +1221,37 @@ PlayerBaseData.SendPlayerHonorTitleEditReq = function(self, tbhonorTitle, callba
   (HttpNetHandler.SendMsg)((NetMsgId.Id).player_honor_edit_req, msgData, nil, successCallback)
 end
 
-PlayerBaseData.OnNewDay = function(self)
+PlayerBaseData.GetDestoryUrl = function(self)
   -- function num : 0_80
+  return self._sDestoryUrl
+end
+
+PlayerBaseData.SetDestoryUrl = function(self, sUrl)
+  -- function num : 0_81
+  self._sDestoryUrl = sUrl
+end
+
+PlayerBaseData.RequestDestoryUrl = function(self, cb)
+  -- function num : 0_82 , upvalues : _ENV
+  local callback = function(_, msgData)
+    -- function num : 0_82_0 , upvalues : cb, self
+    if cb ~= nil then
+      cb(self._sDestoryUrl)
+    end
+  end
+
+  ;
+  (HttpNetHandler.SendMsg)((NetMsgId.Id).player_destroy_req, {}, nil, callback)
+end
+
+PlayerBaseData.OnNewDay = function(self)
+  -- function num : 0_83
   self._nBuyEnergyCount = 0
   self._nSendGiftCnt = 0
 end
 
 PlayerBaseData.RefreshWorldClassRedDot = function(self)
-  -- function num : 0_81 , upvalues : _ENV
+  -- function num : 0_84 , upvalues : _ENV
   local nWorldClass = self:GetWorldClass()
   local nCurStageId = (PlayerData.Base):GetCurWorldClassStageId()
   local tbDemonAdvanceCfg = (CacheTable.Get)("_DemonAdvance")
@@ -1277,7 +1301,7 @@ PlayerBaseData.RefreshWorldClassRedDot = function(self)
 end
 
 PlayerBaseData.RefreshHonorTitleRedDot = function(self)
-  -- function num : 0_82 , upvalues : localdata, _ENV
+  -- function num : 0_85 , upvalues : localdata, _ENV
   local sJson = (localdata.GetPlayerLocalData)("HonorTitle")
   local localHonorTilte = decodeJson(sJson)
   if type(localHonorTilte) ~= "table" then
@@ -1289,10 +1313,10 @@ PlayerBaseData.RefreshHonorTitleRedDot = function(self)
 end
 
 PlayerBaseData.SendPlayerRedeemCodeReq = function(self, sCode, callback)
-  -- function num : 0_83 , upvalues : _ENV
+  -- function num : 0_86 , upvalues : _ENV
   local msgData = {Value = sCode}
   local successCallback = function(_, msgData)
-    -- function num : 0_83_0 , upvalues : callback
+    -- function num : 0_86_0 , upvalues : callback
     if callback ~= nil then
       callback(msgData.Change)
     end
@@ -1303,7 +1327,7 @@ PlayerBaseData.SendPlayerRedeemCodeReq = function(self, sCode, callback)
 end
 
 PlayerBaseData.CheckFunctionBtn = function(self, nFuncId, PassCallback, sSound)
-  -- function num : 0_84 , upvalues : _ENV
+  -- function num : 0_87 , upvalues : _ENV
   if sSound == nil then
     sSound = "ui_common_feedback_error"
   end
@@ -1331,7 +1355,7 @@ PlayerBaseData.CheckFunctionBtn = function(self, nFuncId, PassCallback, sSound)
 end
 
 PlayerBaseData.CheckFunctionUnlock = function(self, nFuncId, bShowTips)
-  -- function num : 0_85 , upvalues : _ENV
+  -- function num : 0_88 , upvalues : _ENV
   local mapFuncCfgData = (ConfigTable.GetData)("OpenFunc", nFuncId)
   if mapFuncCfgData == nil then
     printError("OpenFunc Data Missing:" .. nFuncId)
@@ -1358,9 +1382,9 @@ PlayerBaseData.CheckFunctionUnlock = function(self, nFuncId, bShowTips)
 end
 
 PlayerBaseData.CheckNewFuncUnlockWorldClass = function(self, nBefore, nNew)
-  -- function num : 0_86 , upvalues : _ENV
+  -- function num : 0_89 , upvalues : _ENV
   local ForEachOpenFucn = function(mapData)
-    -- function num : 0_86_0 , upvalues : nBefore, nNew, _ENV, self
+    -- function num : 0_89_0 , upvalues : nBefore, nNew, _ENV, self
     if nBefore < mapData.NeedWorldClass and mapData.NeedWorldClass <= nNew then
       do
         if mapData.NeedConditions > 0 then
@@ -1388,9 +1412,9 @@ PlayerBaseData.CheckNewFuncUnlockWorldClass = function(self, nBefore, nNew)
 end
 
 PlayerBaseData.CheckNewFuncUnlockMainlinePass = function(self, nMainlineId)
-  -- function num : 0_87 , upvalues : _ENV
+  -- function num : 0_90 , upvalues : _ENV
   local ForEachOpenFucn = function(mapData)
-    -- function num : 0_87_0 , upvalues : nMainlineId, self, _ENV
+    -- function num : 0_90_0 , upvalues : nMainlineId, self, _ENV
     if mapData.NeedConditions == nMainlineId then
       if mapData.NeedWorldClass > 0 and self._nWorldClass < mapData.NeedWorldClass then
         return 
@@ -1411,9 +1435,9 @@ PlayerBaseData.CheckNewFuncUnlockMainlinePass = function(self, nMainlineId)
 end
 
 PlayerBaseData.CheckNewFuncUnlockFixedRoguelike = function(self, nFRId)
-  -- function num : 0_88 , upvalues : _ENV
+  -- function num : 0_91 , upvalues : _ENV
   local ForEachOpenFunc = function(mapData)
-    -- function num : 0_88_0 , upvalues : nFRId, self, _ENV
+    -- function num : 0_91_0 , upvalues : nFRId, self, _ENV
     if mapData.NeedRoguelike == nFRId then
       if mapData.NeedWorldClass > 0 and self._nWorldClass < mapData.NeedWorldClass then
         return 
@@ -1443,12 +1467,12 @@ PlayerBaseData.CheckNewFuncUnlockFixedRoguelike = function(self, nFRId)
 end
 
 PlayerBaseData.OnEvent_TransAnimInClear = function(self)
-  -- function num : 0_89
+  -- function num : 0_92
   self.bInLoading = true
 end
 
 PlayerBaseData.OnEvent_TransAnimOutClear = function(self)
-  -- function num : 0_90
+  -- function num : 0_93
   if self.bShowNewDayWind and self.bInLoading then
     self.bShowNewDayWind = false
     self:BackToHome()
@@ -1457,7 +1481,7 @@ PlayerBaseData.OnEvent_TransAnimOutClear = function(self)
 end
 
 PlayerBaseData.Event_CreateRole = function(self)
-  -- function num : 0_91 , upvalues : _ENV
+  -- function num : 0_94 , upvalues : _ENV
   local tab = {}
   ;
   (table.insert)(tab, {"role_id", tostring(self._nPlayerId)})
@@ -1473,7 +1497,7 @@ PlayerBaseData.Event_CreateRole = function(self)
 end
 
 PlayerBaseData.PrologueEventUpload = function(self, index)
-  -- function num : 0_92 , upvalues : _ENV
+  -- function num : 0_95 , upvalues : _ENV
   local tab = {}
   ;
   (table.insert)(tab, {"role_id", tostring(self._nPlayerId)})
@@ -1487,7 +1511,7 @@ PlayerBaseData.PrologueEventUpload = function(self, index)
 end
 
 PlayerBaseData.UserEventUpload_PC = function(self, eventName)
-  -- function num : 0_93 , upvalues : _ENV
+  -- function num : 0_96 , upvalues : _ENV
   local clientPublishRegion = (CS.ClientConfig).ClientPublishRegion
   local curPlatform = ((CS.ClientManager).Instance).Platform
   if clientPublishRegion == (CS.ClientPublishRegion).JP then
