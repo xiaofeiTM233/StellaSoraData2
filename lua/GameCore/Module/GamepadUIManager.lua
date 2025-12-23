@@ -460,14 +460,21 @@ GamepadUIManager.DisableGamepadUI = function(sCtrlName)
     sCurUIName = nil
     if next(tbHistory) ~= nil then
       sCurUIName = tbHistory[#tbHistory]
-      -- DECOMPILER ERROR at PC36: Confused about usage of register: R2 in 'UnsetPending'
+      -- DECOMPILER ERROR at PC40: Confused about usage of register: R2 in 'UnsetPending'
 
-      ;
-      (InputManager.Instance).IsVirtualMouseEnabled = (mapMouseConfig[sCurUIName]).VirtualMouse
-      -- DECOMPILER ERROR at PC41: Confused about usage of register: R2 in 'UnsetPending'
+      if mapMouseConfig[sCurUIName] then
+        (InputManager.Instance).IsVirtualMouseEnabled = (mapMouseConfig[sCurUIName]).VirtualMouse
+        -- DECOMPILER ERROR at PC45: Confused about usage of register: R2 in 'UnsetPending'
 
-      ;
-      (InputManager.Instance).IsBlockCursor = (mapMouseConfig[sCurUIName]).BlockCursor
+        ;
+        (InputManager.Instance).IsBlockCursor = (mapMouseConfig[sCurUIName]).BlockCursor
+      else
+        if sCurUIName then
+          printWarn("GamepadUIManager：关闭历史未找到对应鼠标配置" .. sCurUIName)
+        else
+          printWarn("GamepadUIManager：关闭历史未找到对应鼠标配置")
+        end
+      end
       RefreshCurTypeUI()
       local wait = function()
     -- function num : 0_16_0 , upvalues : _ENV, sCurUIName, EnableNode

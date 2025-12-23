@@ -101,15 +101,15 @@ BattleRoom.OnEvent_LevelStateChanged = function(self, nState)
       local tbUsage = (self.parent):GetFateCardUsage()
       local clientData, nDataLength = (self.parent):CacheTempData()
       local tbDamage = (self.parent):GetDamageRecord()
-      local tbSamples = (UTILS.GetBattleSamples)()
-      -- DECOMPILER ERROR at PC152: Confused about usage of register: R15 in 'UnsetPending'
+      local tbSamples = {}
+      -- DECOMPILER ERROR at PC150: Confused about usage of register: R15 in 'UnsetPending'
 
       if (self.parent).nTotalTime ~= nil then
         (self.parent).nTotalTime = (self.parent).nTotalTime + self.nTime
       end
       local tbEvent = {}
       tbEvent = (PlayerData.Achievement):GetBattleAchievement((GameEnum.levelType).StarTower, true)
-      -- DECOMPILER ERROR at PC176: Confused about usage of register: R16 in 'UnsetPending'
+      -- DECOMPILER ERROR at PC174: Confused about usage of register: R16 in 'UnsetPending'
 
       ;
       (msg.BattleEndReq).Victory = {HP = nHp, Time = self.nTime, ClientData = clientData, fateCardUsage = tbUsage, DateLen = nDataLength, Damages = tbDamage, Sample = tbSamples, 

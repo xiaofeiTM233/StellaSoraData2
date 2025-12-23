@@ -1,6 +1,7 @@
 local JointDrillRankingPanel = class("JointDrillRankingPanel", BasePanel)
+JointDrillRankingPanel._sUIResRootPath = "UI_Activity/"
 JointDrillRankingPanel._tbDefine = {
-{sPrefabPath = "Play_JointDrill/JointDrillRankingPanel.prefab", sCtrlName = "Game.UI.JointDrill.JointDrillRankingCtrl"}
+{sPrefabPath = "_510001/JointDrillRankingPanel.prefab", sCtrlName = "Game.UI.JointDrill.JointDrillRankingCtrl"}
 }
 JointDrillRankingPanel.Awake = function(self)
   -- function num : 0_0

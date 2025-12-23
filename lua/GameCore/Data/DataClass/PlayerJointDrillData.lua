@@ -11,6 +11,7 @@ PlayerJointDrillData.Init = function(self)
   self.nActStatus = 0
   self.tbPassedLevels = {}
   self.bInBattle = false
+  self.bResetLevelSelect = false
   self.curLevel = nil
   self.nCurLevelId = 0
   self.nCurLevel = 1
@@ -607,8 +608,7 @@ PlayerJointDrillData.JointDrillGameOver = function(self, callback, bSettle)
     end
     ;
     (EventManager.Hit)(EventId.ClosePanel, PanelId.JointDrillBuildList)
-    ;
-    (EventManager.Hit)("RefreshJointDrillLevel")
+    self.bResetLevelSelect = true
     if callback ~= nil then
       callback(netMsg)
     end
@@ -670,13 +670,17 @@ PlayerJointDrillData.JointDrillGiveUp = function(self, nFloor, nTime, nDamage, n
   (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_give_up_req, msg, nil, NetCallback)
 end
 
-PlayerJointDrillData.JointDrillRetreat = function(self, mapBuild, callback)
+PlayerJointDrillData.JointDrillRetreat = function(self, mapBuild, nBossHp, callback)
   -- function num : 0_21 , upvalues : _ENV
   self:SetRecorderExcludeIds(true)
   self:StopRecord()
   local NetCallback = function(_, netMsg)
-    -- function num : 0_21_0 , upvalues : self, mapBuild, callback
+    -- function num : 0_21_0 , upvalues : self, mapBuild, nBossHp, callback
     self:RemoveJointDrillTeam(mapBuild)
+    -- DECOMPILER ERROR at PC6: Confused about usage of register: R2 in 'UnsetPending'
+
+    ;
+    (self.mapBossInfo).nHp = nBossHp
     if callback ~= nil then
       callback()
     end
@@ -704,6 +708,7 @@ PlayerJointDrillData.JointDrillSettle = function(self, mapBuild, nTime, nDamage,
       end
       ;
       (EventManager.Hit)(EventId.ClosePanel, PanelId.JointDrillBuildList)
+      self.bResetLevelSelect = true
       if callback ~= nil then
         callback(netMsg)
       end
@@ -714,8 +719,8 @@ PlayerJointDrillData.JointDrillSettle = function(self, mapBuild, nTime, nDamage,
     end
   end
 
-  local tbSamples = (UTILS.GetBattleSamples)()
   local sKey = (LocalData.GetPlayerLocalData)("JointDrillRecordKey") or ""
+  local tbSamples = (UTILS.GetBattleSamples)(sKey)
   local bSuccess, nCheckSum = (NovaAPI.GetRecorderKey)(sKey)
   local tbSendSample = {Sample = tbSamples, Checksum = nCheckSum}
   local msg = {Time = nTime, Damage = nDamage, sample = tbSendSample, 
@@ -828,8 +833,6 @@ PlayerJointDrillData.CheckChallengeCount = function(self)
         if #self.tbTeams < mapLevelCfg.MaxBattleNum then
           return true
         else
-          ;
-          (EventManager.Hit)(EventId.ClosePanel, PanelId.JointDrillBuildList)
           self:JointDrillGameOver()
           return false
         end
@@ -1027,10 +1030,20 @@ PlayerJointDrillData.GetActStatus = function(self)
   return self.nActStatus
 end
 
+PlayerJointDrillData.SetResetLevelSelect = function(self, bReset)
+  -- function num : 0_51
+  self.bResetLevelSelect = bReset
+end
+
+PlayerJointDrillData.GetResetLevelSelect = function(self)
+  -- function num : 0_52
+  return self.bResetLevelSelect
+end
+
 PlayerJointDrillData.SendJointDrillRankMsg = function(self)
-  -- function num : 0_51 , upvalues : _ENV
+  -- function num : 0_53 , upvalues : _ENV
   local NetCallback = function(_, netMsg)
-    -- function num : 0_51_0 , upvalues : self, _ENV
+    -- function num : 0_53_0 , upvalues : self, _ENV
     self.nLastRefreshRankTime = netMsg.LastRefreshTime
     self.mapSelfRankData = netMsg.Self
     self.mapRankList = netMsg.Rank
@@ -1044,39 +1057,39 @@ PlayerJointDrillData.SendJointDrillRankMsg = function(self)
 end
 
 PlayerJointDrillData.GetSelfRankData = function(self)
-  -- function num : 0_52
+  -- function num : 0_54
   return self.mapSelfRankData
 end
 
 PlayerJointDrillData.GetRankList = function(self)
-  -- function num : 0_53
+  -- function num : 0_55
   return self.mapRankList
 end
 
 PlayerJointDrillData.GetRankRewardCount = function(self)
-  -- function num : 0_54
+  -- function num : 0_56
   return self.nRankCount
 end
 
 PlayerJointDrillData.GetTotalRankCount = function(self)
-  -- function num : 0_55
+  -- function num : 0_57
   return self.nTotalRank
 end
 
 PlayerJointDrillData.GetLastRankRefreshTime = function(self)
-  -- function num : 0_56
+  -- function num : 0_58
   return self.nLastRefreshRankTime, self.nRankingRefreshTime
 end
 
 PlayerJointDrillData.GetTotalRankScore = function(self)
-  -- function num : 0_57
+  -- function num : 0_59
   return self.nTotalScore
 end
 
 PlayerJointDrillData.SendJointDrillSweepMsg = function(self, nLevelId, nCount, callback)
-  -- function num : 0_58 , upvalues : _ENV
+  -- function num : 0_60 , upvalues : _ENV
   local NetCallback = function(_, netMsg)
-    -- function num : 0_58_0 , upvalues : _ENV, callback, self
+    -- function num : 0_60_0 , upvalues : _ENV, callback, self
     (EventManager.Hit)("JointDrillRaidSuccess", netMsg)
     if callback ~= nil then
       callback(netMsg)
@@ -1091,11 +1104,11 @@ PlayerJointDrillData.SendJointDrillSweepMsg = function(self, nLevelId, nCount, c
 end
 
 PlayerJointDrillData.SendReceiveQuestReward = function(self, callback)
-  -- function num : 0_59 , upvalues : _ENV
+  -- function num : 0_61 , upvalues : _ENV
   local NetCallback = function(_, netMsg)
-    -- function num : 0_59_0 , upvalues : _ENV, callback
+    -- function num : 0_61_0 , upvalues : _ENV, callback
     (UTILS.OpenReceiveByChangeInfo)(netMsg, function()
-      -- function num : 0_59_0_0 , upvalues : callback
+      -- function num : 0_61_0_0 , upvalues : callback
       if callback ~= nil then
         callback()
       end
@@ -1108,7 +1121,7 @@ PlayerJointDrillData.SendReceiveQuestReward = function(self, callback)
 end
 
 PlayerJointDrillData.RefreshQuestData = function(self, questData)
-  -- function num : 0_60 , upvalues : _ENV
+  -- function num : 0_62 , upvalues : _ENV
   local bHasData = false
   for k,v in ipairs(self.tbQuests) do
     -- DECOMPILER ERROR at PC10: Confused about usage of register: R8 in 'UnsetPending'
@@ -1128,7 +1141,7 @@ PlayerJointDrillData.RefreshQuestData = function(self, questData)
 end
 
 PlayerJointDrillData.GetRewardQuestList = function(self)
-  -- function num : 0_61 , upvalues : _ENV
+  -- function num : 0_63 , upvalues : _ENV
   local tbQuests = {}
   for _,v in ipairs(self.tbQuests) do
     local nSortStatus = 0
@@ -1151,7 +1164,7 @@ PlayerJointDrillData.GetRewardQuestList = function(self)
 end
 
 PlayerJointDrillData.EventUpload = function(self, action, result)
-  -- function num : 0_62 , upvalues : _ENV
+  -- function num : 0_64 , upvalues : _ENV
   if not result then
     result = ""
   end

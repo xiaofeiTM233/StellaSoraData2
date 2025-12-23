@@ -89,6 +89,8 @@ return {
 , 
 {id = "avg1_144", name = "치토세", name_bg_color = "#a87dc0"}
 , 
+{id = "avg1_145", name = "오토하", name_bg_color = "#90a1c6"}
+, 
 {id = "avg1_146", name = "베니토", name_bg_color = "#0ABEC5"}
 , 
 {id = "avg1_147", name = "캐러멜", name_bg_color = "#f0d2a1"}
@@ -112,6 +114,8 @@ return {
 {id = "avg2_002", name = "우드모트 허수아비", name_bg_color = "#0ABEC5"}
 , 
 {id = "avg2_003", name = "우드모트 척탄병", name_bg_color = "#0ABEC5"}
+, 
+{id = "avg2_953", name = "난로의 섬망", name_bg_color = "#0ABEC5"}
 , 
 {id = "avg2_954", name = "크리스피 미트", name_bg_color = "#0ABEC5"}
 , 
@@ -376,6 +380,8 @@ return {
 {id = "avg3_205", name = "이그나", name_bg_color = "#4579b4"}
 , 
 {id = "avg3_206", name = "암월", name_bg_color = "#394444"}
+, 
+{id = "avg3_210", name = "하사나", name_bg_color = "#0ABEC5"}
 , 
 {id = "avg3_873", name = "클레어", name_bg_color = "#0ABEC5"}
 , 
@@ -903,7 +909,23 @@ return {
 , 
 {id = "avg3_1257", name = "라루B", name_bg_color = "#79092e", reuse = "avg1_158"}
 , 
+{id = "avg3_1258", name = "빛나는 라루A", name_bg_color = "#79092e", reuse = "avg4_100"}
+, 
+{id = "avg3_1259", name = "빛나는 어린 라루A", name_bg_color = "#79092e", reuse = "avg4_101"}
+, 
+{id = "avg3_1260", name = "원거리 풀A", name_bg_color = "#0ABEC5", reuse = "avg2_958"}
+, 
+{id = "avg3_1261", name = "‘크리스마스트리의 정령’", name_bg_color = "#ccc5b3", reuse = "avg3_204"}
+, 
+{id = "avg3_1262", name = "아그리 유니온 산림 감시원C", name_bg_color = "#0ABEC5", reuse = "avg3_120"}
+, 
+{id = "avg3_1263", name = "원거리 풀B", name_bg_color = "#0ABEC5", reuse = "avg2_958"}
+, 
+{id = "avg3_1264", name = "미스티A", name_bg_color = "#c27fe9", reuse = "avg1_135"}
+, 
 {id = "avg4_100", name = "빛나는 라루", name_bg_color = "#0ABEC5"}
+, 
+{id = "avg4_101", name = "빛나는 어린 라루", name_bg_color = "#0ABEC5"}
 , 
 {id = "avg4_999", name = "비타", name_bg_color = "#0ABEC5"}
 }

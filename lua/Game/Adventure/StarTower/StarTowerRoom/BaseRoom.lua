@@ -1239,7 +1239,7 @@ BaseRoom.OpenNpcOptionPanel = function(self, nCaseId, nNpcConfigId)
       local mapTalkCfg = (ConfigTable.GetData)("StarTowerTalk", nTalkId)
       if mapTalkCfg ~= nil and mapAffinity[mapTalkCfg.NPCId] ~= nil then
         local nAffinity = mapAffinity[mapTalkCfg.NPCId]
-        if #mapTalkCfg.Affinity == 2 and nAffinity ~= nil and (mapTalkCfg.Affinity)[1] < nAffinity and nAffinity <= (mapTalkCfg.Affinity)[2] then
+        if #mapTalkCfg.Affinity == 2 and nAffinity ~= nil and (mapTalkCfg.Affinity)[1] <= nAffinity and nAffinity <= (mapTalkCfg.Affinity)[2] then
           (table.insert)(tbChat, nTalkId)
         end
       end
@@ -1349,7 +1349,7 @@ BaseRoom.OpenNpcOptionPanel = function(self, nCaseId, nNpcConfigId)
       local mapTalkCfg = (ConfigTable.GetData)("StarTowerTalk", nTalkId)
       if mapTalkCfg ~= nil and mapAffinity[mapTalkCfg.NPCId] ~= nil then
         local nAffinity = mapAffinity[mapTalkCfg.NPCId]
-        if #mapTalkCfg.Affinity == 2 and nAffinity ~= nil and (mapTalkCfg.Affinity)[1] < nAffinity and nAffinity <= (mapTalkCfg.Affinity)[2] then
+        if #mapTalkCfg.Affinity == 2 and nAffinity ~= nil and (mapTalkCfg.Affinity)[1] <= nAffinity and nAffinity <= (mapTalkCfg.Affinity)[2] then
           (table.insert)(tbChat, nTalkId)
         end
       end
@@ -1425,30 +1425,37 @@ BaseRoom.HandleNpcRecover = function(self, nCaseId, nNpcConfigId)
     local tbChat = ((ConfigTable.GetData)("NPCConfig", nNpcConfigId)).Lines
     local nCount = #tbChat
     local nTalkId = tbChat[1]
+    local tbSelectedChat = {}
+    local nAffinity = ((PlayerData.StarTower):GetNpcAffinityData(9172)).nTotalExp
     if nCount > 1 then
-      nTalkId = tbChat[(math.random)(1, #tbChat)]
+      for _,nTalkId in ipairs(tbChat) do
+        local mapTalkCfg = (ConfigTable.GetData)("StarTowerTalk", nTalkId)
+        if mapTalkCfg ~= nil and nAffinity ~= nil and #mapTalkCfg.Affinity == 2 and nAffinity ~= nil and (mapTalkCfg.Affinity)[1] <= nAffinity and nAffinity <= (mapTalkCfg.Affinity)[2] then
+          (table.insert)(tbSelectedChat, nTalkId)
+        end
+      end
     end
-    if nTalkId == nil then
-      nTalkId = 0
-    end
-    local nCoin = ((self.parent)._mapItem)[(AllEnum.CoinItemId).FixedRogCurrency] or 0
-    ;
-    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, false, nCoin, (self.parent).nTowerId, (self.parent)._mapNote)
-    return 
-  end
-  do
-    local nEftId = mapCase.EffectId
-    local nHp = (self.parent):RecoverHp(nEftId)
-    local WwiseAudioMgr = (CS.WwiseAudioManager).Instance
-    WwiseAudioMgr:PostEvent("ui_battle_cure")
-    local msg = {}
-    msg.Id = nCaseId
-    msg.RecoveryHPReq = {}
-    -- DECOMPILER ERROR at PC105: Confused about usage of register: R8 in 'UnsetPending'
+    do
+      if #tbSelectedChat > 0 then
+        nTalkId = tbSelectedChat[(math.random)(1, #tbSelectedChat)]
+      end
+      do
+        local nCoin = ((self.parent)._mapItem)[(AllEnum.CoinItemId).FixedRogCurrency] or 0
+        ;
+        (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, false, nCoin, (self.parent).nTowerId, (self.parent)._mapNote)
+        do return  end
+        local nEftId = mapCase.EffectId
+        local nHp = (self.parent):RecoverHp(nEftId)
+        local WwiseAudioMgr = (CS.WwiseAudioManager).Instance
+        WwiseAudioMgr:PostEvent("ui_battle_cure")
+        local msg = {}
+        msg.Id = nCaseId
+        msg.RecoveryHPReq = {}
+        -- DECOMPILER ERROR at PC146: Confused about usage of register: R8 in 'UnsetPending'
 
-    ;
-    (msg.RecoveryHPReq).Hp = nHp
-    local callback = function(_, msgData)
+        ;
+        (msg.RecoveryHPReq).Hp = nHp
+        local callback = function(_, msgData)
     -- function num : 0_19_0 , upvalues : _ENV, nNpcConfigId, self, nCaseId
     (EventManager.Hit)(EventId.OpenMessageBox, (ConfigTable.GetUIText)("StarTower_NpcRecoverTips"))
     ;
@@ -1459,8 +1466,10 @@ BaseRoom.HandleNpcRecover = function(self, nCaseId, nNpcConfigId)
     (((self.mapCases)[(self.EnumCase).NpcRecoveryHP])[nCaseId]).bFinish = true
   end
 
-    ;
-    (self.parent):StarTowerInteract(msg, callback)
+        ;
+        (self.parent):StarTowerInteract(msg, callback)
+      end
+    end
   end
 end
 

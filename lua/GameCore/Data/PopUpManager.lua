@@ -67,9 +67,12 @@ end
 
 PopUpManager.PopUpEnQueue = function(nType, mapData)
   -- function num : 0_4 , upvalues : _ENV, _tbPopUpQueue, popUpPanelConfig
+  if EditorSettings and EditorSettings.bSkipPopup then
+    return 
+  end
   local bAdded = false
   for nIndex,mapPopUp in ipairs(_tbPopUpQueue) do
-    -- DECOMPILER ERROR at PC9: Confused about usage of register: R8 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC17: Confused about usage of register: R8 in 'UnsetPending'
 
     if mapPopUp.nType == nType then
       (_tbPopUpQueue[nIndex]).mapData = mapData

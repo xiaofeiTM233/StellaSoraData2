@@ -717,10 +717,17 @@ end
 orderedFormat = function(formatStr, ...)
   -- function num : 0_48 , upvalues : _ENV
   local args = {...}
-  return formatStr:gsub("{(%d+)}", function(index)
+  return formatStr:gsub("{([^}]+)}", function(placeholder)
     -- function num : 0_48_0 , upvalues : _ENV, args
-    index = tonumber(index) + 1
-    return tostring(args[index])
+    local patterns = {".-_(%d+)$", "^(%d+)$"}
+    for _,pattern in ipairs(patterns) do
+      local num = placeholder:match(pattern)
+      if num then
+        local index = tonumber(num) + 1
+        return tostring(args[index] or "")
+      end
+    end
+    return "{" .. placeholder .. "}"
   end
 )
 end

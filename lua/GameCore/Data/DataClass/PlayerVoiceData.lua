@@ -41,6 +41,7 @@ PlayerVoiceData.Init = function(self)
   self.bFirstEnterGame = true
   self.bNpc = false
   self.nNpcId = 0
+  self.nNPCSkinId = 0
   self.bStartBoardClickTimer = false
   self.nContinuousClickCount = 0
   self.nBoardClickTime = 0
@@ -205,19 +206,24 @@ local getBoardClickFreeTime = function(bNpc)
   return bNpc and npc_board_click_free_time or board_click_free_time
 end
 
-PlayerVoiceData.StartBoardFreeTimer = function(self, nNpcId)
+PlayerVoiceData.StartBoardFreeTimer = function(self, nNpcId, nSkinId)
   -- function num : 0_10 , upvalues : board_free_trigger_ex_hang, TimerManager
   if nNpcId ~= nil or self.bNpc then
     self.bNpc = true
-    if not nNpcId then
-      self.nNpcId = nNpcId == nil or 0
-      self.bNpc = false
-      self.nNpcId = 0
-      self.bStartBoardClickTimer = true
-      if self.boardFreeTimer == nil and self.nTriggerFreeVoiceState ~= board_free_trigger_ex_hang then
-        self.boardFreeTimer = (TimerManager.Add)(0, 0.1, self, self.CheckBoardFree, true, true, false)
-      end
+    if nNpcId ~= nil then
+      self.nNpcId = nNpcId
     end
+    if nSkinId ~= nil then
+      self.nNPCSkinId = nSkinId
+    end
+  else
+    self.bNpc = false
+    self.nNpcId = 0
+    self.nNPCSkinId = 0
+  end
+  self.bStartBoardClickTimer = true
+  if self.boardFreeTimer == nil and self.nTriggerFreeVoiceState ~= board_free_trigger_ex_hang then
+    self.boardFreeTimer = (TimerManager.Add)(0, 0.1, self, self.CheckBoardFree, true, true, false)
   end
 end
 
@@ -339,6 +345,7 @@ PlayerVoiceData.PlayBoardClickVoice = function(self)
   -- function num : 0_19 , upvalues : TimerManager, _ENV, getBoardClickMaxCount, Actor2DManager, TN, TF, charFavorLevelClickVoice
   self.bNpc = false
   self.nNpcId = 0
+  self.nNPCSkinId = 0
   if self.nBoardClickTime == 0 and self.boardClickTimer == nil then
     self.boardClickTimer = (TimerManager.Add)(0, 0.1, self, self.CheckContinuousClick, true, true, false)
   end
@@ -373,7 +380,7 @@ PlayerVoiceData.PlayBoardClickVoice = function(self)
     do
       if #self.tbHolidayVoiceKey > 0 then
         for _,v in ipairs(self.tbHolidayVoiceKey) do
-          (table.insert)(tbVoiceKey, R10_PC100)
+          (table.insert)(tbVoiceKey, R10_PC101)
         end
       end
       do
@@ -389,10 +396,11 @@ PlayerVoiceData.PlayBoardClickVoice = function(self)
   end
 end
 
-PlayerVoiceData.PlayBoardNPCClickVoice = function(self, nNpcId)
+PlayerVoiceData.PlayBoardNPCClickVoice = function(self, nNpcId, nSkinId)
   -- function num : 0_20 , upvalues : TimerManager, getBoardClickMaxCount, _ENV
   self.bNpc = true
   self.nNpcId = nNpcId
+  self.nNPCSkinId = nSkinId or 0
   if self.nBoardClickTime == 0 and self.boardClickTimer == nil then
     self.boardClickTimer = (TimerManager.Add)(0, 0.1, self, self.CheckContinuousClick, true, true, false)
   end
@@ -407,7 +415,7 @@ PlayerVoiceData.PlayBoardNPCClickVoice = function(self, nNpcId)
       ;
       (table.insert)(tbVoiceKey, "posterchat_npc")
     end
-    self:PlayCharVoice(tbVoiceKey, curBoardCharId, nil, true)
+    self:PlayCharVoice(tbVoiceKey, curBoardCharId, self.nNPCSkinId, true)
   end
 end
 
@@ -422,7 +430,7 @@ PlayerVoiceData.PlayBoardFreeVoice = function(self)
     sVoiceKey = "hang_npc"
   end
   if curBoardCharId ~= nil then
-    self:PlayCharVoice(sVoiceKey, curBoardCharId)
+    self:PlayCharVoice(sVoiceKey, curBoardCharId, self.nNPCSkinId, self.bNpc)
   end
 end
 
@@ -437,12 +445,29 @@ PlayerVoiceData.PlayBoardFreeLongTimeVoice = function(self)
     sVoiceKey = "exhang_npc"
   end
   if curBoardCharId ~= nil then
-    self:PlayCharVoice(sVoiceKey, curBoardCharId)
+    self:PlayCharVoice(sVoiceKey, curBoardCharId, self.nNPCSkinId, self.bNpc)
   end
 end
 
+PlayerVoiceData.GetNPCGreetTimeVoiceKey = function(self)
+  -- function num : 0_23 , upvalues : ClientManager, _ENV
+  local sTimeVoice = ""
+  local nServerTimeStamp = ClientManager.serverTimeStamp
+  local nHour = tonumber((os.date)("%H", nServerTimeStamp))
+  if nHour >= 6 and nHour < 12 then
+    sTimeVoice = "greetmorn_npc"
+  else
+    if nHour >= 12 and nHour < 18 then
+      sTimeVoice = "greetnoon_npc"
+    else
+      sTimeVoice = "greetnight_npc"
+    end
+  end
+  return sTimeVoice
+end
+
 PlayerVoiceData.PlayBattleResultVoice = function(self, tbChar, bWin)
-  -- function num : 0_23 , upvalues : _ENV
+  -- function num : 0_24 , upvalues : _ENV
   local nIndex = (math.random)(1, #tbChar)
   local nCharId = tbChar[nIndex]
   local sVoiceKey = bWin and "win" or "lose"
@@ -450,7 +475,7 @@ PlayerVoiceData.PlayBattleResultVoice = function(self, tbChar, bWin)
 end
 
 PlayerVoiceData.CheckPlayGiftVoice = function(self, nLevel, nLastLevel)
-  -- function num : 0_24 , upvalues : charFavorLevelUnlockVoice
+  -- function num : 0_25 , upvalues : charFavorLevelUnlockVoice
   local bPlay = true
   if nLastLevel ~= nLevel then
     for i = 1, #charFavorLevelUnlockVoice do
@@ -466,7 +491,7 @@ PlayerVoiceData.CheckPlayGiftVoice = function(self, nLevel, nLastLevel)
 end
 
 PlayerVoiceData.PlayCharFavourUpVoice = function(self, nCharId, nLastFavourLevel)
-  -- function num : 0_25 , upvalues : _ENV, charFavorLevelUnlockVoice
+  -- function num : 0_26 , upvalues : _ENV, charFavorLevelUnlockVoice
   local nVoiceId = nil
   local mapData = (PlayerData.Char):GetCharAffinityData(nCharId)
   if mapData ~= nil then
@@ -487,17 +512,18 @@ PlayerVoiceData.PlayCharFavourUpVoice = function(self, nCharId, nLastFavourLevel
 end
 
 PlayerVoiceData.ClearTimer = function(self)
-  -- function num : 0_26
+  -- function num : 0_27
   self:ResetBoardPlayTimer()
   self:ResetBoardFreeTimer()
   self:ResetBoardClickTimer()
   self.bStartBoardClickTimer = false
   self.bNpc = false
   self.nNpcId = 0
+  self.nNPCSkinId = 0
 end
 
 PlayerVoiceData.OnEvent_UIOperate = function(self)
-  -- function num : 0_27 , upvalues : board_free_trigger_none
+  -- function num : 0_28 , upvalues : board_free_trigger_none
   self.nBoardFreeTime = 0
   self.nTriggerFreeVoiceState = board_free_trigger_none
   if self.bStartBoardClickTimer and self.nVoiceDuration == 0 then
@@ -506,7 +532,7 @@ PlayerVoiceData.OnEvent_UIOperate = function(self)
 end
 
 PlayerVoiceData.OnEvent_AvgVoiceDuration = function(self, nDuration)
-  -- function num : 0_28 , upvalues : board_free_trigger_ex_hang
+  -- function num : 0_29 , upvalues : board_free_trigger_ex_hang
   self:ResetBoardPlayTimer()
   self.nVoiceDuration = nDuration
   if self.bStartBoardClickTimer and self.nTriggerFreeVoiceState ~= board_free_trigger_ex_hang then
@@ -516,7 +542,7 @@ PlayerVoiceData.OnEvent_AvgVoiceDuration = function(self, nDuration)
 end
 
 PlayerVoiceData.OnEvent_NewDay = function(self)
-  -- function num : 0_29
+  -- function num : 0_30
   self:CheckHoliday()
 end
 

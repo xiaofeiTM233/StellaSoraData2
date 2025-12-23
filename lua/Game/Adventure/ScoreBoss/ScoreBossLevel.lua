@@ -154,7 +154,7 @@ ScoreBossLevel.OnEvent_BossRushSpawnId = function(self, bossId)
   -- function num : 0_9 , upvalues : _ENV
   self.BossId = bossId
   local healthInfo = ((CS.AdventureModuleHelper).GetEntityHealthInfo)(bossId)
-  self.BossMaxHp = healthInfo ~= nil and (healthInfo.hpMax):AsInt() or 0
+  self.BossMaxHp = healthInfo ~= nil and healthInfo.hpMax or 0
   ;
   (EventManager.AddEntityEvent)("HpChanged", self.BossId, self, self.OnEvent_HpChanged)
   ;

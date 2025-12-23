@@ -1,7 +1,7 @@
 local StoryLevel = class("StoryLevel")
 local Actor2DManager = require("Game.Actor2D.Actor2DManager")
 local mapEventConfig = {LevelStateChanged = "OnEvent_SendMsgFinishBattle", [EventId.AbandonBattle] = "OnEvent_AbandonBattle", LoadLevelRefresh = "OnEvent_LoadLevelRefresh", Mainline_Time_CountUp = "OnEvent_Time", BattlePause = "OnEvnet_Pause", AdventureModuleEnter = "OnEvent_AdventureModuleEnter"}
-StoryLevel.Init = function(self, parent, nLevelId, nBuildId)
+StoryLevel.Init = function(self, parent, nLevelId, nBuildId, bActivityStory)
   -- function num : 0_0 , upvalues : _ENV
   self.bSettle = false
   self.parent = parent
@@ -10,7 +10,10 @@ StoryLevel.Init = function(self, parent, nLevelId, nBuildId)
   self.nLevelId = nLevelId
   self.curFloorIdx = 1
   self.mapCharacterTempData = {}
-  local mapStory = (ConfigTable.GetData_Story)(nLevelId)
+  self.bActivityStory = bActivityStory == true
+  if bActivityStory ~= true or not (ConfigTable.GetData)("ActivityStory", nLevelId) then
+    local mapStory = (ConfigTable.GetData_Story)(nLevelId)
+  end
   if mapStory == nil then
     printError("mapStory is nil,id = " .. nLevelId)
     return 
@@ -49,7 +52,7 @@ StoryLevel.Init = function(self, parent, nLevelId, nBuildId)
   else
     (PlayerData.Build):GetBuildDetailData(GetBuildCallback, nBuildId)
   end
-  -- DECOMPILER ERROR: 3 unprocessed JMP targets
+  -- DECOMPILER ERROR: 8 unprocessed JMP targets
 end
 
 StoryLevel.RefreshCharDamageData = function(self)
@@ -92,7 +95,9 @@ StoryLevel.OnEvent_SendMsgFinishBattle = function(self, LevelResult, FadeTime, s
     self:OnEvent_AbandonBattle()
     return 
   end
-  local mapStory = (ConfigTable.GetData_Story)(self.nLevelId)
+  if self.bActivityStory ~= true or not (ConfigTable.GetData)("ActivityStory", self.nLevelId) then
+    local mapStory = (ConfigTable.GetData_Story)(self.nLevelId)
+  end
   if self.curFloorIdx < #mapStory.FloorId then
     self:ChangeFloor()
     return 
@@ -104,9 +109,12 @@ StoryLevel.OnEvent_SendMsgFinishBattle = function(self, LevelResult, FadeTime, s
 
   print("====== 当前通关主线关卡ID：" .. self.nLevelId .. " ======")
   local events = {List = (PlayerData.Achievement):GetBattleAchievement((GameEnum.levelType).Mainline, LevelResult ~= (AllEnum.LevelResult).Failed)}
-  ;
-  (PlayerData.Avg):SendMsg_STORY_DONE(func_cbFinishSucc, events)
-  -- DECOMPILER ERROR: 1 unprocessed JMP targets
+  if self.bActivityStory then
+    (PlayerData.ActivityAvg):SendMsg_STORY_DONE(func_cbFinishSucc, events)
+  else
+    (PlayerData.Avg):SendMsg_STORY_DONE(func_cbFinishSucc, events)
+  end
+  -- DECOMPILER ERROR: 3 unprocessed JMP targets
 end
 
 StoryLevel.OnEvent_AbandonBattle = function(self)
@@ -204,8 +212,11 @@ StoryLevel.PlaySuccessPerform = function(self, FadeTime, mapChangeInfo, sVideoNa
       (EventManager.Remove)("VIDEO_END", self, videoCallback)
       ;
       (EventManager.Hit)(EventId.OpenPanel, PanelId.BattleResultMask)
-      local nFloorCount = #((ConfigTable.GetData_Story)(self.nLevelId)).FloorId
-      local nMapId = (((ConfigTable.GetData_Story)(self.nLevelId)).FloorId)[nFloorCount]
+      if self.bActivityStory ~= true or not (ConfigTable.GetData)("ActivityStory", self.nLevelId) then
+        local storyCfg = (ConfigTable.GetData_Story)(self.nLevelId)
+      end
+      local nFloorCount = #storyCfg.FloorId
+      local nMapId = (storyCfg.FloorId)[nFloorCount]
       local nType = ((ConfigTable.GetData)("MainlineFloor", nMapId)).Theme
       local sName = ((ConfigTable.GetData)("EndSceneType", nType)).EndSceneName
       ;
@@ -301,7 +312,9 @@ end
 
 StoryLevel.OnEvnet_Pause = function(self)
   -- function num : 0_13 , upvalues : _ENV
-  local sAim = ((ConfigTable.GetData_Story)(self.nLevelId)).Aim
+  if self.bActivityStory ~= true or not ((ConfigTable.GetData)("ActivityStory", self.nLevelId)).Aim then
+    local sAim = ((ConfigTable.GetData_Story)(self.nLevelId)).Aim
+  end
   ;
   (EventManager.Hit)(EventId.OpenPanel, PanelId.MainBattlePause, self.nMainLineTime or 0, (self.mapBuildData).tbChar, sAim)
 end
@@ -309,7 +322,9 @@ end
 StoryLevel.ChangeFloor = function(self)
   -- function num : 0_14 , upvalues : _ENV
   self:CacheTempData()
-  local mapStory = (ConfigTable.GetData_Story)(self.nLevelId)
+  if self.bActivityStory ~= true or not (ConfigTable.GetData)("ActivityStory", self.nLevelId) then
+    local mapStory = (ConfigTable.GetData_Story)(self.nLevelId)
+  end
   self.curFloorIdx = self.curFloorIdx + 1
   self.nCacheFloorTime = self.nMainLineTime
   local levelUnloadCallback = function()

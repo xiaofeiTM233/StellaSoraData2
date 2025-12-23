@@ -18,6 +18,9 @@ local TimerManager = require("GameCore.Timer.TimerManager")
 local BdConvertData = require("GameCore.Data.DataClass.Activity.BdConvertData")
 local BreakOut_30101Data = require("GameCore.Data.DataClass.Activity.BreakOut_30101Data")
 local BreakOutData = require("GameCore.Data.DataClass.Activity.BreakOutData")
+local TrekkerVersusData = require("GameCore.Data.DataClass.Activity.TrekkerVersusData")
+local Christmas_20101Data = require("GameCore.Data.DataClass.Activity.Christmas_20101Data")
+local Miracle_10103Data = require("GameCore.Data.DataClass.Activity.Miracle_10103Data")
 PlayerActivityData.Init = function(self)
   -- function num : 0_0 , upvalues : _ENV
   self.bCacheActData = false
@@ -96,8 +99,14 @@ PlayerActivityData.CacheAllActivityData = function(self, mapNetMsg)
     for _,v in ipairs(mapNetMsg.List) do
       local nActId = v.Id
       local actCfg = (ConfigTable.GetData)("Activity", nActId)
-      if actCfg ~= nil and actCfg.ActivityType == (GameEnum.activityType).Avg then
-        self:RefreshActivityAvgData(nActId, v.Avg)
+      if actCfg ~= nil then
+        if actCfg.ActivityType == (GameEnum.activityType).Avg then
+          self:RefreshActivityAvgData(nActId, v.Avg)
+        else
+          if actCfg.ActivityType == (GameEnum.activityType).Story then
+            (PlayerData.ActivityAvg):CacheAvgData(v.StoryChapter)
+          end
+        end
       end
       if actCfg ~= nil then
         if actCfg.ActivityType == (GameEnum.activityType).PeriodicQuest then
@@ -138,7 +147,7 @@ PlayerActivityData.CacheAllActivityData = function(self, mapNetMsg)
                                     mapActData.StartTime = 0
                                     mapActData.EndTime = 0
                                     actIns = (ActivityTaskData.new)(mapActData)
-                                    -- DECOMPILER ERROR at PC144: Confused about usage of register: R11 in 'UnsetPending'
+                                    -- DECOMPILER ERROR at PC156: Confused about usage of register: R11 in 'UnsetPending'
 
                                     ;
                                     (self.tbAllActivity)[nActId] = actIns
@@ -156,58 +165,62 @@ PlayerActivityData.CacheAllActivityData = function(self, mapNetMsg)
                                         self:RefreshBdConvertData(nActId, v.BdConvert)
                                       else
                                         if actCfg.ActivityType == (GameEnum.activityType).Breakout then
-                                          self:RefreshBreakoutData(nActId, v.Breakout)
+                                          self:RefreshBreakOutData(nActId, v.Breakout)
+                                        else
+                                          if actCfg.ActivityType == (GameEnum.activityType).TrekkerVersus then
+                                            self:RefreshTrekkerVersusData(nActId, v.TrekkerVersus)
+                                          end
                                         end
                                       end
                                     end
                                   end
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out DO_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out DO_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out DO_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out DO_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_THEN_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_THEN_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_ELSE_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_ELSE_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_ELSE_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_ELSE_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_ELSE_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_ELSE_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_ELSE_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_ELSE_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_ELSE_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_THEN_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_THEN_STMT
 
-                                  -- DECOMPILER ERROR at PC196: LeaveBlock: unexpected jumping out IF_STMT
+                                  -- DECOMPILER ERROR at PC219: LeaveBlock: unexpected jumping out IF_STMT
 
                                 end
                               end
@@ -249,7 +262,6 @@ PlayerActivityData.UpdateActivityState = function(self, mapNetMsg)
       ((self.tbAllActivity)[v.Id]):UpdateActivityState(v)
     end
   end
-  self:RefreshPopUpList()
   self:RefreshActivityRedDot()
 end
 
@@ -289,7 +301,7 @@ PlayerActivityData.RefreshActStatus = function(self)
 end
 
 PlayerActivityData.CreateActivityIns = function(self, actData)
-  -- function num : 0_9 , upvalues : _ENV, PeriodicQuestActData, LoginRewardActData, MiningGameData, TrialActData, CookieActData, TowerDefenseData, JointDrillActData, ActivityLevelTypeData, ActivityTaskData, ActivityShopData, AdvertiseActData, BdConvertData, BreakOutData
+  -- function num : 0_9 , upvalues : _ENV, PeriodicQuestActData, LoginRewardActData, MiningGameData, TrialActData, CookieActData, TowerDefenseData, JointDrillActData, ActivityLevelTypeData, ActivityTaskData, ActivityShopData, AdvertiseActData, BdConvertData, BreakOutData, TrekkerVersusData
   local actIns = nil
   local actCfg = (ConfigTable.GetData)("Activity", actData.Id)
   if actCfg == nil then
@@ -319,7 +331,7 @@ PlayerActivityData.CreateActivityIns = function(self, actData)
                 if actCfg.ActivityType == (GameEnum.activityType).Levels then
                   actIns = (ActivityLevelTypeData.new)(actData)
                 else
-                  if actCfg.ActivityType == (GameEnum.activityType).Avg then
+                  if actCfg.ActivityType == (GameEnum.activityType).Avg or actCfg.ActivityType == (GameEnum.activityType).Story then
                     (PlayerData.ActivityAvg):CacheActivityAvgData(actData)
                   else
                     if actCfg.ActivityType == (GameEnum.activityType).Task then
@@ -336,6 +348,10 @@ PlayerActivityData.CreateActivityIns = function(self, actData)
                           else
                             if actCfg.ActivityType == (GameEnum.activityType).Breakout then
                               actIns = (BreakOutData.new)(actData)
+                            else
+                              if actCfg.ActivityType == (GameEnum.activityType).TrekkerVersus then
+                                actIns = (TrekkerVersusData.new)(actData)
+                              end
                             end
                           end
                         end
@@ -350,7 +366,7 @@ PlayerActivityData.CreateActivityIns = function(self, actData)
       end
     end
   end
-  -- DECOMPILER ERROR at PC167: Confused about usage of register: R4 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC184: Confused about usage of register: R4 in 'UnsetPending'
 
   if actIns ~= nil then
     (self.tbAllActivity)[actData.Id] = actIns
@@ -449,7 +465,7 @@ PlayerActivityData.CacheActivityGroupData = function(self)
 end
 
 PlayerActivityData.CreateActivityGroupIns = function(self, actData)
-  -- function num : 0_15 , upvalues : _ENV, SwimThemeData, OurRegiment_10101Data, Dream_10102Data, BreakOut_30101Data, TimerManager
+  -- function num : 0_15 , upvalues : _ENV, SwimThemeData, OurRegiment_10101Data, Dream_10102Data, BreakOut_30101Data, Christmas_20101Data, Miracle_10103Data, TimerManager
   local actIns = nil
   local actCfg = actData
   if actCfg == nil then
@@ -470,11 +486,19 @@ PlayerActivityData.CreateActivityGroupIns = function(self, actData)
         else
           if actCfg.ActivityThemeType == (GameEnum.activityThemeType).BreakOut_30101 then
             actIns = (BreakOut_30101Data.new)(actData)
+          else
+            if actCfg.ActivityThemeType == (GameEnum.activityThemeType).Christmas_20101 then
+              actIns = (Christmas_20101Data.new)(actData)
+            else
+              if actCfg.ActivityThemeType == (GameEnum.activityThemeType).Miracle_10103 then
+                actIns = (Miracle_10103Data.new)(actData)
+              end
+            end
           end
         end
       end
     end
-    -- DECOMPILER ERROR at PC70: Confused about usage of register: R7 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC92: Confused about usage of register: R7 in 'UnsetPending'
 
     ;
     (self.tbAllActivityGroup)[actData.Id] = actIns
@@ -637,7 +661,12 @@ PlayerActivityData.RefreshSingleQuest = function(self, questData)
           end
         end
       end
+      -- DECOMPILER ERROR at PC136: Unhandled construct in 'MakeBoolean' P1
+
       if actCfg.ActivityType == (GameEnum.activityType).TowerDefense and (self.tbAllActivity)[questData.ActivityId] ~= nil then
+        ((self.tbAllActivity)[questData.ActivityId]):RefreshQuestData(questData)
+      end
+      if actCfg.ActivityType == (GameEnum.activityType).TrekkerVersus and (self.tbAllActivity)[questData.ActivityId] ~= nil then
         ((self.tbAllActivity)[questData.ActivityId]):RefreshQuestData(questData)
       end
     end
@@ -662,7 +691,6 @@ PlayerActivityData.ReceiveLoginRewardSuc = function(self, nActId)
   if (self.tbAllActivity)[nActId] ~= nil then
     ((self.tbAllActivity)[nActId]):ReceiveRewardSuc()
   end
-  self:RefreshLoginRewardPopUpList()
 end
 
 PlayerActivityData.RefreshPopUpList = function(self)
@@ -696,7 +724,7 @@ PlayerActivityData.RefreshLoginRewardPopUpList = function(self)
   end
   for nActId,data in pairs(self.tbAllActivity) do
     local nActType = data:GetActType()
-    if nActType == (GameEnum.activityType).LoginReward and data:CheckCanReceive() and data:CheckActivityOpen() then
+    if nActType == (GameEnum.activityType).LoginReward and data:CheckCanReceive() and data:CheckActivityOpen() and data:CheckActPlay() then
       (table.insert)(self.tbLoginRewardPopUp, data)
     end
   end
@@ -750,51 +778,58 @@ PlayerActivityData.RefreshBdConvertData = function(self, nActId, msgData)
   end
 end
 
-PlayerActivityData.RefreshBreakoutData = function(self, nActId, msgData)
+PlayerActivityData.RefreshBreakOutData = function(self, nActId, msgData)
   -- function num : 0_34
   if (self.tbAllActivity)[nActId] ~= nil then
-    ((self.tbAllActivity)[nActId]):RefreshBreakoutData(nActId, msgData)
+    ((self.tbAllActivity)[nActId]):RefreshBreakOutData(nActId, msgData)
+  end
+end
+
+PlayerActivityData.RefreshTrekkerVersusData = function(self, nActId, msgData)
+  -- function num : 0_35
+  if (self.tbAllActivity)[nActId] ~= nil then
+    ((self.tbAllActivity)[nActId]):RefreshTrekkerVersusData(nActId, msgData)
   end
 end
 
 PlayerActivityData.RefreshActivityLevelGameActData = function(self, nActId, msgData)
-  -- function num : 0_35
+  -- function num : 0_36
   if (self.tbAllActivity)[nActId] ~= nil then
     ((self.tbAllActivity)[nActId]):RefreshActivityLevelGameActData(nActId, msgData)
   end
 end
 
 PlayerActivityData.SetActivityLevelActId = function(self, nActId)
-  -- function num : 0_36
+  -- function num : 0_37
   self.nActivityLevelActId = nActId
 end
 
 PlayerActivityData.GetActivityLevelActId = function(self)
-  -- function num : 0_37
+  -- function num : 0_38
   return self.nActivityLevelActId
 end
 
 PlayerActivityData.RefreshTrialActData = function(self, nActId, msgData)
-  -- function num : 0_38
+  -- function num : 0_39
   if (self.tbAllActivity)[nActId] ~= nil then
     ((self.tbAllActivity)[nActId]):RefreshTrialActData(msgData)
   end
 end
 
 PlayerActivityData.RefreshActivityAvgData = function(self, nActId, msgData)
-  -- function num : 0_39 , upvalues : _ENV
+  -- function num : 0_40 , upvalues : _ENV
   (PlayerData.ActivityAvg):RefreshActivityAvgData(nActId, msgData)
 end
 
 PlayerActivityData.RefreshActivityShopData = function(self, nActId, msgData)
-  -- function num : 0_40
+  -- function num : 0_41
   if (self.tbAllActivity)[nActId] ~= nil then
     ((self.tbAllActivity)[nActId]):RefreshActivityShopData(msgData)
   end
 end
 
 PlayerActivityData.RefreshActivityCGData = function(self, msgData)
-  -- function num : 0_41 , upvalues : _ENV
+  -- function num : 0_42 , upvalues : _ENV
   self.tbReadedCG = {}
   for _,actId in pairs(msgData) do
     (table.insert)(self.tbReadedCG, actId)
@@ -802,13 +837,13 @@ PlayerActivityData.RefreshActivityCGData = function(self, msgData)
 end
 
 PlayerActivityData.IsCGPlayed = function(self, nActId)
-  -- function num : 0_42 , upvalues : _ENV
+  -- function num : 0_43 , upvalues : _ENV
   do return (table.indexof)(self.tbReadedCG, nActId) > 0 end
   -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
 PlayerActivityData.GetActivityBannerList = function(self)
-  -- function num : 0_43 , upvalues : _ENV
+  -- function num : 0_44 , upvalues : _ENV
   local tbList = {}
   for _,v in pairs(self.tbAllActivity) do
     if v:CheckShowBanner() then
@@ -817,7 +852,7 @@ PlayerActivityData.GetActivityBannerList = function(self)
   end
   ;
   (table.sort)(tbList, function(a, b)
-    -- function num : 0_43_0
+    -- function num : 0_44_0
     do return a:GetActId() < b:GetActId() end
     -- DECOMPILER ERROR: 1 unprocessed JMP targets
   end
@@ -826,16 +861,16 @@ PlayerActivityData.GetActivityBannerList = function(self)
 end
 
 PlayerActivityData.RefreshInfinityTowerActData = function(self, nActId, msgData)
-  -- function num : 0_44
+  -- function num : 0_45
   if (self.tbAllActivity)[nActId] ~= nil then
     ((self.tbAllActivity)[nActId]):RefreshInfinityTowerActData(nActId, msgData)
   end
 end
 
 PlayerActivityData.SendActivityDetailMsg = function(self, callback, bForceGet)
-  -- function num : 0_45 , upvalues : _ENV
+  -- function num : 0_46 , upvalues : _ENV
   local callFunc = function()
-    -- function num : 0_45_0 , upvalues : self, callback
+    -- function num : 0_46_0 , upvalues : self, callback
     self.bCacheActData = true
     if callback ~= nil then
       callback()
@@ -852,9 +887,9 @@ PlayerActivityData.SendActivityDetailMsg = function(self, callback, bForceGet)
 end
 
 PlayerActivityData.SendReceivePerQuest = function(self, nActId, nQuestId, callback)
-  -- function num : 0_46 , upvalues : _ENV
+  -- function num : 0_47 , upvalues : _ENV
   local callFunc = function(_, mapChangeInfo)
-    -- function num : 0_46_0 , upvalues : self, nActId, nQuestId, _ENV, callback
+    -- function num : 0_47_0 , upvalues : self, nActId, nQuestId, _ENV, callback
     local actData = (self.tbAllActivity)[nActId]
     local tbQuestList = actData:RefreshQuestStatus(nQuestId)
     ;
@@ -866,9 +901,9 @@ PlayerActivityData.SendReceivePerQuest = function(self, nActId, nQuestId, callba
 end
 
 PlayerActivityData.SendReceiveFinalReward = function(self, nActId, callback)
-  -- function num : 0_47 , upvalues : _ENV
+  -- function num : 0_48 , upvalues : _ENV
   local callFunc = function(_, mapMsgData)
-    -- function num : 0_47_0 , upvalues : self, nActId, callback
+    -- function num : 0_48_0 , upvalues : self, nActId, callback
     self:ReceiveFinalRewardSuc(nActId, mapMsgData)
     if callback ~= nil then
       callback()
@@ -880,12 +915,12 @@ PlayerActivityData.SendReceiveFinalReward = function(self, nActId, callback)
 end
 
 PlayerActivityData.ReceiveQuestReward = function(self, mapMsgData)
-  -- function num : 0_48 , upvalues : _ENV
+  -- function num : 0_49 , upvalues : _ENV
   (UTILS.OpenReceiveByChangeInfo)(mapMsgData)
 end
 
 PlayerActivityData.ReceiveFinalRewardSuc = function(self, actId, mapMsgData)
-  -- function num : 0_49 , upvalues : _ENV
+  -- function num : 0_50 , upvalues : _ENV
   local actData = (self.tbAllActivity)[actId]
   if actData ~= nil then
     actData:RefreshFinalStatus(true)
@@ -894,13 +929,13 @@ PlayerActivityData.ReceiveFinalRewardSuc = function(self, actId, mapMsgData)
   end
 end
 
-PlayerActivityData.SendReceiveLoginRewardMsg = function(self, nActId, callFunc)
-  -- function num : 0_50 , upvalues : _ENV
+PlayerActivityData.SendReceiveLoginRewardMsg = function(self, nActId, callFunc, mapNpc)
+  -- function num : 0_51 , upvalues : _ENV
   local callback = function(_, mapMsgData)
-    -- function num : 0_50_0 , upvalues : self, nActId, _ENV, callFunc
+    -- function num : 0_51_0 , upvalues : self, nActId, _ENV, callFunc, mapNpc
     self:ReceiveLoginRewardSuc(nActId)
     ;
-    (UTILS.OpenReceiveByChangeInfo)(mapMsgData, callFunc)
+    (UTILS.OpenReceiveByChangeInfo)(mapMsgData, callFunc, nil, nil, mapNpc)
   end
 
   ;
@@ -908,7 +943,7 @@ PlayerActivityData.SendReceiveLoginRewardMsg = function(self, nActId, callFunc)
 end
 
 PlayerActivityData.OpenActivityPanel = function(self, nActId)
-  -- function num : 0_51 , upvalues : _ENV
+  -- function num : 0_52 , upvalues : _ENV
   local tbList = self:GetSortedActList()
   if next(tbList) == nil then
     self:RefreshActivityRedDot()
@@ -917,9 +952,9 @@ PlayerActivityData.OpenActivityPanel = function(self, nActId)
     return 
   end
   local openFunc = function()
-    -- function num : 0_51_0 , upvalues : _ENV, nActId
+    -- function num : 0_52_0 , upvalues : _ENV, nActId
     local func = function()
-      -- function num : 0_51_0_0 , upvalues : _ENV, nActId
+      -- function num : 0_52_0_0 , upvalues : _ENV, nActId
       (EventManager.Hit)(EventId.OpenPanel, PanelId.ActivityList, nActId)
     end
 
@@ -931,20 +966,22 @@ PlayerActivityData.OpenActivityPanel = function(self, nActId)
 end
 
 PlayerActivityData.OnEvent_NewDay = function(self)
-  -- function num : 0_52
+  -- function num : 0_53
   self.bCacheActData = false
 end
 
 PlayerActivityData.OnEvent_UpdateWorldClass = function(self)
-  -- function num : 0_53
+  -- function num : 0_54
   self:RefreshPopUpList()
+  self:RefreshLoginRewardPopUpList()
   self:RefreshActStatus()
   self:RefreshActGroupNewRedDot()
 end
 
 PlayerActivityData.OnEvent_StoryEnd = function(self)
-  -- function num : 0_54
+  -- function num : 0_55
   self:RefreshPopUpList()
+  self:RefreshLoginRewardPopUpList()
   self:RefreshActStatus()
   self:RefreshActGroupNewRedDot()
 end

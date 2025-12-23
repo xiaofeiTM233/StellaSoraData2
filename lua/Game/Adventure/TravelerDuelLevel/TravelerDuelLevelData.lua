@@ -6,16 +6,7 @@ local mapEventConfig = {LoadLevelRefresh = "OnEvent_LoadLevelRefresh", [EventId.
 TravelerDuelLevelData.Init = function(self, parent, nLevel, tbAffixes, nBuildId)
   -- function num : 0_0 , upvalues : _ENV
   self._EntryTime = ((CS.ClientManager).Instance).serverTimeStampWithTimeZone
-  local LocalData = require("GameCore.Data.LocalData")
-  local sKey = (LocalData.GetPlayerLocalData)("TravelerDuelRecordKey")
-  if sKey ~= nil or sKey ~= "" then
-    (NovaAPI.DeleteRecFile)(sKey)
-  end
   self.bEnd = false
-  local ClientManager = (CS.ClientManager).Instance
-  sKey = tostring(ClientManager.serverTimeStamp)
-  ;
-  (LocalData.SetPlayerLocalData)("TravelerDuelRecordKey", sKey)
   self.parent = parent
   self.nlevelId = nLevel
   self.tmpBuildId = nBuildId
@@ -25,7 +16,7 @@ TravelerDuelLevelData.Init = function(self, parent, nLevel, tbAffixes, nBuildId)
     self.nTime = mapCfg.Timelimit
   end
   local GetDataCallback = function(mapBuildData)
-    -- function num : 0_0_0 , upvalues : _ENV, nLevel, self, tbAffixes, sKey
+    -- function num : 0_0_0 , upvalues : _ENV, nLevel, self, tbAffixes
     local mapLevel = (ConfigTable.GetData)("TravelerDuelBossLevel", nLevel)
     if mapLevel == nil then
       printError("TravelerDuelBossLevel missing:" .. nLevel)
@@ -47,7 +38,6 @@ TravelerDuelLevelData.Init = function(self, parent, nLevel, tbAffixes, nBuildId)
     PlayerData.nCurGameType = (AllEnum.WorldMapNodeType).TravelerDuel
     ;
     ((CS.AdventureModuleHelper).EnterTravelerDuel)(nLevel, mapLevel.FloorId, self.tbCharId, tbAffixes)
-    safe_call_cs_func((CS.AdventureModuleHelper).SetDamageRecordId, sKey)
     ;
     (NovaAPI.EnterModule)("AdventureModuleScene", true, 17)
   end
@@ -75,7 +65,7 @@ TravelerDuelLevelData.OnEvent_LevelResult = function(self, bSuccess, nTime)
   end
   self.bEnd = true
   self:RefreshCharDamageData()
-  local msgCallback = function(mapMsgData)
+  local msgCallback = function(bNewRecord)
     -- function num : 0_3_0 , upvalues : self, _ENV, bSuccess, nTime
     self._EndTime = ((CS.ClientManager).Instance).serverTimeStampWithTimeZone
     local tabUpLevel = {}
@@ -92,28 +82,36 @@ TravelerDuelLevelData.OnEvent_LevelResult = function(self, bSuccess, nTime)
     (table.insert)(tabUpLevel, {"battle_id", tostring(self.nlevelId)})
     ;
     (table.insert)(tabUpLevel, {"battle_result", tostring(nResult)})
+    local tmp = (table.concat)(self.tbAffixes, ",")
+    ;
+    (table.insert)(tabUpLevel, {"battle_affix", tmp})
+    ;
+    (table.insert)(tabUpLevel, {"characterid1", (self.tbCharDamage)[1] ~= nil and tostring(((self.tbCharDamage)[1]).nCharId) or "0"})
+    ;
+    (table.insert)(tabUpLevel, {"damage1", (self.tbCharDamage)[1] ~= nil and tostring(((self.tbCharDamage)[1]).nDamage) or "0"})
+    ;
+    (table.insert)(tabUpLevel, {"characterid2", (self.tbCharDamage)[2] ~= nil and tostring(((self.tbCharDamage)[2]).nCharId) or "0"})
+    ;
+    (table.insert)(tabUpLevel, {"damage2", (self.tbCharDamage)[2] ~= nil and tostring(((self.tbCharDamage)[2]).nDamage) or "0"})
+    ;
+    (table.insert)(tabUpLevel, {"characterid3", (self.tbCharDamage)[3] ~= nil and tostring(((self.tbCharDamage)[3]).nCharId) or "0"})
+    ;
+    (table.insert)(tabUpLevel, {"damage3", (self.tbCharDamage)[3] ~= nil and tostring(((self.tbCharDamage)[3]).nDamage) or "0"})
     ;
     (NovaAPI.UserEventUpload)("traveler_duel_battle", tabUpLevel)
     if bSuccess then
-      self:PlaySuccessPerform(mapMsgData, 3, nTime)
+      self:PlaySuccessPerform(bNewRecord, 3, nTime)
     else
       ;
-      (EventManager.Hit)(EventId.ClosePanel, PanelId.BtnTips)
-      ;
-      (EventManager.Hit)(EventId.OpenPanel, PanelId.TDBattleResultPanel, false, {false, false, false}, mapMsgData.AwardItems, mapMsgData.FirstItems, {}, 0, false, nTime, self.nlevelId, self.tbCharId, self.tbAffixes, mapMsgData.TimeScore, mapMsgData.BaseScore, mapMsgData.FinalScore, mapMsgData.MaxScore < mapMsgData.FinalScore, mapMsgData.Change, mapMsgData.SurpriseItems, mapMsgData.CustomItems, self.tbCharDamage)
+      (EventManager.Hit)(EventId.OpenPanel, PanelId.TDBattleResultPanel, false, {false, false, false}, {}, {}, {}, 0, false, nTime, self.nlevelId, self.tbCharId, self.tbAffixes, 0, 0, 0, bNewRecord, {}, {}, {}, self.tbCharDamage)
       ;
       (self.parent):LevelEnd()
     end
-    -- DECOMPILER ERROR: 2 unprocessed JMP targets
   end
 
-  local nStar = 0
-  if bSuccess then
-    nStar = 3
-  end
   local wait = function()
-    -- function num : 0_3_1 , upvalues : self, nStar, nTime, msgCallback
-    (self.parent):SendMsg_TravelerDuelSettle(nStar, self.nlevelId, nTime, msgCallback)
+    -- function num : 0_3_1 , upvalues : self, bSuccess, nTime, msgCallback
+    (self.parent):SettleBattle(bSuccess, self.nlevelId, nTime, self.tbAffixes, (self.mapBuildData).nBuildId, msgCallback)
   end
 
   if bSuccess then
@@ -132,7 +130,7 @@ TravelerDuelLevelData.OnEvent_AdventureModuleEnter = function(self)
   -- function num : 0_5 , upvalues : _ENV
   (PlayerData.Achievement):SetSpecialBattleAchievement((GameEnum.levelType).TravelerDuel)
   ;
-  (EventManager.Hit)(EventId.OpenPanel, PanelId.TDBattlePanel, self.tbCharId)
+  (EventManager.Hit)(EventId.OpenPanel, PanelId.TDBattlePanel, self.tbCharId, self.nlevelId)
   self:SetPersonalPerk()
   self:SetDiscInfo()
   for idx,nCharId in ipairs(self.tbCharId) do
@@ -200,7 +198,7 @@ TravelerDuelLevelData.SetDiscInfo = function(self)
   safe_call_cs_func((CS.AdventureModuleHelper).SetDiscInfo, tbDiscInfo)
 end
 
-TravelerDuelLevelData.PlaySuccessPerform = function(self, mapMsgData, nStar, nTime)
+TravelerDuelLevelData.PlaySuccessPerform = function(self, bNewRecord, nStar, nTime)
   -- function num : 0_10 , upvalues : _ENV
   local func_OpenResult = function(bSuccess)
     -- function num : 0_10_0
@@ -213,13 +211,6 @@ TravelerDuelLevelData.PlaySuccessPerform = function(self, mapMsgData, nStar, nTi
     local nFloorId = ((ConfigTable.GetData)("TravelerDuelBossLevel", self.nlevelId)).FloorId
     local nType = ((ConfigTable.GetData)("TravelerDuelFloor", nFloorId)).Theme
     local sName = ((ConfigTable.GetData)("EndSceneType", nType)).EndSceneName
-    local jumpPerform = function()
-      -- function num : 0_10_1_0 , upvalues : _ENV
-      (NovaAPI.DispatchEventWithData)("SKIP_SETTLEMENT_PERFORM")
-    end
-
-    ;
-    (EventManager.Hit)(EventId.OpenPanel, PanelId.BtnTips, jumpPerform)
     local tbSkin = {}
     for _,nCharId in ipairs(tbChar) do
       local nSkinId = (PlayerData.Char):GetCharSkinId(nCharId)
@@ -231,15 +222,14 @@ TravelerDuelLevelData.PlaySuccessPerform = function(self, mapMsgData, nStar, nTi
   end
 
   local openBattleResultPanel = function()
-    -- function num : 0_10_2 , upvalues : _ENV, self, openBattleResultPanel, mapMsgData, nTime
+    -- function num : 0_10_2 , upvalues : _ENV, self, openBattleResultPanel, nTime, bNewRecord
     (EventManager.Remove)("SettlementPerformLoadFinish", self, openBattleResultPanel)
     ;
-    (EventManager.Hit)(EventId.OpenPanel, PanelId.TDBattleResultPanel, true, {true, true, true}, mapMsgData.AwardItems, mapMsgData.FirstItems, {}, 0, false, nTime, self.nlevelId, self.tbCharId, self.tbAffixes, mapMsgData.TimeScore, mapMsgData.BaseScore, mapMsgData.FinalScore, mapMsgData.MaxScore < mapMsgData.FinalScore, mapMsgData.Change, mapMsgData.SurpriseItems, mapMsgData.CustomItems, self.tbCharDamage)
+    (EventManager.Hit)(EventId.OpenPanel, PanelId.TDBattleResultPanel, true, {true, true, true}, {}, {}, {}, 0, false, nTime, self.nlevelId, self.tbCharId, self.tbAffixes, {}, {}, {}, bNewRecord, {}, {}, {}, self.tbCharDamage)
     self.bSettle = false
     ;
     (self.parent):LevelEnd()
     self:UnBindEvent()
-    -- DECOMPILER ERROR: 1 unprocessed JMP targets
   end
 
   ;
@@ -262,7 +252,15 @@ end
 
 TravelerDuelLevelData.OnEvnet_Pause = function(self)
   -- function num : 0_12 , upvalues : _ENV
-  (EventManager.Hit)("OpenTDPause", self.nlevelId, self.tbCharId)
+  local nHard = 0
+  for _,nAffixId in ipairs(self.tbAffixes) do
+    local mapAffixCfgData = (ConfigTable.GetData)("TravelerDuelChallengeAffix", nAffixId)
+    if mapAffixCfgData ~= nil then
+      nHard = nHard + mapAffixCfgData.Difficulty
+    end
+  end
+  ;
+  (EventManager.Hit)("OpenTDPause", self.nlevelId, self.tbCharId, nHard)
 end
 
 TravelerDuelLevelData.OnEvent_UploadDodgeEvent = function(self, padMode)

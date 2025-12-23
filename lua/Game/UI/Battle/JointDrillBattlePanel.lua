@@ -5,7 +5,7 @@ JointDrillBattlePanel._bAddToBackHistory = false
 JointDrillBattlePanel._tbDefine = {
 {sPrefabPath = "Battle/BattleDashboard.prefab", sCtrlName = "Game.UI.Battle.BattleDashboardCtrl"}
 , 
-{sPrefabPath = "Play_JointDrill/JointDrillMenu.prefab", sCtrlName = "Game.UI.JointDrill.JointDrillMenuCtrl"}
+{sPrefabPath = "JointDrillBattle/JointDrillMenu.prefab", sCtrlName = "Game.UI.JointDrill.JointDrillMenuCtrl"}
 , 
 {sPrefabPath = "Battle/AdventureMainUI/AdventureMainUI.prefab", sCtrlName = "Game.UI.Battle.MainBattleCtrl"}
 , 
@@ -17,9 +17,9 @@ JointDrillBattlePanel._tbDefine = {
 , 
 {sPrefabPath = "Battle/CommonMonsterWarning.prefab", sCtrlName = "Game.UI.Battle.CommonMonsterWarningCtrl"}
 , 
-{sPrefabPath = "Play_JointDrill/JointDrillBossTime.prefab", sCtrlName = "Game.UI.JointDrill.JintDrillTimeCtrl"}
+{sPrefabPath = "JointDrillBattle/JointDrillBossTime.prefab", sCtrlName = "Game.UI.JointDrill.JintDrillTimeCtrl"}
 , 
-{sPrefabPath = "Play_JointDrill/JointDrillPausePanel.prefab", sCtrlName = "Game.UI.JointDrill.JointDrillPauseCtrl"}
+{sPrefabPath = "JointDrillBattle/JointDrillPausePanel.prefab", sCtrlName = "Game.UI.JointDrill.JointDrillPauseCtrl"}
 }
 JointDrillBattlePanel.Awake = function(self)
   -- function num : 0_0 , upvalues : _ENV, GamepadUIManager

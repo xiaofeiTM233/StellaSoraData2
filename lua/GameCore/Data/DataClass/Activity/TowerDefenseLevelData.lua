@@ -107,8 +107,16 @@ TowerDefenseLevelData.GetCharacterEntityId = function(self, nCharacterId)
   return ((self.tbCharacterData)[nCharacterId]).nEntityId
 end
 
+TowerDefenseLevelData.GetCharacterData = function(self, nCharacterId)
+  -- function num : 0_11
+  if (self.tbCharacterData)[nCharacterId] == nil then
+    return nil
+  end
+  return (self.tbCharacterData)[nCharacterId]
+end
+
 TowerDefenseLevelData.OnEvent_UnloadComplete = function(self)
-  -- function num : 0_11 , upvalues : _ENV
+  -- function num : 0_12 , upvalues : _ENV
   if not self.bRestart then
     (NovaAPI.EnterModule)("MainMenuModuleScene", true)
     self:UnBindEvent()
@@ -144,12 +152,12 @@ TowerDefenseLevelData.OnEvent_UnloadComplete = function(self)
 end
 
 TowerDefenseLevelData.OnEvent_AdventureModuleEnter = function(self)
-  -- function num : 0_12 , upvalues : _ENV
+  -- function num : 0_13 , upvalues : _ENV
   (EventManager.Hit)(EventId.OpenPanel, PanelId.TowerDefensePanel, self.nActId, self.nLevelId)
 end
 
 TowerDefenseLevelData.BindEvent = function(self)
-  -- function num : 0_13 , upvalues : _ENV, mapEventConfig
+  -- function num : 0_14 , upvalues : _ENV, mapEventConfig
   if type(mapEventConfig) ~= "table" then
     return 
   end
@@ -162,7 +170,7 @@ TowerDefenseLevelData.BindEvent = function(self)
 end
 
 TowerDefenseLevelData.UnBindEvent = function(self)
-  -- function num : 0_14 , upvalues : _ENV, mapEventConfig
+  -- function num : 0_15 , upvalues : _ENV, mapEventConfig
   if type(mapEventConfig) ~= "table" then
     return 
   end

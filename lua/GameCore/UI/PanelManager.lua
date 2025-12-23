@@ -537,14 +537,35 @@ local CreatePlayerInfoTips = function()
   objPlayerInfoPanel:_Enter()
 end
 
+local ResetTouchEffect = function()
+  -- function num : 0_29 , upvalues : _ENV, mapUIRootTransform
+  local GameResourceLoader = require("Game.Common.Resource.GameResourceLoader")
+  local ResType = GameResourceLoader.ResType
+  local objMain, objSlide = nil, nil
+  local sPathFormat = Settings.AB_ROOT_PATH .. "UI/CommonEx/TouchEffect/%s.prefab"
+  local sValue_Main = (ConfigTable.GetConfigValue)("TouchEffect_Main")
+  if type(sValue_Main) == "string" and sValue_Main ~= "" then
+    objMain = (GameResourceLoader.LoadAsset)(ResType.Any, (string.format)(sPathFormat, sValue_Main), typeof(GameObject), "UI")
+  end
+  local sValue_Slide = (ConfigTable.GetConfigValue)("TouchEffect_Slide")
+  if type(sValue_Slide) == "string" and sValue_Main ~= "" then
+    objSlide = (GameResourceLoader.LoadAsset)(ResType.Any, (string.format)(sPathFormat, sValue_Slide), typeof(GameObject), "UI")
+  end
+  if objMain ~= nil or objSlide ~= nil then
+    local trNode = mapUIRootTransform[(AllEnum.SortingLayerName).Overlay]
+    ;
+    (NovaAPI.ResetTouchEffect)(trNode:Find("TouchEffectUI/fxContainer"), objMain, objSlide)
+  end
+end
+
 PanelManager.Init = function()
-  -- function num : 0_29 , upvalues : _ENV, mapUIRootTransform, trSnapshotParent, tbTemplateSnapshot, OnMarkCurCanvasFullRectWH, objCurPanel, objNextPanel, tbBackHistory, tbDisposablePanel, mapDefinePanel, AddEventCallback, InitGuidePanel, InitTransitionPanel, CreatePlayerInfoTips
+  -- function num : 0_30 , upvalues : _ENV, mapUIRootTransform, trSnapshotParent, tbTemplateSnapshot, OnMarkCurCanvasFullRectWH, objCurPanel, objNextPanel, tbBackHistory, tbDisposablePanel, mapDefinePanel, AddEventCallback, InitGuidePanel, InitTransitionPanel, CreatePlayerInfoTips, ResetTouchEffect
   local goUIRoot = (GameObject.Find)("==== UI ROOT ====")
   if goUIRoot ~= nil then
     mapUIRootTransform = {}
     mapUIRootTransform[0] = goUIRoot.transform
     local func_CacheRootTransform = function(sSortingLayerName, sNodeName)
-    -- function num : 0_29_0 , upvalues : goUIRoot, mapUIRootTransform
+    -- function num : 0_30_0 , upvalues : goUIRoot, mapUIRootTransform
     local trNode = (goUIRoot.transform):Find(sNodeName)
     mapUIRootTransform[sSortingLayerName] = trNode
   end
@@ -578,11 +599,12 @@ PanelManager.Init = function()
     ;
     (NovaAPI.CloseLaunchLoading)(goLaunchUI)
     CreatePlayerInfoTips()
+    ResetTouchEffect()
   end
 end
 
 PanelManager.GetUIRoot = function(sSortingLayerName)
-  -- function num : 0_30 , upvalues : mapUIRootTransform
+  -- function num : 0_31 , upvalues : mapUIRootTransform
   if sSortingLayerName == nil then
     sSortingLayerName = 0
   end
@@ -590,7 +612,7 @@ PanelManager.GetUIRoot = function(sSortingLayerName)
 end
 
 PanelManager.Home = function()
-  -- function num : 0_31 , upvalues : _ENV, tbBackHistory, DoBackToTarget
+  -- function num : 0_32 , upvalues : _ENV, tbBackHistory, DoBackToTarget
   local nBackToIdx = 1
   for nIndex,objPanel in ipairs(tbBackHistory) do
     if objPanel._nPanelId == PanelId.MainMenu then
@@ -604,7 +626,7 @@ PanelManager.Home = function()
 end
 
 PanelManager.OnConfirmBackToLogIn = function()
-  -- function num : 0_32 , upvalues : objCurPanel, tbBackHistory, _ENV, RemoveTbSnapShot
+  -- function num : 0_33 , upvalues : objCurPanel, tbBackHistory, _ENV, RemoveTbSnapShot
   if objCurPanel == nil then
     return 
   end
@@ -637,7 +659,7 @@ PanelManager.OnConfirmBackToLogIn = function()
 end
 
 PanelManager.Release = function()
-  -- function num : 0_33 , upvalues : _ENV, tbBackHistory
+  -- function num : 0_34 , upvalues : _ENV, tbBackHistory
   if type(tbBackHistory) == "table" then
     for i,objPanel in ipairs(tbBackHistory) do
       objPanel:_Release()
@@ -646,7 +668,7 @@ PanelManager.Release = function()
 end
 
 PanelManager.GetCurPanelId = function()
-  -- function num : 0_34 , upvalues : objCurPanel
+  -- function num : 0_35 , upvalues : objCurPanel
   if objCurPanel ~= nil then
     return objCurPanel._nPanelId
   end
@@ -654,7 +676,7 @@ PanelManager.GetCurPanelId = function()
 end
 
 PanelManager.GetDisposablePanelState = function(nPanelId)
-  -- function num : 0_35 , upvalues : _ENV, tbDisposablePanel
+  -- function num : 0_36 , upvalues : _ENV, tbDisposablePanel
   for i,v in ipairs(tbDisposablePanel) do
     if v._nPanelId == nPanelId then
       return true
@@ -664,7 +686,7 @@ PanelManager.GetDisposablePanelState = function(nPanelId)
 end
 
 PanelManager.CheckPanelOpen = function(nPanelId)
-  -- function num : 0_36 , upvalues : _ENV, tbBackHistory, tbDisposablePanel
+  -- function num : 0_37 , upvalues : _ENV, tbBackHistory, tbDisposablePanel
   if type(tbBackHistory) == "table" then
     for i,objPanel in ipairs(tbBackHistory) do
       if objPanel._nPanelId == nPanelId then
@@ -687,28 +709,28 @@ PanelManager.CheckPanelOpen = function(nPanelId)
 end
 
 PanelManager.CheckNextPanelOpening = function()
-  -- function num : 0_37 , upvalues : objNextPanel
+  -- function num : 0_38 , upvalues : objNextPanel
   do return objNextPanel ~= nil end
   -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
 PanelManager.SetMainViewSkipAnimIn = function(bIn)
-  -- function num : 0_38 , upvalues : bMainViewSkipAnimIn
+  -- function num : 0_39 , upvalues : bMainViewSkipAnimIn
   bMainViewSkipAnimIn = bIn
 end
 
 PanelManager.GetMainViewSkipAnimIn = function()
-  -- function num : 0_39 , upvalues : bMainViewSkipAnimIn
+  -- function num : 0_40 , upvalues : bMainViewSkipAnimIn
   return bMainViewSkipAnimIn
 end
 
 PanelManager.InputEnable = function(bAudioStop, bDisActiveUICombat)
-  -- function num : 0_40 , upvalues : _ENV, AdventureModuleHelper, WwiseAudioMgr, nInputRC
+  -- function num : 0_41 , upvalues : _ENV, AdventureModuleHelper, WwiseAudioMgr, nInputRC
   print("PanelManager.InputEnable")
   local resume = function()
-    -- function num : 0_40_0 , upvalues : _ENV, AdventureModuleHelper, bAudioStop, WwiseAudioMgr, bDisActiveUICombat
+    -- function num : 0_41_0 , upvalues : _ENV, AdventureModuleHelper, bAudioStop, WwiseAudioMgr, bDisActiveUICombat
     local wait = function()
-      -- function num : 0_40_0_0 , upvalues : _ENV, AdventureModuleHelper, bAudioStop, WwiseAudioMgr, bDisActiveUICombat
+      -- function num : 0_41_0_0 , upvalues : _ENV, AdventureModuleHelper, bAudioStop, WwiseAudioMgr, bDisActiveUICombat
       (coroutine.yield)(((CS.UnityEngine).WaitForEndOfFrame)())
       ;
       (NovaAPI.InputEnable)()
@@ -742,7 +764,7 @@ PanelManager.InputEnable = function(bAudioStop, bDisActiveUICombat)
 end
 
 PanelManager.InputDisable = function()
-  -- function num : 0_41 , upvalues : _ENV, nInputRC, AdventureModuleHelper, WwiseAudioMgr
+  -- function num : 0_42 , upvalues : _ENV, nInputRC, AdventureModuleHelper, WwiseAudioMgr
   print("PanelManager.InputDisable")
   if nInputRC == 0 then
     (NovaAPI.InputDisable)()
@@ -756,13 +778,13 @@ PanelManager.InputDisable = function()
 end
 
 PanelManager.ClearInputState = function()
-  -- function num : 0_42 , upvalues : nInputRC
+  -- function num : 0_43 , upvalues : nInputRC
   nInputRC = 0
 end
 
 local goDiscSkillActive, goSelect1, goSelect2, goSelect3, goDashboard, trSupportRole, trMainRole, trSkillHint, trJoystick, goTransition, goPlayerInfo = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
 PanelManager.SwitchUI = function()
-  -- function num : 0_43 , upvalues : mapUIRootTransform, _ENV, goDiscSkillActive, goSelect1, goSelect2, goSelect3, goDashboard, trSupportRole, trMainRole, trSkillHint, trJoystick, goTransition, goPlayerInfo
+  -- function num : 0_44 , upvalues : mapUIRootTransform, _ENV, goDiscSkillActive, goSelect1, goSelect2, goSelect3, goDashboard, trSupportRole, trMainRole, trSkillHint, trJoystick, goTransition, goPlayerInfo
   if mapUIRootTransform == nil then
     return 
   end
@@ -839,7 +861,7 @@ PanelManager.SwitchUI = function()
 end
 
 PanelManager.SwitchSkillBtn = function()
-  -- function num : 0_44 , upvalues : mapUIRootTransform, goDashboard, _ENV, trSupportRole, trMainRole, trSkillHint, trJoystick
+  -- function num : 0_45 , upvalues : mapUIRootTransform, goDashboard, _ENV, trSupportRole, trMainRole, trSkillHint, trJoystick
   if mapUIRootTransform == nil then
     return 
   end
@@ -868,7 +890,7 @@ PanelManager.SwitchSkillBtn = function()
 end
 
 PanelManager.CloseAllDisposablePanel = function()
-  -- function num : 0_45 , upvalues : _ENV, tbDisposablePanel
+  -- function num : 0_46 , upvalues : _ENV, tbDisposablePanel
   if type(tbDisposablePanel) == "table" then
     local n = #tbDisposablePanel
     for i = n, 1, -1 do
@@ -887,7 +909,7 @@ PanelManager.CloseAllDisposablePanel = function()
 end
 
 PanelManager.CheckInTransition = function()
-  -- function num : 0_46 , upvalues : objTransitionPanel, _ENV
+  -- function num : 0_47 , upvalues : objTransitionPanel, _ENV
   do
     if objTransitionPanel ~= nil then
       local nStatus = objTransitionPanel:GetTransitionStatus()

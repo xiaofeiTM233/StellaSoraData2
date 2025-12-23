@@ -692,7 +692,7 @@ JointDrillLevelData.OnEvent_MonsterSpawn = function(self, nBossId)
   if self.bChangeLevel then
     return 
   end
-  local data, nDataLength = self:CacheTempData(true, bBoss)
+  local data, nDataLength = self:CacheTempData(true, bBoss, true)
   local nHp, nHpMax = 0, 0
   if self.mapTempData ~= nil and (self.mapTempData).mapBossTempData ~= nil then
     nHp = ((self.mapTempData).mapBossTempData).nHp
@@ -721,25 +721,31 @@ JointDrillLevelData.OnEvent_BattleLvsToggle = function(self, nBattleLv, nTotalTi
   (PanelManager.InputDisable)()
   ;
   (self.parent):StopRecord()
-  local syncCallback = function()
-    -- function num : 0_25_0 , upvalues : _ENV, AdventureModuleHelper
-    (PanelManager.InputEnable)()
+  local func = function()
+    -- function num : 0_25_0 , upvalues : _ENV, AdventureModuleHelper, self, nTotalTime
+    local syncCallback = function()
+      -- function num : 0_25_0_0 , upvalues : _ENV, AdventureModuleHelper
+      (PanelManager.InputEnable)()
+      ;
+      (AdventureModuleHelper.LevelStateChanged)(false)
+      ;
+      (EventManager.Hit)("ResetBossHUD")
+    end
+
+    local data, nDataLength = (self.parent):EncodeTempDataJson(self.mapTempData)
+    local nHp, nHpMax = 1, 1
+    local tempBossData = (self.mapTempData).mapBossTempData
+    if tempBossData ~= nil then
+      nHp = (math.max)(tempBossData.nHp, 1)
+      nHpMax = (math.max)(tempBossData.nHpMax, 1)
+    end
     ;
-    (AdventureModuleHelper.LevelStateChanged)(false)
-    ;
-    (EventManager.Hit)("ResetBossHUD")
+    (self.parent):JointDrillSync(self.nCurLevel, nTotalTime, self.nDamageValue, nHp, nHpMax, data, syncCallback)
   end
 
-  local data, nDataLength = (self.parent):EncodeTempDataJson(self.mapTempData)
-  local nHp, nHpMax = 1, 1
-  local tempBossData = (self.mapTempData).mapBossTempData
-  if tempBossData ~= nil then
-    nHp = (math.max)(tempBossData.nHp, 1)
-    nHpMax = (math.max)(tempBossData.nHpMax, 1)
-  end
   ;
-  (self.parent):JointDrillSync(self.nCurLevel, nTotalTime, self.nDamageValue, nHp, nHpMax, data, syncCallback)
-  -- DECOMPILER ERROR: 2 unprocessed JMP targets
+  (EventManager.Hit)(EventId.SetTransition, 3, func)
+  -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
 JointDrillLevelData.OnEvent_UnloadComplete = function(self)
@@ -782,6 +788,8 @@ JointDrillLevelData.OnEvent_RestartJointDrill = function(self)
   self.bRestart = true
   ;
   (self.parent):SetGameTime(0)
+  ;
+  (AdventureModuleHelper.ClearCharacterDamageRecord)(true)
   local sRecord = (self.parent):EncodeTempDataJson(self.mapInitTempData)
   ;
   (self.parent):ResetRecord(sRecord)
@@ -803,8 +811,12 @@ JointDrillLevelData.OnEvent_RetreatJointDrill = function(self)
     self:JointDrillFail((AllEnum.JointDrillResultType).Retreat)
   end
 
+  local nHp = 1
+  if self.mapInitTempData ~= nil and (self.mapInitTempData).mapBossTempData ~= nil then
+    nHp = ((self.mapInitTempData).mapBossTempData).nHp
+  end
   ;
-  (self.parent):JointDrillRetreat(self.mapBuildData, callback)
+  (self.parent):JointDrillRetreat(self.mapBuildData, nHp, callback)
 end
 
 JointDrillLevelData.OnEvent_JointDrill_Result = function(self, nLevelState, nTotalTime, nDamageValue)

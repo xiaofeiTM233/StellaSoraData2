@@ -5,11 +5,17 @@ return {
 , 
 {id = 108, icon = "Icon/Head/head_10801_S", name = "카시미라", landmark = "미라슈 남부 입구의 깃대에 메시지를 남기면 찾아갈 수 있음", signature = "용병 업무는 업무용 휴대폰으로 연락"}
 , 
+{id = 110, icon = "Icon/Head/head_11001_S", name = "피렌", landmark = "필리에 골드 애리어 설시대로 6동", signature = "비업무 시간에는 연락 금지"}
+, 
 {id = 111, icon = "Icon/Head/head_11101_S", name = "아야메", landmark = "럭키 오아시스호", signature = "각종 회계, 마법, 교육 파견 업무 접수"}
 , 
 {id = 112, icon = "Icon/Head/head_11201_S", name = "세이나", landmark = "럭키 오아시스호", signature = "비어있습니다"}
 , 
 {id = 113, icon = "Icon/Head/head_11301_S", name = "시먀오", landmark = "창오성 주림로 6번지", signature = "위반 통지된 가게는 신속히 정정하세요!!!"}
+, 
+{id = 114, icon = "Icon/Head/head_11401_S", name = "샤통", landmark = "미라슈 풍미묘 골목 14동 꼭대기 층", signature = "음악 격투 탄막 게임 대리 접수"}
+, 
+{id = 115, icon = "Icon/Head/head_11501_S", name = "호타루", landmark = "성휘 부속대학 기숙사 7호동 2707", signature = "더 많은 털복숭이 친구들은 어디에~"}
 , 
 {id = 116, icon = "Icon/Head/head_11601_S", name = "레이센", landmark = "필리에 아그리 유니온 남구 6호 온실", signature = "광합성 하는 법을 배우고 싶다……"}
 , 
@@ -39,6 +45,8 @@ return {
 , 
 {id = 135, icon = "Icon/Head/head_13501_S", name = "미스티", landmark = "거주지 없음, 뉴스 제보는 레드 아이즈 타워를 통해 전달", signature = "사진이 없다는 건 진실이 아니라는 것"}
 , 
+{id = 138, icon = "Icon/Head/head_13801_S", name = "닉스", landmark = "필리에 메이스트가 10번지", signature = "휴가 중 복귀일 미정"}
+, 
 {id = 141, icon = "Icon/Head/head_14101_S", name = "치시아", landmark = "1년 중 4개월은 창오성에", signature = "일류 현사, 부적 필요하면 연락!"}
 , 
 {id = 142, icon = "Icon/Head/head_14201_S", name = "코제트", landmark = "아모르 지리협회", signature = "개인 정보 설정으로 인해 서명을 볼 수 없습니다"}
@@ -56,6 +64,8 @@ return {
 {id = 155, icon = "Icon/Head/head_15501_S", name = "시아", landmark = "셀스티 태청희거리 7호", signature = "같이 바다 보러 가자!"}
 , 
 {id = 156, icon = "Icon/Head/head_15601_S", name = "나즈나", landmark = "필리에 외곽 동부 숲 하나사키 여단", signature = "내 인형 본 적 있어?"}
+, 
+{id = 158, icon = "Icon/Head/head_15801_S", name = "라루(이브)", landmark = "크리스마스 축제 운영위원회 사무소", signature = "초집중 열일 모드 중! 방해 금지!"}
 , 
 {id = 999, icon = "Icon/Head/head_group_S", name = "일은 끝이 없다", landmark = "", signature = "지금은 근무 시간, 핸드폰 보지 마세요"}
 , 

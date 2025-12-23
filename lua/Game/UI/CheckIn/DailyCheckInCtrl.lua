@@ -41,12 +41,10 @@ end
 
 DailyCheckInCtrl.RefreshRight = function(self)
   -- function num : 0_1 , upvalues : _ENV
-  local nTimeNow = ((CS.ClientManager).Instance).serverTimeStampWithTimeZone
-  local nYear = tonumber((os.date)("!%Y", nTimeNow))
   local nTens, _ = (math.modf)(self.nMonth / 10 % 10)
   local nOnes, _ = (math.modf)(self.nMonth % 10)
   ;
-  (NovaAPI.SetTMPText)((self._mapNode).txtYear, nYear)
+  (NovaAPI.SetTMPText)((self._mapNode).txtYear, self.nYear)
   ;
   ((self._mapNode).goSpace):SetActive(nTens == 1)
   self:SetAtlasSprite(((self._mapNode).imgMonth)[1], "05_number", "zs_dailycheckin_month_" .. nTens)
@@ -159,7 +157,8 @@ DailyCheckInCtrl.Awake = function(self)
     self.mapReward = tbParam[1]
     self.callback = tbParam[2]
   end
-  local nMonth, nDays = ((PlayerData.Daily).GetMonthAndDays)()
+  local nYear, nMonth, nDays = ((PlayerData.Daily).GetMonthAndDays)()
+  self.nYear = nYear
   self.nMonth = nMonth
   self.nIndex = ((PlayerData.Daily).GetDailyCheckInIndex)()
   self.tbList = ((PlayerData.Daily).GetDailyCheckInList)(nDays)

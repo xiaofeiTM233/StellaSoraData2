@@ -106,6 +106,11 @@ end
 TrialLevel.RefreshCharDamageData = function(self)
   -- function num : 0_3 , upvalues : _ENV
   self.tbCharDamage = (UTILS.GetCharDamageResult)(self.tbCharId)
+  for i,v in ipairs(self.tbCharDamage) do
+    -- DECOMPILER ERROR at PC16: Confused about usage of register: R6 in 'UnsetPending'
+
+    ((self.tbCharDamage)[i]).nSkinId = (PlayerData.Char):GetCharSkinId(v.nCharId)
+  end
 end
 
 TrialLevel.OnEvent_LevelResult = function(self, nLevelTime)

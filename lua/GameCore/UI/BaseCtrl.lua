@@ -657,6 +657,7 @@ BaseCtrl.GetPanelParam = function(self)
   return (self._panel):GetPanelParam()
 end
 
+local bActive_AutoFit = true
 BaseCtrl.GetAtlasSprite = function(self, sAtlasPath, sSpriteName)
   -- function num : 0_17 , upvalues : _ENV, sRootPath, GameResourceLoader, ResType, typeof
   if (string.find)(sAtlasPath, "/CommonEx/") ~= nil or (string.find)(sAtlasPath, "/Common/") ~= nil then
@@ -668,11 +669,18 @@ BaseCtrl.GetAtlasSprite = function(self, sAtlasPath, sSpriteName)
   return (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(Sprite))
 end
 
-BaseCtrl.GetPngSprite = function(self, sPath)
-  -- function num : 0_18 , upvalues : _ENV, GameResourceLoader, ResType, sRootPath, typeof
+BaseCtrl.GetPngSprite = function(self, sPath, sSurfix, imgObj)
+  -- function num : 0_18 , upvalues : _ENV, bActive_AutoFit, GameResourceLoader, ResType, sRootPath, typeof
   if type(sPath) == "number" then
     printError("调用接口处需更新，panel id:" .. (self._panel)._nPanelId .. "，ctrl name:" .. self.__cname)
     return nil
+  end
+  if type(sPath) == "string" and sPath ~= "" and type(sSurfix) == "string" and sSurfix ~= "" then
+    if bActive_AutoFit == true then
+      sPath = self:_AutoFitIcon(imgObj, sPath, sSurfix)
+    else
+      sPath = sPath .. sSurfix
+    end
   end
   if (string.find)(sPath, "Icon/") == nil and (string.find)(sPath, "Image/") == nil and (string.find)(sPath, "ImageAvg/") == nil and (string.find)(sPath, "big_sprites/") == nil then
     printError("配置表中 Icon 资源字段内容填写错误，应填路径，如：Icon/Item/item_1，panel id:" .. (self._panel)._nPanelId .. "，ctrl name:" .. self.__cname)
@@ -757,13 +765,71 @@ BaseCtrl.SetActivityAtlasSprite = function(self, imgObj, sActivityPath, sSpriteN
   return bSuc
 end
 
-BaseCtrl.SetPngSprite = function(self, imgObj, sPath)
+BaseCtrl.SetActivityAtlasSprite_New = function(self, imgObj, sActivityPath, sSpriteName)
   -- function num : 0_25 , upvalues : _ENV, sRootPath
+  local sFullPath = (string.format)("%sUI_Activity/%s/%s.png", sRootPath, sActivityPath, sSpriteName)
+  local bSuc = (NovaAPI.SetImageSprite)(imgObj, sFullPath)
+  if not bSuc then
+    traceback((string.format)("icon设置失败：%s，panel id：%s，ctrl name：%s", sFullPath, tostring((self._panel)._nPanelId), tostring(self.__cname)))
+  end
+  return bSuc
+end
+
+BaseCtrl._AutoFitIcon = function(self, imgObj, sPath, sSurfix)
+  -- function num : 0_26 , upvalues : _ENV, GameResourceLoader, sRootPath
+  local mapAutoFix = (AllEnum.CharHeadIconSurfixAutoFit)[sSurfix]
+  if mapAutoFix == nil then
+    return sPath .. sSurfix
+  end
+  local rectTransform = (imgObj.gameObject):GetComponent("RectTransform")
+  local nTargetWidth = (rectTransform.rect).width
+  local nTargetHeight = (rectTransform.rect).height
+  local sAutoFit, nRange = nil, nil
+  for k,v in pairs(mapAutoFix) do
+    local nMultiple_W = (math.abs)(nTargetWidth - v.w) / v.w
+    local nMultiple_H = (math.abs)(nTargetHeight - v.h) / v.h
+    local nMultiple = nMultiple_H <= nMultiple_W and nMultiple_W or nMultiple_H
+    if nRange == nil then
+      nRange = nMultiple
+      sAutoFit = k
+    else
+      if nMultiple < nRange then
+        nRange = nMultiple
+        sAutoFit = k
+      end
+    end
+  end
+  if sAutoFit == nil then
+    return sPath .. sSurfix
+  else
+    local _sPath = sPath .. sAutoFit
+    local bExist = (GameResourceLoader.ExistsAsset)(sRootPath .. _sPath .. ".png")
+    if bExist == false then
+      if (NovaAPI.IsEditorPlatform)() == true then
+        printError((string.format)("抽卡角色头像 icon 自适应失败，资源缺失。%s 将 %s 自适应调整为 %s", sPath, sSurfix, sAutoFit))
+      end
+      _sPath = sPath .. sSurfix
+      ;
+      (NovaAPI.SetImageColor)(imgObj, Color.cyan)
+    end
+    return _sPath
+  end
+end
+
+BaseCtrl.SetPngSprite = function(self, imgObj, sPath, sSurfix)
+  -- function num : 0_27 , upvalues : _ENV, bActive_AutoFit, sRootPath
   if type(sPath) == "number" then
     traceback("调用接口处需更新，panel id:" .. (self._panel)._nPanelId .. "，ctrl name:" .. self.__cname)
     ;
     (NovaAPI.SetImageSpriteAsset)(imgObj, nil)
     return false
+  end
+  if type(sPath) == "string" and sPath ~= "" and type(sSurfix) == "string" and sSurfix ~= "" then
+    if bActive_AutoFit == true then
+      sPath = self:_AutoFitIcon(imgObj, sPath, sSurfix)
+    else
+      sPath = sPath .. sSurfix
+    end
   end
   if (string.find)(sPath, "Icon/") == nil and (string.find)(sPath, "Image/") == nil and (string.find)(sPath, "ImageAvg/") == nil and (string.find)(sPath, "big_sprites/") == nil and (string.find)(sPath, "Disc/") == nil and (string.find)(sPath, "Play_") == nil and (string.find)(sPath, "UI_Activity") == nil then
     traceback("配置表中 Icon 资源字段内容填写错误，应填路径，如：Icon/Item/item_1，panel id:" .. (self._panel)._nPanelId .. "，ctrl name:" .. self.__cname)
@@ -781,7 +847,7 @@ BaseCtrl.SetPngSprite = function(self, imgObj, sPath)
 end
 
 BaseCtrl.SetSprite_FrameColor = function(self, imgObj, nRarity, sFrameType, bBigSprites)
-  -- function num : 0_26 , upvalues : _ENV
+  -- function num : 0_28 , upvalues : _ENV
   local sPngName = sFrameType .. (AllEnum.FrameColor_New)[nRarity]
   if bBigSprites then
     return self:SetPngSprite(imgObj, "UI/big_sprites/" .. sPngName)
@@ -791,7 +857,7 @@ BaseCtrl.SetSprite_FrameColor = function(self, imgObj, nRarity, sFrameType, bBig
 end
 
 BaseCtrl.SetSprite_Coin = function(self, imgObj, nCoinItemId)
-  -- function num : 0_27 , upvalues : _ENV
+  -- function num : 0_29 , upvalues : _ENV
   local mapItem = (ConfigTable.GetData_Item)(nCoinItemId)
   if mapItem == nil then
     return false
@@ -805,7 +871,7 @@ BaseCtrl.SetSprite_Coin = function(self, imgObj, nCoinItemId)
 end
 
 BaseCtrl.SetAvgCharHeadIcon = function(self, imgObj, sSpeakerId, sFace)
-  -- function num : 0_28 , upvalues : _ENV
+  -- function num : 0_30 , upvalues : _ENV
   if sFace == nil then
     sFace = "002"
   end
@@ -817,7 +883,7 @@ BaseCtrl.SetAvgCharHeadIcon = function(self, imgObj, sSpeakerId, sFace)
 end
 
 BaseCtrl.GetAvgStageEffect = function(self, sName, sType)
-  -- function num : 0_29 , upvalues : _ENV, sRootPath, GameResourceLoader, ResType, typeof
+  -- function num : 0_31 , upvalues : _ENV, sRootPath, GameResourceLoader, ResType, typeof
   if sName == nil then
     return nil
   end
@@ -826,7 +892,7 @@ BaseCtrl.GetAvgStageEffect = function(self, sName, sType)
 end
 
 BaseCtrl.GetAvgPortrait = function(self, sAvgCharId, sPose, sFace)
-  -- function num : 0_30 , upvalues : _ENV, sRootPath, GameResourceLoader, ResType, typeof
+  -- function num : 0_32 , upvalues : _ENV, sRootPath, GameResourceLoader, ResType, typeof
   local sPathBody = (string.format)("%sActor2D/CharacterAvg/%s/atlas_png/%s/%s_%s_001.png", sRootPath, sAvgCharId, sPose, sAvgCharId, sPose)
   local sPathFace = (string.format)("%sActor2D/CharacterAvg/%s/atlas_png/%s/%s_%s_%s.png", sRootPath, sAvgCharId, sPose, sAvgCharId, sPose, sFace)
   local sPathBlackBody = (string.format)("%sActor2D/CharacterAvg/%s/%s_%s_001x.png", sRootPath, sAvgCharId, sAvgCharId, sPose)
@@ -853,7 +919,7 @@ BaseCtrl.GetAvgPortrait = function(self, sAvgCharId, sPose, sFace)
 end
 
 BaseCtrl.GetAvgPortraitEmojiOffsetData = function(self, sAvgCharId, sPose, nEmojiIndex)
-  -- function num : 0_31 , upvalues : _ENV, sRootPath, GameResourceLoader, ResType, typeof
+  -- function num : 0_33 , upvalues : _ENV, sRootPath, GameResourceLoader, ResType, typeof
   local sFullPath = (string.format)("%sActor2D/CharacterAvg/%s/%s.asset", sRootPath, sAvgCharId, sAvgCharId)
   local objOffset = (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(CS.Actor2DOffsetData))
   local nX, nY = 0, 0
@@ -864,7 +930,7 @@ BaseCtrl.GetAvgPortraitEmojiOffsetData = function(self, sAvgCharId, sPose, nEmoj
 end
 
 BaseCtrl.GetAvgHeadFrameOffsetData = function(self, sAvgCharId, sPose, nFrameIndex)
-  -- function num : 0_32 , upvalues : _ENV, sRootPath, GameResourceLoader, ResType, typeof
+  -- function num : 0_34 , upvalues : _ENV, sRootPath, GameResourceLoader, ResType, typeof
   local sFullPath = (string.format)("%sActor2D/CharacterAvg/%s/%s.asset", sRootPath, sAvgCharId, sAvgCharId)
   local objOffset = (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(CS.Actor2DOffsetData))
   if nFrameIndex == 2 then
@@ -876,7 +942,7 @@ BaseCtrl.GetAvgHeadFrameOffsetData = function(self, sAvgCharId, sPose, nFrameInd
 end
 
 BaseCtrl.OnEvent_AvgSpeedUp_Timer = function(self, nRate)
-  -- function num : 0_33
+  -- function num : 0_35
   local n = #self._tbTimer
   for i = n, 1, -1 do
     local timer = (self._tbTimer)[i]
@@ -887,7 +953,7 @@ BaseCtrl.OnEvent_AvgSpeedUp_Timer = function(self, nRate)
 end
 
 BaseCtrl.SetAvgCharHeadIconByPrefab = function(self, img, sPrefabPath)
-  -- function num : 0_34 , upvalues : sRootPath, GameResourceLoader, ResType, typeof, _ENV
+  -- function num : 0_36 , upvalues : sRootPath, GameResourceLoader, ResType, typeof, _ENV
   local sFullPath = sRootPath .. sPrefabPath
   local prefab = (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(GameObject), "UI", (self._panel)._nPanelId)
   ;
@@ -895,7 +961,7 @@ BaseCtrl.SetAvgCharHeadIconByPrefab = function(self, img, sPrefabPath)
 end
 
 BaseCtrl.AddTimer = function(self, nTargetCount, nInterval, sCallbackName, bAutoRun, bDestroyWhenComplete, nScaleType, tbParam)
-  -- function num : 0_35 , upvalues : _ENV, TimerManager
+  -- function num : 0_37 , upvalues : _ENV, TimerManager
   local callback = nil
   if type(sCallbackName) == "function" then
     callback = sCallbackName
@@ -920,7 +986,7 @@ BaseCtrl.AddTimer = function(self, nTargetCount, nInterval, sCallbackName, bAuto
 end
 
 BaseCtrl._autoRemoveTimer = function(self, timer)
-  -- function num : 0_36 , upvalues : _ENV
+  -- function num : 0_38 , upvalues : _ENV
   local n = #self._tbTimer
   for i = n, 1, -1 do
     local timer = (self._tbTimer)[i]
@@ -931,7 +997,7 @@ BaseCtrl._autoRemoveTimer = function(self, timer)
 end
 
 BaseCtrl.CreatePrefabInstance = function(self, sPrefabPath, trParent)
-  -- function num : 0_37 , upvalues : sRootPath, GameResourceLoader, ResType, typeof, _ENV
+  -- function num : 0_39 , upvalues : sRootPath, GameResourceLoader, ResType, typeof, _ENV
   local sFullPath = sRootPath .. sPrefabPath
   local prefab = (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(Object), "UI", (self._panel)._nPanelId)
   if trParent == nil then
@@ -947,7 +1013,7 @@ BaseCtrl.CreatePrefabInstance = function(self, sPrefabPath, trParent)
 end
 
 BaseCtrl.DestroyPrefabInstance = function(self, sPrefabPath)
-  -- function num : 0_38 , upvalues : _ENV
+  -- function num : 0_40 , upvalues : _ENV
   local goIns = (self._mapPrefab)[sPrefabPath]
   if goIns ~= nil then
     destroy(goIns)
@@ -959,7 +1025,7 @@ BaseCtrl.DestroyPrefabInstance = function(self, sPrefabPath)
 end
 
 BaseCtrl.LoadAsset = function(self, sPrefabPath, assetType)
-  -- function num : 0_39 , upvalues : sRootPath, typeof, _ENV, GameResourceLoader, ResType
+  -- function num : 0_41 , upvalues : sRootPath, typeof, _ENV, GameResourceLoader, ResType
   local sFullPath = sRootPath .. sPrefabPath
   if assetType == nil then
     assetType = typeof(Object)
@@ -974,13 +1040,13 @@ BaseCtrl.LoadAsset = function(self, sPrefabPath, assetType)
 end
 
 BaseCtrl.LoadAssetAsync = function(self, sPrefabPath, assetType, callback)
-  -- function num : 0_40 , upvalues : sRootPath, typeof, _ENV, GameResourceLoader, ResType
+  -- function num : 0_42 , upvalues : sRootPath, typeof, _ENV, GameResourceLoader, ResType
   local sFullPath = sRootPath .. sPrefabPath
   if assetType == nil then
     assetType = typeof(Object)
   end
   local callBack = function(obj)
-    -- function num : 0_40_0 , upvalues : self, sPrefabPath, callback
+    -- function num : 0_42_0 , upvalues : self, sPrefabPath, callback
     -- DECOMPILER ERROR at PC6: Confused about usage of register: R1 in 'UnsetPending'
 
     if obj ~= nil then
@@ -998,7 +1064,7 @@ BaseCtrl.LoadAssetAsync = function(self, sPrefabPath, assetType, callback)
 end
 
 BaseCtrl.UnLoadAsset = function(self, sPrefabPath)
-  -- function num : 0_41
+  -- function num : 0_43
   local prefab = (self._mapLoadAssets)[sPrefabPath]
   if prefab ~= nil then
     prefab = nil
@@ -1010,7 +1076,7 @@ BaseCtrl.UnLoadAsset = function(self, sPrefabPath)
 end
 
 BaseCtrl.SpawnPrefabInstance = function(self, prefab, sLuaClassName, sPoolName, parent)
-  -- function num : 0_42 , upvalues : AdventureModuleHelper, _ENV
+  -- function num : 0_44 , upvalues : AdventureModuleHelper, _ENV
   local goPrefabIns = (AdventureModuleHelper.SpawnPrefabInstance)(prefab, sPoolName, parent)
   local luaClassName = require(sLuaClassName)
   local objCtrl = (luaClassName.new)(goPrefabIns, self._panel)
@@ -1019,7 +1085,7 @@ BaseCtrl.SpawnPrefabInstance = function(self, prefab, sLuaClassName, sPoolName, 
 end
 
 BaseCtrl.DespawnPrefabInstance = function(self, objCtrl, sPoolName)
-  -- function num : 0_43 , upvalues : AdventureModuleHelper
+  -- function num : 0_45 , upvalues : AdventureModuleHelper
   if objCtrl ~= nil then
     objCtrl:_PreExit()
     objCtrl:_Exit()
@@ -1030,7 +1096,7 @@ BaseCtrl.DespawnPrefabInstance = function(self, objCtrl, sPoolName)
 end
 
 BaseCtrl.BindCtrlByNode = function(self, goNode, sCtrlName)
-  -- function num : 0_44 , upvalues : _ENV
+  -- function num : 0_46 , upvalues : _ENV
   local objCtrl = nil
   local luaClass = require(sCtrlName)
   if luaClass == nil then
@@ -1045,7 +1111,7 @@ BaseCtrl.BindCtrlByNode = function(self, goNode, sCtrlName)
 end
 
 BaseCtrl.UnbindCtrlByNode = function(self, objCtrl)
-  -- function num : 0_45 , upvalues : _ENV
+  -- function num : 0_47 , upvalues : _ENV
   objCtrl:_PreExit()
   objCtrl:_Exit()
   objCtrl:_Destroy()
@@ -1055,9 +1121,9 @@ BaseCtrl.UnbindCtrlByNode = function(self, objCtrl)
 end
 
 BaseCtrl.SetAnimationCallback = function(self, animatior, sCallbackName)
-  -- function num : 0_46 , upvalues : _ENV
+  -- function num : 0_48 , upvalues : _ENV
   local wait = function()
-    -- function num : 0_46_0 , upvalues : _ENV, animatior, self, sCallbackName
+    -- function num : 0_48_0 , upvalues : _ENV, animatior, self, sCallbackName
     (coroutine.yield)(((CS.UnityEngine).WaitForEndOfFrame)())
     local time = (animatior:GetCurrentAnimatorStateInfo(0)).length
     self:AddTimer(1, time, sCallbackName, true, true, true)
@@ -1068,7 +1134,7 @@ BaseCtrl.SetAnimationCallback = function(self, animatior, sCallbackName)
 end
 
 BaseCtrl.ParseHitDamageDesc = function(self, nHitDamageId, nLevel)
-  -- function num : 0_47 , upvalues : _ENV, ConfigData
+  -- function num : 0_49 , upvalues : _ENV, ConfigData
   local sDesc = ""
   local mapDamage = (ConfigTable.GetData_HitDamage)(nHitDamageId)
   if not mapDamage then
@@ -1101,7 +1167,7 @@ BaseCtrl.ParseHitDamageDesc = function(self, nHitDamageId, nLevel)
 end
 
 BaseCtrl.ThousandsNumber = function(self, number)
-  -- function num : 0_48 , upvalues : _ENV
+  -- function num : 0_50 , upvalues : _ENV
   local formatted = (tostring(number))
   -- DECOMPILER ERROR at PC3: Overwrote pending register: R3 in 'AssignReg'
 
@@ -1115,13 +1181,13 @@ BaseCtrl.ThousandsNumber = function(self, number)
 end
 
 BaseCtrl.GetGamepadUINode = function(self)
-  -- function num : 0_49 , upvalues : _ENV
+  -- function num : 0_51 , upvalues : _ENV
   local tbNode = {}
   if self.gameObject == nil or type(self._mapNodeConfig) ~= "table" then
     return tbNode
   end
   local add = function(sKey, mapConfig, sComponentName)
-    -- function num : 0_49_0 , upvalues : _ENV, self, tbNode
+    -- function num : 0_51_0 , upvalues : _ENV, self, tbNode
     if mapConfig.sComponentName == sComponentName then
       local nCount = mapConfig.nCount
       if type(nCount) == "number" then

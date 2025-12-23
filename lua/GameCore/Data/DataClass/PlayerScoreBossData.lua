@@ -563,8 +563,8 @@ end
 PlayerScoreBossData.SureScoreBossSettleReq = function(self, totalStar, totalScore, isReplace, tabOtherLevelId)
   -- function num : 0_32 , upvalues : _ENV, LocalData
   (NovaAPI.StopRecord)()
-  local tbSamples = (UTILS.GetBattleSamples)()
   local sKey = (LocalData.GetPlayerLocalData)("ScoreBossRecordKey")
+  local tbSamples = (UTILS.GetBattleSamples)(sKey)
   local bSuccess, nCheckSum = (NovaAPI.GetRecorderKey)(sKey)
   local tbSendSample = {Sample = tbSamples, Checksum = nCheckSum}
   local msg = {}
@@ -857,17 +857,8 @@ PlayerScoreBossData.GetVoiceKey = function(self)
     isFirst = true
     self.isFirstVoice = true
   end
-  local timeNow = ((CS.ClientManager).Instance).serverTimeStamp
-  local nHour = tonumber((os.date)("%H", timeNow))
-  if nHour >= 6 and nHour < 12 then
-    return isFirst, "greetmorn_npc"
-  else
-    if nHour >= 12 and nHour < 18 then
-      return isFirst, "greetnoon_npc"
-    else
-      return isFirst, "greetnight_npc"
-    end
-  end
+  local sTimeVoice = (PlayerData.Voice):GetNPCGreetTimeVoiceKey()
+  return isFirst, sTimeVoice
 end
 
 return PlayerScoreBossData

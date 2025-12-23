@@ -52,8 +52,9 @@ end
 PlayerStorySetData.CacheStorySetData = function(self, netMsg)
   -- function num : 0_4 , upvalues : _ENV
   if netMsg.Chapters ~= nil then
+    local nChapterId = -1
     for _,data in ipairs(netMsg.Chapters) do
-      -- DECOMPILER ERROR at PC15: Confused about usage of register: R7 in 'UnsetPending'
+      -- DECOMPILER ERROR at PC16: Confused about usage of register: R8 in 'UnsetPending'
 
       if (self.tbChapter)[data.ChapterId] ~= nil then
         ((self.tbChapter)[data.ChapterId]).bUnlock = true
@@ -74,10 +75,19 @@ PlayerStorySetData.CacheStorySetData = function(self, netMsg)
           ;
           (RedDotManager.SetValid)(RedDotDefine.Story_Set_Section, {data.ChapterId, v.nId}, (v.nStatus == (AllEnum.StorySetStatus).UnLock and bShow))
         end
+        local chapterHasRedDot = (RedDotManager.GetValid)(RedDotDefine.Story_Set_Chapter, data.ChapterId)
+        if chapterHasRedDot == true then
+          if nChapterId < 0 then
+            nChapterId = data.ChapterId
+          else
+            nChapterId = (math.min)(nChapterId, data.ChapterId)
+          end
+        end
+        self:SetRecentChapterId(nChapterId)
       end
     end
   end
-  -- DECOMPILER ERROR: 5 unprocessed JMP targets
+  -- DECOMPILER ERROR: 7 unprocessed JMP targets
 end
 
 PlayerStorySetData.UnlockNewChapter = function(self, nId)
@@ -132,10 +142,20 @@ PlayerStorySetData.TryOpenStorySetPanel = function(self, callback)
   end
 end
 
+PlayerStorySetData.SetRecentChapterId = function(self, chapterId)
+  -- function num : 0_8
+  self.nRecentChapterId = chapterId
+end
+
+PlayerStorySetData.GetRecentChapterId = function(self)
+  -- function num : 0_9
+  return self.nRecentChapterId
+end
+
 PlayerStorySetData.SendGetStorySetData = function(self, callback)
-  -- function num : 0_8 , upvalues : _ENV
+  -- function num : 0_10 , upvalues : _ENV
   local func_cb = function(_, netMsg)
-    -- function num : 0_8_0 , upvalues : _ENV, callback
+    -- function num : 0_10_0 , upvalues : _ENV, callback
     (RedDotManager.SetValid)(RedDotDefine.Story_Set_Server, nil, false)
     if callback ~= nil then
       callback()
@@ -147,9 +167,9 @@ PlayerStorySetData.SendGetStorySetData = function(self, callback)
 end
 
 PlayerStorySetData.ReceiveStorySetReward = function(self, nChapterId, nSectionId, callback)
-  -- function num : 0_9 , upvalues : _ENV
+  -- function num : 0_11 , upvalues : _ENV
   local func_cb = function(_, netMsg)
-    -- function num : 0_9_0 , upvalues : self, nChapterId, _ENV, nSectionId, callback
+    -- function num : 0_11_0 , upvalues : self, nChapterId, _ENV, nSectionId, callback
     if (self.tbChapter)[nChapterId] ~= nil then
       local nIndex = 0
       for k,v in ipairs(((self.tbChapter)[nChapterId]).tbSectionList) do
@@ -184,6 +204,7 @@ PlayerStorySetData.ReceiveStorySetReward = function(self, nChapterId, nSectionId
           if callback ~= nil then
             callback(netMsg)
           end
+          self:SetRecentChapterId(nChapterId)
           ;
           (EventManager.Hit)("ReceiveStorySetRewardSuc")
         end

@@ -14,9 +14,28 @@ AllEnum.LanguageInfo = {
 }
 AllEnum.SortingLayerName = {HUD = "HUD", UI = "UI", UI_Top = "UI Top", UI_Video = " UI Video", Overlay = "Overlay"}
 AllEnum.Const = {MAX_TEAM_COUNT = 6, ICON_SCALE = 0.68}
-AllEnum.CoinItemId = {Gold = 1, Jade = 2, STONE = 3, FREESTONE = 4, Energy = 20, WorldClassExp = 21, RogueHardCoreTick = 28, StarTowerSweepTick = 29, StarTowerSweepTickLimit = 30, PresentsFragment = 6, BossCruTickets = 10, FixedRogCurrency = 11, FRRewardCurrency = 12, NormalSingleTicket = 501, LimitedSingleTicket = 502, DailyQuestActive = 61}
+AllEnum.CoinItemId = {Gold = 1, Jade = 2, STONE = 3, FREESTONE = 4, Energy = 20, WorldClassExp = 21, RogueHardCoreTick = 28, StarTowerSweepTick = 29, StarTowerSweepTickLimit = 30, PresentsFragment = 6, BossCruTickets = 10, FixedRogCurrency = 11, FRRewardCurrency = 12, NormalSingleTicket = 501, LimitedSingleTicket = 502, DailyQuestActive = 61, WeeklyQuestActive = 63}
 AllEnum.QuestStatus = {Undone = false, Done = true}
-AllEnum.CharHeadIconSurfix = {GC = "_GC", GD = "_GD", L = "_L", S = "_S", SK = "_SK", XL = "_XL", XXL = "_XXL", GOODS = "_GOODS", QM = "_QM", QS = "_QS", Q = "_Q"}
+AllEnum.CharHeadIconSurfix = {GC = "_GC", GD = "_GD", L = "_L", LS = "_LS", S = "_S", SS = "_SS", SK = "_SK", XL = "_XL", XXL = "_XXL", XXLS = "_XXLS", GOODS = "_GOODS", QM = "_QM", QS = "_QS", Q = "_Q"}
+AllEnum.CharHeadIconSurfixAutoFit = {
+_L = {
+_L = {w = 140, h = 152}
+, 
+_LS = {w = 70, h = 76}
+}
+, 
+_S = {
+_S = {w = 256, h = 256}
+, 
+_SS = {w = 128, h = 128}
+}
+, 
+_XXL = {
+_XXL = {w = 192, h = 192}
+, 
+_XXLS = {w = 96, h = 96}
+}
+}
 AllEnum.EET = {[(GameEnum.elementType).WE] = "WEE", [(GameEnum.elementType).FE] = "FEE", [(GameEnum.elementType).SE] = "SEE", [(GameEnum.elementType).AE] = "AEE", [(GameEnum.elementType).LE] = "LEE", [(GameEnum.elementType).DE] = "DEE"}
 AllEnum.CharAttr = {
 {sKey = "Hp", nGroup = 1, sLanguageId_Simple = "Attr_Hp_Simple"}
@@ -655,7 +674,7 @@ AllEnum.ChooseOptionCfg = {
 AllEnum.OptionType = {Char = 1, Disc = 2, Equipment = 3}
 AllEnum.RewardType = {First = 1, Three = 2, Extra = 3}
 AllEnum.FormationEnterType = {MainLine = 0, FixedRoguelike = 1, StarTower = 2}
-AllEnum.RegionBossFormationType = {RegionBoss = 1, TravelerDuel = 2, DailyInstance = 3, InfinityTower = 4, EquipmentInstance = 5, Story = 6, Vampire = 7, ScoreBoss = 8, SkillInstance = 9, WeeklyCopies = 10, JointDrill = 11, ActivityLevels = 12}
+AllEnum.RegionBossFormationType = {RegionBoss = 1, TravelerDuel = 2, DailyInstance = 3, InfinityTower = 4, EquipmentInstance = 5, Story = 6, Vampire = 7, ScoreBoss = 8, SkillInstance = 9, WeeklyCopies = 10, JointDrill = 11, ActivityLevels = 12, ActivityStory = 13}
 AllEnum.EnergyPanelType = {Main = 1, BuyConfirm = 2, ItemUse = 3, BatteryUse = 4}
 AllEnum.DispatchState = {CanAccept = 0, Accepting = 1, Complete = 2, Done = 3}
 AllEnum.PopUpType = {DailyCheckIn = 1, MonthlyCard = 2, Activity = 3, ActivityLogin = 4, NewChat = 5, FuncUnlock = 6, WorldClass = 7}
@@ -669,11 +688,17 @@ AllEnum.DatingKrTags = {
 , 
 ["2"] = {["==KR1=="] = "은", ["==KR2=="] = "이", ["==KR3=="] = "을", ["==KR4=="] = "과"}
 }
+AllEnum.KrTags = {
+["1"] = {[1] = "가", [2] = "는", [3] = "를", [4] = "와"}
+, 
+["2"] = {[1] = "이", [2] = "은", [3] = "을", [4] = "과"}
+}
 AllEnum.PotentialCardType = {StarTower = 1, CharInfo = 2, Book = 3, TowerDefense = 4, Detial = 5}
 AllEnum.PhoneTogType = {Chat = 1, Dating = 2, Gift = 3}
 AllEnum.ReceivePropsTitle = {Common = 1, Dating = 2}
 AllEnum.DiscSkillIconSurfix = {Small = "_S", Corner = "_jb"}
-AllEnum.QuestPanelTab = {GuideQuest = 1, WorldClass = 2, DailyQuest = 3, Tutorial = 4}
+AllEnum.QuestPanelTab = {GuideQuest = 1, DailyQuest = 2, WeeklyQuest = 3, WorldClass = 4}
+AllEnum.QuestNewbieTab = {TeamFormation = 1, Tutorial = 2}
 AllEnum.StarTowerFastBattleBg = {Bg_L = "bg_fastBattle_%s_l", Bg_R = "bg_fastBattle_%s_r", Flag = "zs_fastBattle_%s"}
 AllEnum.FateCardBundleIcon = {L = "_L", S = "_S"}
 AllEnum.WorldClassType = {LevelUp = 1, Advance = 2}
@@ -691,7 +716,7 @@ AllEnum.TutorialLevelLockType = {None = 1, WorldClass = 2, PreLevel = 3}
 AllEnum.JointDrillActStatus = {WaitStart = 1, Start = 2, WaitClose = 3, Closed = 4}
 AllEnum.DiscReadType = {DiscStory = 1, DiscAvg = 2}
 AllEnum.BattleHudType = {Sector = 1, Horizontal = 2}
-AllEnum.ActivityThemeFuncIndex = {MiniGame = 1, Task = 2, Story = 3, Shop = 4, Level = 5}
+AllEnum.ActivityThemeFuncIndex = {MiniGame = 1, Task = 2, Story = 3, Shop = 4, Level = 5, Other = 6}
 AllEnum.CgSurfix = {Main = "_M", Image = ""}
 AllEnum.Cg2DType = {Base = 1, L2D = 2}
 AllEnum.CharSkinSource = {[(GameEnum.skinSourceType).ACTIVITY] = "Skin_Unlock_Activity", [(GameEnum.skinSourceType).TIMELIMIT] = "Skin_Unlock_Shop", [(GameEnum.skinSourceType).ADVANCE] = "Skin_Unlock_Advance", [(GameEnum.skinSourceType).BATTLEPASS] = "Skin_Unlock_Battlepass"}

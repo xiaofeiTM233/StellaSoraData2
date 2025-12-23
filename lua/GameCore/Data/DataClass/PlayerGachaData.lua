@@ -397,42 +397,116 @@ end
 
 PlayerGachaData.SendGachaReq = function(self, nId, nMode, callback)
   -- function num : 0_26 , upvalues : _ENV
-  local GachaCallback = function(_, mapData)
-    -- function num : 0_26_0 , upvalues : self, nId, nMode, _ENV, callback
-    self:GachaCountChanged(nId, mapData.DaysCount)
-    self:AupMissTimesCountChanged(nId, mapData.AupMissTimes)
-    self:AMissTimesCountChanged(nId, mapData.AMissTimes)
-    self:TotalCountChanged(nId, mapData.TotalTimes)
-    self:AupGuaranteeTimesChanged(nId, mapData.AupGuaranteeTimes)
-    self:GachaTotalTimes(nId, mapData.GachaTotalTimes)
-    if nMode == 2 then
-      self:RecvFirstTenReward(nId, true)
-    end
-    local mapGacha = (ConfigTable.GetData)("Gacha", nId)
-    if mapGacha ~= nil and mapGacha.StorageId > 0 then
-      self:AddGachaHistory(mapGacha.StorageId, nId, mapData)
-    end
-    if type(callback) == "function" then
-      callback(mapData)
-    end
-    if nMode == 2 then
-      local tab = {}
+  local mapMsgData = {Id = nId, Mode = nMode}
+  local tbCheck = {}
+  local mapGacha = (ConfigTable.GetData)("Gacha", nId)
+  local mapGachaStorage = (ConfigTable.GetData)("GachaStorage", mapGacha.StorageId)
+  local rapidjson = require("rapidjson")
+  do
+    if mapGacha.SpecificTid > 0 then
+      local nCurCount = (PlayerData.Item):GetItemCountByID(mapGacha.SpecificTid)
       ;
-      (table.insert)(tab, {"role_id", tostring((PlayerData.Base)._nPlayerId)})
-      if mapGacha.StorageId == (GameEnum.gachaStorageType).CharacterCardPool then
-        (NovaAPI.UserEventUpload)("standard_trekker_gacha10", tab)
-      else
-        if mapGacha.StorageId == (GameEnum.gachaStorageType).DiscCardPool then
-          (NovaAPI.UserEventUpload)("standard_disc_gacha10", tab)
-        else
-          if mapGacha.StorageId == (GameEnum.gachaStorageType).CharacterUpCardPool then
-            (NovaAPI.UserEventUpload)("limited_trekker_gacha10", tab)
+      (table.insert)(tbCheck, {Tid = mapGacha.SpecificTid, Qty = nCurCount})
+    end
+    if nMode == 2 then
+      do
+        if type(mapGachaStorage.TenTimesPreferred) == "string" then
+          local tbTen = (rapidjson.decode)(mapGachaStorage.TenTimesPreferred)
+          if tbTen ~= nil then
+            mapGachaStorage.TenTimesPreferred = tbTen
           else
-            if mapGacha.StorageId == (GameEnum.gachaStorageType).DiscUpCardPool then
-              (NovaAPI.UserEventUpload)("limited_disc_gacha10", tab)
+            mapGachaStorage.TenTimesPreferred = {}
+          end
+        end
+        if #mapGachaStorage.TenTimesPreferred > 0 then
+          for nIdx,mapCost in ipairs(mapGachaStorage.TenTimesPreferred) do
+            local f = pairs(mapCost)
+            local sTid, nCount = f(mapCost)
+            local nTid = tonumber(sTid)
+            local nCurCount = (PlayerData.Item):GetItemCountByID(nTid)
+            ;
+            (table.insert)(tbCheck, {Tid = nTid, Qty = nCurCount})
+          end
+        end
+        do
+          do
+            if type(mapGachaStorage.OncePreferred) == "string" then
+              local tbTen = (rapidjson.decode)(mapGachaStorage.OncePreferred)
+              if tbTen ~= nil then
+                mapGachaStorage.OncePreferred = tbTen
+              else
+                mapGachaStorage.OncePreferred = {}
+              end
+            end
+            if #mapGachaStorage.OncePreferred > 0 then
+              for nIdx,mapCost in ipairs(mapGachaStorage.OncePreferred) do
+                local f = pairs(mapCost)
+                local sTid, nCount = f(mapCost)
+                local nTid = tonumber(sTid)
+                local nCurCount = (PlayerData.Item):GetItemCountByID(nTid)
+                ;
+                (table.insert)(tbCheck, {Tid = nTid, Qty = nCurCount})
+              end
+            end
+            do
+              mapMsgData.Check = tbCheck
+              local GachaCallback = function(_, mapData)
+    -- function num : 0_26_0 , upvalues : _ENV, tbCheck, self, nId, nMode, callback
+    if mapData.DaysCount == nil then
+      (EventManager.Hit)("GachaProcessStart", false)
+      for _,mapItemTpl in ipairs(tbCheck) do
+        (EventManager.Hit)(EventId.CoinResChange, mapItemTpl.Tid, mapItemTpl.Qty)
+      end
+      local wait = function()
+      -- function num : 0_26_0_0 , upvalues : _ENV
+      (coroutine.yield)(((CS.UnityEngine).WaitForEndOfFrame)())
+      ;
+      (EventManager.Hit)(EventId.OpenMessageBox, {nType = (AllEnum.MessageBox).Alert, sContent = (ConfigTable.GetUIText)("Gacha_sync_ack"), callbackConfirm = function()
+        -- function num : 0_26_0_0_0
+      end
+})
+    end
+
+      ;
+      (cs_coroutine.start)(wait)
+      return 
+    end
+    do
+      self:GachaCountChanged(nId, mapData.DaysCount)
+      self:AupMissTimesCountChanged(nId, mapData.AupMissTimes)
+      self:AMissTimesCountChanged(nId, mapData.AMissTimes)
+      self:TotalCountChanged(nId, mapData.TotalTimes)
+      self:AupGuaranteeTimesChanged(nId, mapData.AupGuaranteeTimes)
+      self:GachaTotalTimes(nId, mapData.GachaTotalTimes)
+      if nMode == 2 then
+        self:RecvFirstTenReward(nId, true)
+      end
+      local mapGacha = (ConfigTable.GetData)("Gacha", nId)
+      if mapGacha ~= nil and mapGacha.StorageId > 0 then
+        self:AddGachaHistory(mapGacha.StorageId, nId, mapData)
+      end
+      if type(callback) == "function" then
+        callback(mapData)
+      end
+      if nMode == 2 then
+        local tab = {}
+        ;
+        (table.insert)(tab, {"role_id", tostring((PlayerData.Base)._nPlayerId)})
+        if mapGacha.StorageId == (GameEnum.gachaStorageType).CharacterCardPool then
+          (NovaAPI.UserEventUpload)("standard_trekker_gacha10", tab)
+        else
+          if mapGacha.StorageId == (GameEnum.gachaStorageType).DiscCardPool then
+            (NovaAPI.UserEventUpload)("standard_disc_gacha10", tab)
+          else
+            if mapGacha.StorageId == (GameEnum.gachaStorageType).CharacterUpCardPool then
+              (NovaAPI.UserEventUpload)("limited_trekker_gacha10", tab)
             else
-              if mapGacha.StorageId == (GameEnum.gachaStorageType).BeginnerCardPool then
-                (NovaAPI.UserEventUpload)("guaranteed5star_gacha10", tab)
+              if mapGacha.StorageId == (GameEnum.gachaStorageType).DiscUpCardPool then
+                (NovaAPI.UserEventUpload)("limited_disc_gacha10", tab)
+              else
+                if mapGacha.StorageId == (GameEnum.gachaStorageType).BeginnerCardPool then
+                  (NovaAPI.UserEventUpload)("guaranteed5star_gacha10", tab)
+                end
               end
             end
           end
@@ -441,11 +515,16 @@ PlayerGachaData.SendGachaReq = function(self, nId, nMode, callback)
     end
   end
 
-  local mapMsgData = {Id = nId, Mode = nMode}
-  ;
-  (EventManager.Hit)("GachaProcessStart", true)
-  ;
-  (HttpNetHandler.SendMsg)((NetMsgId.Id).gacha_spin_req, mapMsgData, nil, GachaCallback)
+              ;
+              (EventManager.Hit)("GachaProcessStart", true)
+              ;
+              (HttpNetHandler.SendMsg)((NetMsgId.Id).gacha_spin_req, mapMsgData, nil, GachaCallback)
+            end
+          end
+        end
+      end
+    end
+  end
 end
 
 PlayerGachaData.GetPoolProbData = function(self, nPoolId)

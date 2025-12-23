@@ -21,6 +21,7 @@ TowerDefenseData.InitData = function(self)
   self.cacheEnterLevelList = {}
   self.TowerDefenseLevelData = (TowerDefenseLevelData.new)()
   self.TempLevelTeamData = {}
+  self.tempData = nil
 end
 
 TowerDefenseData.UpdateStatus = function(self)
@@ -623,6 +624,9 @@ TowerDefenseData.RequestFinishLevel = function(self, levelId, bResult, nHp, cb)
 )
       return 
     end
+    self:CreateTempData(levelId, bResult)
+    ;
+    (EventManager.Hit)(EventId.ClosePanel, PanelId.TowerDefenseLevelDetailPanel)
     local nStar = 1
     local config = (ConfigTable.GetData)("TowerDefenseLevel", levelId)
     if config.Condition2 < nHp then
@@ -650,8 +654,58 @@ TowerDefenseData.RequestFinishLevel = function(self, levelId, bResult, nHp, cb)
   end
 end
 
-TowerDefenseData.EventUpload = function(self, result)
+TowerDefenseData.SkipLevel = function(self, levelId, characterList, itemId, cb)
   -- function num : 0_40 , upvalues : _ENV
+  local mapMsg = {Level = levelId, Characters = characterList, ItemId = itemId}
+  local callback = function()
+    -- function num : 0_40_0 , upvalues : self, levelId, _ENV, cb
+    self:CreateTempData(levelId, true)
+    local mapMsg = {LevelId = levelId, Star = 3}
+    ;
+    (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_tower_defense_level_settle_req, mapMsg, nil, function(_, mapMsgData)
+      -- function num : 0_40_0_0 , upvalues : self, levelId, _ENV, cb
+      self:UpdateLevelData({Id = levelId, Star = 3})
+      local mapReward = (PlayerData.Item):ProcessRewardChangeInfo(mapMsgData)
+      local tbItem = {}
+      for _,v in ipairs(mapReward.tbReward) do
+        local item = {Tid = v.id, Qty = v.count, rewardType = (AllEnum.RewardType).First}
+        ;
+        (table.insert)(tbItem, item)
+      end
+      ;
+      (UTILS.OpenReceiveByDisplayItem)(tbItem, mapMsgData)
+      if cb ~= nil then
+        cb()
+      end
+    end
+)
+  end
+
+  ;
+  (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_tower_defense_level_apply_req, mapMsg, nil, callback)
+  -- DECOMPILER ERROR at PC21: Confused about usage of register: R7 in 'UnsetPending'
+
+  ;
+  (self.TempLevelTeamData)[levelId] = {charList = clone(characterList), itemId = itemId}
+end
+
+TowerDefenseData.CreateTempData = function(self, nLevelId, bResult)
+  -- function num : 0_41
+  self.tempData = {nLevelId = nLevelId, bResult = bResult}
+end
+
+TowerDefenseData.GetTempData = function(self)
+  -- function num : 0_42
+  return self.tempData
+end
+
+TowerDefenseData.ClearTempData = function(self)
+  -- function num : 0_43
+  self.tempData = nil
+end
+
+TowerDefenseData.EventUpload = function(self, result)
+  -- function num : 0_44 , upvalues : _ENV
   local tabUpLevel = {}
   ;
   (table.insert)(tabUpLevel, {"role_id", tostring((PlayerData.Base)._nPlayerId)})
@@ -672,10 +726,10 @@ TowerDefenseData.EventUpload = function(self, result)
 end
 
 TowerDefenseData.RequestReadAVG = function(self, storyId)
-  -- function num : 0_41 , upvalues : _ENV
+  -- function num : 0_45 , upvalues : _ENV
   local mapMsg = {Value = storyId}
   local cb = function(_, mapMsgData)
-    -- function num : 0_41_0 , upvalues : storyId, self, _ENV
+    -- function num : 0_45_0 , upvalues : storyId, self, _ENV
     local data = {nId = storyId, bIsRead = true}
     self:UpdateStoryData(data)
     local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
@@ -689,10 +743,10 @@ TowerDefenseData.RequestReadAVG = function(self, storyId)
 end
 
 TowerDefenseData.RequestReceiveQuest = function(self, nGroupId, nQuestId)
-  -- function num : 0_42 , upvalues : _ENV
+  -- function num : 0_46 , upvalues : _ENV
   local mapMsg = {ActivityId = self.nActId, GroupId = nQuestId == 0 and nGroupId or 0, QuestId = nQuestId}
   local cb = function(_, mapMsgData)
-    -- function num : 0_42_0 , upvalues : nQuestId, self, nGroupId, _ENV
+    -- function num : 0_46_0 , upvalues : nQuestId, self, nGroupId, _ENV
     if nQuestId == 0 then
       local quests = self:GetQuestbyGroupId(nGroupId)
       for _,quest in pairs(quests) do

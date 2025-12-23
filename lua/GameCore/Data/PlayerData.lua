@@ -84,10 +84,6 @@ PlayerData.Init = function()
   PlayerData.CharSkin = (PlayerCharSkinData.new)()
   ;
   (PlayerData.CharSkin):Init()
-  local PlayerTravelerDuelData = require("GameCore.Data.DataClass.PlayerTravelerDuelData")
-  PlayerData.TravelerDuel = (PlayerTravelerDuelData.new)()
-  ;
-  (PlayerData.TravelerDuel):Init()
   local PlayerBoardData = require("GameCore.Data.DataClass.PlayerBoardData")
   PlayerData.Board = (PlayerBoardData.new)()
   ;
@@ -251,9 +247,6 @@ PlayerData.UnInit = function()
   (PlayerData.Mall):UnInit()
   PlayerData.Handbook = nil
   PlayerData.CharSkin = nil
-  ;
-  (PlayerData.TravelerDuel):UnInit()
-  PlayerData.TravelerDuel = nil
   PlayerData.DailyInstance = nil
   ;
   (PlayerData.EquipmentInstance):UnInit()

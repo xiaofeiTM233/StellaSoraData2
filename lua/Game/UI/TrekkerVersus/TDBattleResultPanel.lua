@@ -1,7 +1,7 @@
 local TDBattleResultPanel = class("TDBattleResultPanel", BasePanel)
 TDBattleResultPanel._bAddToBackHistory = false
 TDBattleResultPanel._tbDefine = {
-{sPrefabPath = "BattleResult/TravelerDuelBattleResultPanel.prefab", sCtrlName = "Game.UI.BattleResult.TDBattleResultCtrl"}
+{sPrefabPath = "BattleResult/TravelerDuelBattleResultPanel.prefab", sCtrlName = "Game.UI.TrekkerVersus.TDBattleResultCtrl"}
 }
 TDBattleResultPanel.Awake = function(self)
   -- function num : 0_0

@@ -62,7 +62,11 @@ PopUpData.RefreshPopUp = function(self)
 end
 
 PopUpData.CheckPopUpOpen = function(self, mapData)
-  -- function num : 0_4 , upvalues : _ENV
+  -- function num : 0_4 , upvalues : LocalData, _ENV
+  local localData = (LocalData.GetPlayerLocalData)("Act_PopUp_DontShow" .. mapData.Id)
+  if localData then
+    return false
+  end
   local bUnlock = false
   if mapData.StartCondType == (GameEnum.activityAcceptCond).WorldClassSpecific then
     local nWorldCalss = (PlayerData.Base):GetWorldClass()
@@ -157,8 +161,9 @@ PopUpData.IsNeedPopUp = function(self, popupId, localData)
       if localData == nil then
         if cfg.PopUpRes == nil then
           do return cfg.PopRefreshType ~= (GameEnum.PopRefreshType).DailyFirst end
+          local curTime = ((CS.ClientManager).Instance).serverTimeStamp
           local dateA = GetCurrentYearInfo(tonumber(localData))
-          local dateB = GetCurrentYearInfo()
+          local dateB = GetCurrentYearInfo(curTime)
           do
             local isSameDay = dateA.day == dateB.day and dateA.month == dateB.month and dateA.year == dateB.year
             do return not isSameDay and cfg.PopUpRes ~= nil end

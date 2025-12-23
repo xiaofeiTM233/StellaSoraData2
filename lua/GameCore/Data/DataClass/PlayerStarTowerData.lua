@@ -1671,7 +1671,7 @@ PlayerStarTowerData.GetPotentialDescSimple = function(self)
         ;
         (LocalData.SetPlayerLocalData)("StarTowerPotentialDescSimple", sValue)
       end
-      self.bPotentialDescSimple = tonumber(sValue) ~= 1
+      self.bPotentialDescSimple = tonumber(sValue) == 1
     end
     do return self.bPotentialDescSimple end
     -- DECOMPILER ERROR: 2 unprocessed JMP targets

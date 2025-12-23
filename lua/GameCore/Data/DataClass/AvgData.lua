@@ -273,6 +273,9 @@ end
 
 AvgData.CheckIfTrue = function(self, bIsMajor, sAvgId, nGroupId, nIndex, nCheckount)
   -- function num : 0_8 , upvalues : _ENV
+  if self.IsActivityAvg == true then
+    return (PlayerData.ActivityAvg):CheckIfTrue(bIsMajor, sAvgId, nGroupId, nIndex, nCheckount)
+  end
   local n, sCheckTarget = self:AvgLuaNameToStoryId(sAvgId)
   if (table.indexof)(self.tbTempStoryIds, sCheckTarget) > 0 then
     return self:CheckIfTrue_Client(bIsMajor, sAvgId, nGroupId, nIndex, nCheckount)
@@ -337,6 +340,9 @@ end
 
 AvgData.IsUnlock = function(self, sConditionId)
   -- function num : 0_11 , upvalues : _ENV
+  if self.IsActivityAvg == true then
+    return (PlayerData.ActivityAvg):IsUnlock(sConditionId)
+  end
   if type(sConditionId) == "string" and sConditionId == "" then
     return true
   end
@@ -434,6 +440,10 @@ end
 
 AvgData.MarkStoryId = function(self, sAvgId)
   -- function num : 0_12 , upvalues : _ENV
+  if self.IsActivityAvg == true then
+    (PlayerData.ActivityAvg):MarkStoryId(sAvgId)
+    return 
+  end
   if AVG_EDITOR ~= true or type(self.CURRENT_STORY_ID) == "number" then
     local cfgdata = (ConfigTable.GetData_Story)(self.CURRENT_STORY_ID)
     if cfgdata == nil then
@@ -455,6 +465,10 @@ end
 
 AvgData.MarkEvId = function(self, sId)
   -- function num : 0_13 , upvalues : _ENV
+  if self.IsActivityAvg == true then
+    (PlayerData.ActivityAvg):MarkEvId(sId)
+    return 
+  end
   if (table.indexof)(self.tbTempEvIds, sId) <= 0 and (table.indexof)(self.tbEvIds, sId) <= 0 then
     (table.insert)(self.tbTempEvIds, sId)
   end
@@ -462,6 +476,9 @@ end
 
 AvgData.IsChosen = function(self, sAvgId, nGroupId, nIndex)
   -- function num : 0_14 , upvalues : _ENV
+  if self.IsActivityAvg == true then
+    return (PlayerData.ActivityAvg):IsChosen(sAvgId, nGroupId, nIndex)
+  end
   if (self.mapChosen)[sAvgId] == nil then
     return false
   end
@@ -470,12 +487,12 @@ AvgData.IsChosen = function(self, sAvgId, nGroupId, nIndex)
   end
   local nCurrent = ((self.mapChosen)[sAvgId])[nGroupId]
   local bIsChosen = ((self.__data)[nCurrent])[nIndex]
-  -- DECOMPILER ERROR at PC25: Confused about usage of register: R6 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC36: Confused about usage of register: R6 in 'UnsetPending'
 
   if (self.mapTempCL)[sAvgId] == nil then
     (self.mapTempCL)[sAvgId] = {}
   end
-  -- DECOMPILER ERROR at PC34: Confused about usage of register: R6 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC45: Confused about usage of register: R6 in 'UnsetPending'
 
   if ((self.mapTempCL)[sAvgId])[nGroupId] == nil then
     ((self.mapTempCL)[sAvgId])[nGroupId] = {}
@@ -487,12 +504,16 @@ end
 
 AvgData.MarkChosen = function(self, sAvgId, nGroupId, nIndex)
   -- function num : 0_15 , upvalues : _ENV
-  -- DECOMPILER ERROR at PC6: Confused about usage of register: R4 in 'UnsetPending'
+  if self.IsActivityAvg == true then
+    (PlayerData.ActivityAvg):MarkChosen(sAvgId, nGroupId, nIndex)
+    return 
+  end
+  -- DECOMPILER ERROR at PC17: Confused about usage of register: R4 in 'UnsetPending'
 
   if (self.mapTempCL)[sAvgId] == nil then
     (self.mapTempCL)[sAvgId] = {}
   end
-  -- DECOMPILER ERROR at PC15: Confused about usage of register: R4 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC26: Confused about usage of register: R4 in 'UnsetPending'
 
   if ((self.mapTempCL)[sAvgId])[nGroupId] == nil then
     ((self.mapTempCL)[sAvgId])[nGroupId] = {}
@@ -503,19 +524,19 @@ AvgData.MarkChosen = function(self, sAvgId, nGroupId, nIndex)
   end
   ;
   (table.insert)(((self.mapTempCL)[sAvgId])[nGroupId], nIndex)
-  -- DECOMPILER ERROR at PC45: Confused about usage of register: R5 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC56: Confused about usage of register: R5 in 'UnsetPending'
 
   if (self.mapTempLatestCnt)[sAvgId] == nil then
     (self.mapTempLatestCnt)[sAvgId] = {}
   end
-  -- DECOMPILER ERROR at PC54: Confused about usage of register: R5 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC65: Confused about usage of register: R5 in 'UnsetPending'
 
   if ((self.mapTempLatestCnt)[sAvgId])[nGroupId] == nil then
     ((self.mapTempLatestCnt)[sAvgId])[nGroupId] = {}
   end
   local nCurCnt = (((self.mapTempLatestCnt)[sAvgId])[nGroupId])[nIndex] or 0
   nCurCnt = nCurCnt + 1
-  -- DECOMPILER ERROR at PC66: Confused about usage of register: R6 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC77: Confused about usage of register: R6 in 'UnsetPending'
 
   ;
   (((self.mapTempLatestCnt)[sAvgId])[nGroupId])[nIndex] = nCurCnt
@@ -545,6 +566,9 @@ end
 
 AvgData.GetHistoryChoosedPersonality = function(self, sAvgId, nGroupId)
   -- function num : 0_18 , upvalues : _ENV
+  if self.IsActivityAvg == true then
+    return (PlayerData.ActivityAvg):GetHistoryChoosedPersonality(sAvgId, nGroupId)
+  end
   if (self.mapPersonality)[sAvgId] == nil then
     return nil
   end
@@ -562,13 +586,17 @@ AvgData.GetHistoryChoosedPersonality = function(self, sAvgId, nGroupId)
 end
 
 AvgData.MarkChoosedPersonality = function(self, sAvgId, nGroupId, nIndex, nFactor)
-  -- function num : 0_19
-  -- DECOMPILER ERROR at PC6: Confused about usage of register: R5 in 'UnsetPending'
+  -- function num : 0_19 , upvalues : _ENV
+  if self.IsActivityAvg == true then
+    (PlayerData.ActivityAvg):MarkChoosedPersonality(sAvgId, nGroupId, nIndex, nFactor)
+    return 
+  end
+  -- DECOMPILER ERROR at PC18: Confused about usage of register: R5 in 'UnsetPending'
 
   if (self.mapTempPersonality)[sAvgId] == nil then
     (self.mapTempPersonality)[sAvgId] = {}
   end
-  -- DECOMPILER ERROR at PC13: Confused about usage of register: R5 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC25: Confused about usage of register: R5 in 'UnsetPending'
 
   if (self.mapTempPersonalityFactor)[sAvgId] == nil then
     (self.mapTempPersonalityFactor)[sAvgId] = {}
@@ -585,27 +613,27 @@ AvgData.MarkChoosedPersonality = function(self, sAvgId, nGroupId, nIndex, nFacto
       end
     end
   end
-  -- DECOMPILER ERROR at PC28: Confused about usage of register: R6 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC40: Confused about usage of register: R6 in 'UnsetPending'
 
   ;
   ((self.mapTempPersonality)[sAvgId])[nGroupId] = n
-  -- DECOMPILER ERROR at PC31: Confused about usage of register: R6 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC43: Confused about usage of register: R6 in 'UnsetPending'
 
   ;
   ((self.mapTempPersonalityFactor)[sAvgId])[nGroupId] = nFactor
-  -- DECOMPILER ERROR at PC38: Confused about usage of register: R6 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC50: Confused about usage of register: R6 in 'UnsetPending'
 
   if (self.mapTempPersonalityCnt)[sAvgId] == nil then
     (self.mapTempPersonalityCnt)[sAvgId] = {}
   end
-  -- DECOMPILER ERROR at PC47: Confused about usage of register: R6 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC59: Confused about usage of register: R6 in 'UnsetPending'
 
   if ((self.mapTempPersonalityCnt)[sAvgId])[nGroupId] == nil then
     ((self.mapTempPersonalityCnt)[sAvgId])[nGroupId] = {}
   end
   local nCurCnt = (((self.mapTempPersonalityCnt)[sAvgId])[nGroupId])[nIndex] or 0
   nCurCnt = nCurCnt + 1
-  -- DECOMPILER ERROR at PC59: Confused about usage of register: R7 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC71: Confused about usage of register: R7 in 'UnsetPending'
 
   ;
   (((self.mapTempPersonalityCnt)[sAvgId])[nGroupId])[nIndex] = nCurCnt
@@ -727,10 +755,12 @@ AvgData.GetChapterCount = function(self)
   local count = 0
   local data = {}
   local forEachChapter = function(mapData)
-    -- function num : 0_23_0 , upvalues : count, _ENV, data
-    count = count + 1
-    ;
-    (table.insert)(data, mapData)
+    -- function num : 0_23_0 , upvalues : self, count, _ENV, data
+    if self:IsStoryChapterShow(mapData.Id) == true then
+      count = count + 1
+      ;
+      (table.insert)(data, mapData)
+    end
   end
 
   ForEachTableLine(DataTable.StoryChapter, forEachChapter)
@@ -759,8 +789,23 @@ AvgData.IsStoryChapterUnlock = function(self, nChapterId)
   end
 end
 
+AvgData.IsStoryChapterShow = function(self, nChapterId)
+  -- function num : 0_25 , upvalues : _ENV
+  local mapStoryData = (ConfigTable.GetData)("StoryChapter", nChapterId)
+  if mapStoryData == nil then
+    return false
+  end
+  if mapStoryData.OpenTime == "" then
+    return true
+  end
+  local nOpenTime = ((CS.ClientManager).Instance):ISO8601StrToTimeStamp(mapStoryData.OpenTime)
+  local nCurTime = ((CS.ClientManager).Instance).serverTimeStamp
+  do return nOpenTime <= nCurTime end
+  -- DECOMPILER ERROR: 1 unprocessed JMP targets
+end
+
 AvgData.SendMsg_STORY_ENTER = function(self, nStoryId, nBuildId, bNewestStory)
-  -- function num : 0_25 , upvalues : _ENV, File
+  -- function num : 0_26 , upvalues : _ENV, File
   if type(nStoryId) == "string" then
     nStoryId = (self.CFG_Story)[nStoryId]
     if type(nStoryId) ~= "number" then
@@ -779,7 +824,7 @@ AvgData.SendMsg_STORY_ENTER = function(self, nStoryId, nBuildId, bNewestStory)
         nBuildId = 0
       end
       local func_cb = function()
-    -- function num : 0_25_0 , upvalues : self, bNewestStory, nStoryId, nBuildId, _ENV, File
+    -- function num : 0_26_0 , upvalues : self, bNewestStory, nStoryId, nBuildId, _ENV, File
     self:ClearTempData()
     if bNewestStory == true then
       self:SetRecentStoryId(nStoryId)
@@ -832,7 +877,7 @@ AvgData.SendMsg_STORY_ENTER = function(self, nStoryId, nBuildId, bNewestStory)
 end
 
 AvgData.SendMsg_STORY_DONE = function(self, callBack, tbBattleEvents)
-  -- function num : 0_26 , upvalues : _ENV, TimerManager
+  -- function num : 0_27 , upvalues : _ENV, TimerManager
   local mapSendMsgData = {
 List = {}
 , 
@@ -936,7 +981,7 @@ Personality = {}
           ;
           (PlayerData.Char):StoryPass(tbPassId)
           local func_merge = function(tbSrc, tbTarget)
-    -- function num : 0_26_0 , upvalues : _ENV
+    -- function num : 0_27_0 , upvalues : _ENV
     for i,v in ipairs(tbSrc) do
       if (table.indexof)(tbTarget, v) <= 0 then
         (table.insert)(tbTarget, v)
@@ -945,7 +990,7 @@ Personality = {}
   end
 
           local func_overwrite = function(tbSrc, tbTarget)
-    -- function num : 0_26_1 , upvalues : _ENV
+    -- function num : 0_27_1 , upvalues : _ENV
     for sAvgId,v in pairs(tbSrc) do
       if tbTarget[sAvgId] == nil then
         tbTarget[sAvgId] = {}
@@ -959,7 +1004,7 @@ Personality = {}
   end
 
           local func_succ = function(_, mapChangeInfo)
-    -- function num : 0_26_2 , upvalues : mapStoryCfg, _ENV, self, func_merge, func_overwrite, callBack, bBattle, TimerManager
+    -- function num : 0_27_2 , upvalues : mapStoryCfg, _ENV, self, func_merge, func_overwrite, callBack, bBattle, TimerManager
     if mapStoryCfg.Chapter == 1 and mapStoryCfg.IsLast and mapChangeInfo and mapChangeInfo.Props and #mapChangeInfo.Props > 0 then
       (PlayerData.Base):UserEventUpload_PC("pc_mainstory_1_clear")
     end
@@ -1049,12 +1094,12 @@ Personality = {}
             end
           end
           local AfterRewardDisplay = function()
-      -- function num : 0_26_2_0 , upvalues : _ENV
+      -- function num : 0_27_2_0 , upvalues : _ENV
       (EventManager.Hit)("Story_RewardClosed")
     end
 
           local delayOpen = function()
-      -- function num : 0_26_2_1 , upvalues : _ENV, tbItem, mapChangeInfo, AfterRewardDisplay
+      -- function num : 0_27_2_1 , upvalues : _ENV, tbItem, mapChangeInfo, AfterRewardDisplay
       (UTILS.OpenReceiveByDisplayItem)(tbItem, mapChangeInfo, AfterRewardDisplay)
     end
 
@@ -1083,7 +1128,7 @@ Personality = {}
 end
 
 AvgData.OnEvent_AvgSTEnd = function(self)
-  -- function num : 0_27 , upvalues : _ENV
+  -- function num : 0_28 , upvalues : _ENV
   if AVG_EDITOR == true then
     self.tbTempStoryIds = {}
     self.tbTempEvIds = {}
@@ -1100,7 +1145,7 @@ AvgData.OnEvent_AvgSTEnd = function(self)
 end
 
 AvgData.LevelEnd = function(self)
-  -- function num : 0_28 , upvalues : _ENV
+  -- function num : 0_29 , upvalues : _ENV
   (PlayerData.Build):DeleteTrialBuild()
   if type((self.curLevel).UnBindEvent) == "function" then
     (self.curLevel):UnBindEvent()
@@ -1109,7 +1154,7 @@ AvgData.LevelEnd = function(self)
 end
 
 AvgData.GetLastestStoryId = function(self)
-  -- function num : 0_29 , upvalues : _ENV
+  -- function num : 0_30 , upvalues : _ENV
   local nMax = 101
   for k,v in pairs(self.tbStoryIds) do
     local curIdx = (self.CFG_Story)[v]
@@ -1127,13 +1172,13 @@ AvgData.GetLastestStoryId = function(self)
 end
 
 AvgData.GetRecentStoryId = function(self, nChapterId)
-  -- function num : 0_30 , upvalues : _ENV
+  -- function num : 0_31 , upvalues : _ENV
   local nStoryId = (self.mapRecentStoryId)[tostring(nChapterId)]
   if nStoryId == nil then
     local tbChapterList = (self.CFG_ChapterStoryNumIds)[nChapterId]
     if tbChapterList ~= nil then
       (table.sort)(tbChapterList, function(a, b)
-    -- function num : 0_30_0
+    -- function num : 0_31_0
     do return a < b end
     -- DECOMPILER ERROR: 1 unprocessed JMP targets
   end
@@ -1157,7 +1202,7 @@ AvgData.GetRecentStoryId = function(self, nChapterId)
 end
 
 AvgData.SetRecentStoryId = function(self, nStoryId)
-  -- function num : 0_31 , upvalues : _ENV, RapidJson, LocalData
+  -- function num : 0_32 , upvalues : _ENV, RapidJson, LocalData
   local cfgData = (ConfigTable.GetData_Story)(nStoryId)
   -- DECOMPILER ERROR at PC10: Confused about usage of register: R3 in 'UnsetPending'
 
@@ -1171,7 +1216,7 @@ AvgData.SetRecentStoryId = function(self, nStoryId)
 end
 
 AvgData.GetRecentChapterId = function(self)
-  -- function num : 0_32 , upvalues : _ENV
+  -- function num : 0_33 , upvalues : _ENV
   local nRecentChapterId = 1
   for k,v in pairs(self.mapRecentStoryId) do
     if nRecentChapterId < tonumber(k) then
@@ -1182,7 +1227,7 @@ AvgData.GetRecentChapterId = function(self)
 end
 
 AvgData.CheckNewStoryRedDot = function(self)
-  -- function num : 0_33 , upvalues : _ENV
+  -- function num : 0_34 , upvalues : _ENV
   local _, data = self:GetChapterCount()
   for k,v in ipairs(data) do
     local bHasNew = false
@@ -1207,7 +1252,7 @@ AvgData.CheckNewStoryRedDot = function(self)
 end
 
 AvgData.CheckNewStory = function(self, nChapterId)
-  -- function num : 0_34 , upvalues : _ENV
+  -- function num : 0_35 , upvalues : _ENV
   local tbNewUnlockStorys = {}
   for k,v in ipairs((self.CFG_ChapterStoryNumIds)[nChapterId]) do
     local config = (ConfigTable.GetData)("Story", v)
@@ -1223,12 +1268,12 @@ AvgData.CheckNewStory = function(self, nChapterId)
 end
 
 AvgData.SetNewLockChapterIndex = function(self, chapterIndex)
-  -- function num : 0_35
+  -- function num : 0_36
   self.nNewLockChapterIndex = chapterIndex
 end
 
 AvgData.GetNewLockChapterIndex = function(self)
-  -- function num : 0_36
+  -- function num : 0_37
   if self.nNewLockChapterIndex == nil then
     self.nNewLockChapterIndex = -1
   end
@@ -1237,8 +1282,13 @@ AvgData.GetNewLockChapterIndex = function(self)
   return tempIndex
 end
 
+AvgData.ChangeActivityAvgState = function(self, IsActivityAvg)
+  -- function num : 0_38
+  self.IsActivityAvg = IsActivityAvg
+end
+
 AvgData.AvgEditorTempData = function(self, sConditionIds, bAdd)
-  -- function num : 0_37 , upvalues : _ENV
+  -- function num : 0_39 , upvalues : _ENV
   if self.tbAvgEditorTempData_Unlocked_sConditionIds == nil then
     self.tbAvgEditorTempData_Unlocked_sConditionIds = {}
   end
@@ -1262,7 +1312,7 @@ AvgData.AvgEditorTempData = function(self, sConditionIds, bAdd)
 end
 
 AvgData.AvgEditorTempIfTrueData = function(self, sData, bAdd)
-  -- function num : 0_38 , upvalues : _ENV
+  -- function num : 0_40 , upvalues : _ENV
   if self.mapAvgEditorTempData_IsTrueData == nil then
     self.mapAvgEditorTempData_IsTrueData = {}
   end
@@ -1301,10 +1351,10 @@ AvgData.AvgEditorTempIfTrueData = function(self, sData, bAdd)
 end
 
 AvgData.CacheEvData = function(self)
-  -- function num : 0_39 , upvalues : _ENV
+  -- function num : 0_41 , upvalues : _ENV
   self.tbEvData = {}
   local forEachLine_Story = function(storConfig)
-    -- function num : 0_39_0 , upvalues : self, _ENV
+    -- function num : 0_41_0 , upvalues : self, _ENV
     local sConditionId = storConfig.ConditionId
     if sConditionId == nil then
       return 

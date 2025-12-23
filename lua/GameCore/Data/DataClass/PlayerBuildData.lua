@@ -620,18 +620,20 @@ tbSecondarySkill = {}
 tbPotentials = {}
 , 
 tbNotes = {}
-, nTowerId = 0}
+, nTowerId = mapTrialData.StarTowerId or 0, bTrial = true}
   local tbCharTrialId = {}
+  local tbCharPotentialCount = {}
   for _,v in ipairs(mapTrialData.Char) do
     (table.insert)((self._mapTrialBuild).tbChar, {nTrialId = v, nTid = 0, nPotentialCount = 0})
+    tbCharPotentialCount[v] = 0
     ;
     (table.insert)(tbCharTrialId, v)
   end
-  -- DECOMPILER ERROR at PC63: Confused about usage of register: R4 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC70: Confused about usage of register: R5 in 'UnsetPending'
 
   ;
   (self._mapTrialBuild).tbDisc = mapTrialData.Disc
-  -- DECOMPILER ERROR at PC66: Confused about usage of register: R4 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC73: Confused about usage of register: R5 in 'UnsetPending'
 
   ;
   (self._mapTrialBuild).tbSecondarySkill = mapTrialData.ActiveSecondaryIds
@@ -640,13 +642,23 @@ tbNotes = {}
     local potentialCfg = (ConfigTable.GetData)("Potential", v.Tid)
     if potentialCfg then
       local nCharId = potentialCfg.CharId
-      -- DECOMPILER ERROR at PC90: Confused about usage of register: R12 in 'UnsetPending'
+      -- DECOMPILER ERROR at PC97: Confused about usage of register: R13 in 'UnsetPending'
 
       if not ((self._mapTrialBuild).tbPotentials)[nCharId] then
         ((self._mapTrialBuild).tbPotentials)[nCharId] = {}
       end
+      if tbCharPotentialCount[nCharId] ~= nil then
+        tbCharPotentialCount[nCharId] = tbCharPotentialCount[nCharId] + v.Level
+      end
       ;
       (table.insert)(((self._mapTrialBuild).tbPotentials)[nCharId], {nPotentialId = v.Tid, nLevel = v.Level})
+    end
+  end
+  for nCharId,nCount in pairs(tbCharPotentialCount) do
+    for _,v in pairs((self._mapTrialBuild).tbChar) do
+      if v.nTrialId == nCharId then
+        v.nPotentialCount = nCount
+      end
     end
   end
   local tbNoteJson = decodeJson(mapTrialData.Note)
@@ -654,7 +666,7 @@ tbNotes = {}
   for _,v in pairs(tbNoteJson) do
     tbNotes[v.Id] = v.Qty
   end
-  -- DECOMPILER ERROR at PC118: Confused about usage of register: R7 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC149: Confused about usage of register: R8 in 'UnsetPending'
 
   ;
   (self._mapTrialBuild).tbNotes = tbNotes
@@ -664,7 +676,7 @@ tbNotes = {}
   (PlayerData.Disc):CreateTrialDisc(mapTrialData.Disc)
   for k,v in pairs((self._mapTrialBuild).tbChar) do
     local mapTrialChar = (PlayerData.Char):GetTrialCharById(v.nTrialId)
-    -- DECOMPILER ERROR at PC148: Confused about usage of register: R13 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC179: Confused about usage of register: R14 in 'UnsetPending'
 
     ;
     (((self._mapTrialBuild).tbChar)[k]).nTid = mapTrialChar ~= nil and mapTrialChar.nId or 0

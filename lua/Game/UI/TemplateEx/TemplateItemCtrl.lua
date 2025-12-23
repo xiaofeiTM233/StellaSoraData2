@@ -126,7 +126,7 @@ TemplateItemCtrl._SetChar = function(self, nCharId)
     (((self._mapNode).imgCharIcon).gameObject):SetActive(true)
     local nCharSkinId = (PlayerData.Char):GetCharSkinId(nCharId)
     local mapCharSkin = (ConfigTable.GetData_CharacterSkin)(nCharSkinId)
-    self:SetPngSprite((self._mapNode).imgCharIcon, mapCharSkin.Icon .. (AllEnum.CharHeadIconSurfix).S)
+    self:SetPngSprite((self._mapNode).imgCharIcon, mapCharSkin.Icon, (AllEnum.CharHeadIconSurfix).S)
   else
     do
       ;

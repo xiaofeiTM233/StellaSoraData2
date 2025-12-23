@@ -497,8 +497,12 @@ List = {}
   if (PlayerData.Mainline).bUseOldMainline then
     (HttpNetHandler.SendMsg)((NetMsgId.Id).mainline_settle_req, mapSendMsg, nil, func_cbFinishSucc)
   else
-    ;
-    (PlayerData.Avg):SendMsg_STORY_DONE(func_cbFinishSucc)
+    if self.bActivityStory then
+      (PlayerData.ActivityAvg):SendMsg_STORY_DONE(func_cbFinishSucc)
+    else
+      ;
+      (PlayerData.Avg):SendMsg_STORY_DONE(func_cbFinishSucc)
+    end
   end
 end
 

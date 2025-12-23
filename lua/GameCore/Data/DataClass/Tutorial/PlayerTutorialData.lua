@@ -203,15 +203,14 @@ PlayerTutorialData.GetCurDicId = function(self)
 end
 
 PlayerTutorialData.RefreshRedDot = function(self, bIsNew)
-  -- function num : 0_12 , upvalues : _ENV, LocalData
-  local bFuncUnlock = (PlayerData.Base):CheckFunctionUnlock((GameEnum.OpenFuncType).TutorialLevel)
-  if not bFuncUnlock then
-    return 
-  end
-  ;
+  -- function num : 0_12 , upvalues : LocalData, _ENV
   (LocalData.SetPlayerLocalData)("Tutorial_IsNew", bIsNew)
   if bIsNew then
-    (RedDotManager.SetValid)(RedDotDefine.Task_Tutorial, nil, true)
+    (RedDotManager.SetValid)(RedDotDefine.TaskNewbie_Tutorial, nil, true)
+    return 
+  end
+  local bFuncUnlock = (PlayerData.Base):CheckFunctionUnlock((GameEnum.OpenFuncType).TutorialLevel)
+  if not bFuncUnlock then
     return 
   end
   local bRedDot = false
@@ -225,7 +224,7 @@ PlayerTutorialData.RefreshRedDot = function(self, bIsNew)
   end
   do
     ;
-    (RedDotManager.SetValid)(RedDotDefine.Task_Tutorial, nil, bRedDot)
+    (RedDotManager.SetValid)(RedDotDefine.TaskNewbie_Tutorial, nil, bRedDot)
   end
 end
 
