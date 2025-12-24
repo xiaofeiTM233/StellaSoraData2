@@ -53,8 +53,6 @@ PlayerBaseData.Init = function(self)
   (EventManager.Add)(EventId.UserEvent_CreateRole, self, self.Event_CreateRole)
   ;
   (EventManager.Add)("Prologue_EventUpload", self, self.PrologueEventUpload)
-  ;
-  (EventManager.Add)("CS2LuaEvent_OnApplicationFocus", self, self.OnCS2LuaEvent_AppFocus)
 end
 
 PlayerBaseData.UnInit = function(self)
@@ -1534,83 +1532,6 @@ PlayerBaseData.UserEventUpload_PC = function(self, eventName)
         (table.insert)(tab, {"role_id", tostring(self._nPlayerId)})
         ;
         (NovaAPI.UserEventUpload)(tmpEventName, tab)
-      end
-    end
-  end
-end
-
-PlayerBaseData.OnCS2LuaEvent_AppFocus = function(self, bFocus)
-  -- function num : 0_97 , upvalues : _ENV, TimerManager
-  if self.bEnergyInfoCached ~= true then
-    return 
-  end
-  if bFocus == true then
-    if self.nCachedTime == nil then
-      return 
-    end
-    local nPassedTime = ((CS.ClientManager).Instance).serverTimeStamp - self.nCachedTime
-    self.nCachedTime = nil
-    if nPassedTime >= 5 then
-      local nTimeRemainForBattery = 0
-      local nEnergyGain = (ConfigTable.GetConfigNumber)("EnergyGain") * 60
-      local nEnergyCircle = (math.floor)(nPassedTime / nEnergyGain)
-      local nCalculatedEnergy = nEnergyCircle + self.nLastEnergy
-      if (ConfigTable.GetConfigNumber)("EnergyMaxLimit") <= nCalculatedEnergy then
-        self._nCurEnergy = (math.max)(self._nCurEnergy, (ConfigTable.GetConfigNumber)("EnergyMaxLimit"))
-        self._nEnergyTime = 0
-        if self._mapEnergyTimer ~= nil then
-          (self._mapEnergyTimer):Cancel(nil)
-        end
-        local nEnergyAdded = nCalculatedEnergy - (ConfigTable.GetConfigNumber)("EnergyMaxLimit")
-        nTimeRemainForBattery = (math.floor)(nPassedTime - nEnergyAdded * nEnergyGain)
-      else
-        do
-          if self._nCurEnergy < nCalculatedEnergy then
-            self._nCurEnergy = nCalculatedEnergy
-            local nNextEnergyTime = nEnergyGain - nPassedTime % nEnergyGain
-            self._nEnergyTime = nNextEnergyTime + ((CS.ClientManager).Instance).serverTimeStamp
-            if self._mapEnergyTimer ~= nil then
-              (self._mapEnergyTimer):Cancel(nil)
-            end
-            self._mapEnergyTimer = (TimerManager.Add)(1, nNextEnergyTime, self, self.HandleEnergyTimer, true, true, false)
-          end
-          do
-            ;
-            (EventManager.Hit)(EventId.UpdateEnergy)
-            nPassedTime = nTimeRemainForBattery
-            local nEnergyBatteryGain = (ConfigTable.GetConfigNumber)("EnergyBatteryGain") * 60
-            local nEnergyBatteryCircle = (math.floor)(nPassedTime / nEnergyBatteryGain)
-            local nCalculatedEnergyBattery = nEnergyBatteryCircle + self.nLastEnergyBattery
-            if (ConfigTable.GetConfigNumber)("EnergyBatteryMax") <= nCalculatedEnergyBattery then
-              self._nCurEnergyBattery = (math.max)(self._nCurEnergyBattery, (ConfigTable.GetConfigNumber)("EnergyBatteryMax"))
-              self._nEnergyBatteryTime = 0
-              if self._mapEnergyBatteryTimer ~= nil then
-                (self._mapEnergyBatteryTimer):Cancel(nil)
-              end
-            else
-              if self._nCurEnergyBattery < nCalculatedEnergyBattery then
-                self._nCurEnergyBattery = nCalculatedEnergyBattery
-                local nNextEnergyBatteryTime = nEnergyBatteryGain - nPassedTime % nEnergyBatteryGain
-                self._nEnergyBatteryTime = nNextEnergyBatteryTime + ((CS.ClientManager).Instance).serverTimeStamp
-                if self._mapEnergyBatteryTimer ~= nil then
-                  (self._mapEnergyBatteryTimer):Cancel(nil)
-                end
-                self._mapEnergyBatteryTimer = (TimerManager.Add)(1, nNextEnergyBatteryTime, self, self.HandleEnergyBatteryTimer, true, true, false)
-              end
-            end
-            do
-              do
-                ;
-                (EventManager.Hit)(EventId.UpdateEnergyBattery)
-                printLog("Lua PlayerBaseData OnCS2LuaEvent_AppFocus, Get APP Focus, curEnergy: " .. tostring(self._nCurEnergy) .. ", curEnergyBattery: " .. tostring(self._nCurEnergyBattery))
-                self.nCachedTime = ((CS.ClientManager).Instance).serverTimeStamp
-                self.nLastEnergy = self._nCurEnergy
-                self.nLastEnergyBattery = self._nCurEnergyBattery
-                printLog("Lua PlayerBaseData OnCS2LuaEvent_AppFocus, Lose APP Focus, nCachedTime: " .. tostring(self.nCachedTime) .. ", nLastEnergy: " .. tostring(self.nLastEnergy) .. ", nLastEnergyBattery: " .. tostring(self.nLastEnergyBattery))
-              end
-            end
-          end
-        end
       end
     end
   end

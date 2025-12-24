@@ -80,18 +80,26 @@ ActivityDataBase.CheckActShow = function(self)
   end
 end
 
-ActivityDataBase.GetPlayState = function(self)
+ActivityDataBase.CheckHideFromActList = function(self)
   -- function num : 0_9
+  if self.actCfg ~= nil then
+    return (self.actCfg).HideFromActivityList
+  end
+  return true
+end
+
+ActivityDataBase.GetPlayState = function(self)
+  -- function num : 0_10
   return self.bPlay
 end
 
 ActivityDataBase.RefreshPlayState = function(self)
-  -- function num : 0_10
+  -- function num : 0_11
   self.bPlay = self:CheckActPlay()
 end
 
 ActivityDataBase.CheckActPlay = function(self)
-  -- function num : 0_11 , upvalues : _ENV
+  -- function num : 0_12 , upvalues : _ENV
   if (self.actCfg).PlayCond == (GameEnum.activityPreLimit).WorldClass then
     local nCurWorldClass = (PlayerData.Base):GetWorldClass()
     local nNeedWorldClass = tonumber((self.actCfg).PlayCondParams)
@@ -117,7 +125,7 @@ ActivityDataBase.CheckActPlay = function(self)
 end
 
 ActivityDataBase.CheckActJumpCond = function(self, bShowTips)
-  -- function num : 0_12 , upvalues : _ENV
+  -- function num : 0_13 , upvalues : _ENV
   local bPlayCond = true
   local sTips = ""
   if (self.actCfg).PlayCond == (GameEnum.activityPreLimit).WorldClass then
@@ -153,27 +161,27 @@ ActivityDataBase.CheckActJumpCond = function(self, bShowTips)
 end
 
 ActivityDataBase.CheckRewardAllReceive = function(self)
-  -- function num : 0_13
+  -- function num : 0_14
   return false
 end
 
 ActivityDataBase.GetActivityRedDot = function(self)
-  -- function num : 0_14
+  -- function num : 0_15
   return self.bRedDot
 end
 
 ActivityDataBase.GetActEndTime = function(self)
-  -- function num : 0_15
+  -- function num : 0_16
   return self.nEndTime
 end
 
 ActivityDataBase.GetActSortId = function(self)
-  -- function num : 0_16
+  -- function num : 0_17
   return (self.actCfg).SortId
 end
 
 ActivityDataBase.CheckPopUp = function(self)
-  -- function num : 0_17 , upvalues : LocalData, _ENV
+  -- function num : 0_18 , upvalues : LocalData, _ENV
   local localData = (LocalData.GetPlayerLocalData)("Act_PopUp_DontShow" .. self.nActId)
   if localData then
     return false
@@ -182,28 +190,28 @@ ActivityDataBase.CheckPopUp = function(self)
 end
 
 ActivityDataBase.CheckShowBanner = function(self)
-  -- function num : 0_18
+  -- function num : 0_19
   do return not self:CheckActPlay() or ((self.actCfg).BannerRes ~= "" and self.bBanner == false) end
   -- DECOMPILER ERROR: 2 unprocessed JMP targets
 end
 
 ActivityDataBase.GetBannerPng = function(self)
-  -- function num : 0_19
+  -- function num : 0_20
   return (self.actCfg).BannerRes
 end
 
 ActivityDataBase.RefreshRedDot = function(self)
-  -- function num : 0_20
+  -- function num : 0_21
 end
 
 ActivityDataBase.RefreshStateData = function(self, bRedDot, bBanner)
-  -- function num : 0_21
+  -- function num : 0_22
   self.bRedDot = bRedDot
   self.bBanner = bBanner
 end
 
 ActivityDataBase.UpdateStatus = function(self)
-  -- function num : 0_22
+  -- function num : 0_23
 end
 
 return ActivityDataBase

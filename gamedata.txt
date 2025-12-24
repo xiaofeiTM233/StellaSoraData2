@@ -8,6 +8,10 @@ bin/ActivityLevelsFloor.bytes
 bin/ActivityLevelsLevel.bytes
 bin/ActivityShop.bytes
 bin/ActivityShopControl.bytes
+bin/ActivityStory.bytes
+bin/ActivityStoryChapter.bytes
+bin/ActivityStoryCondition.bytes
+bin/ActivityStoryEvidence.bytes
 bin/ActivityTask.bytes
 bin/ActivityTaskControl.bytes
 bin/ActivityTaskGroup.bytes
@@ -22,8 +26,12 @@ bin/AgentSpecialPerformance.bytes
 bin/AgentTab.bytes
 bin/AI.bytes
 bin/AreaEffect.bytes
+bin/AssistAttribute.bytes
+bin/AssistQuest.bytes
+bin/AssistQuestGroup.bytes
 bin/Attribute.bytes
 bin/AttributeLimit.bytes
+bin/AttributeSetLimit.bytes
 bin/Banner.bytes
 bin/BattlePass.bytes
 bin/BattlePassLevel.bytes
@@ -269,6 +277,7 @@ bin/StarTowerBookFateCard.bytes
 bin/StarTowerBookFateCardBundle.bytes
 bin/StarTowerBookFateCardQuest.bytes
 bin/StarTowerBookPotentialReward.bytes
+bin/StarTowerBuild.bytes
 bin/StarTowerBuildRank.bytes
 bin/StarTowerCombatEvent.bytes
 bin/StarTowerCombo.bytes
@@ -335,13 +344,10 @@ bin/TrapAttribute.bytes
 bin/TravelerDuelBoss.bytes
 bin/TravelerDuelBossLevel.bytes
 bin/TravelerDuelChallengeAffix.bytes
+bin/TravelerDuelChallengeControl.bytes
 bin/TravelerDuelChallengeDifficulty.bytes
 bin/TravelerDuelChallengeQuest.bytes
-bin/TravelerDuelChallengeRankReward.bytes
-bin/TravelerDuelChallengeSeason.bytes
 bin/TravelerDuelFloor.bytes
-bin/TravelerDuelLevel.bytes
-bin/TravelerDuelQuest.bytes
 bin/TrialBuild.bytes
 bin/TrialCharacter.bytes
 bin/TrialControl.bytes
@@ -370,6 +376,8 @@ bin/WeekBossAffix.bytes
 bin/WeekBossFloor.bytes
 bin/WeekBossLevel.bytes
 bin/WeekBossType.bytes
+bin/WeeklyQuest.bytes
+bin/WeeklyQuestActive.bytes
 bin/WeightParameter.bytes
 bin/Word.bytes
 bin/WorldClass.bytes

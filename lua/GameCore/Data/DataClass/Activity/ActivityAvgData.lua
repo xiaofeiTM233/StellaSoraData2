@@ -903,33 +903,24 @@ ActivityAvgData.RefreshAvgRedDot = function(self)
         if tbActGroupRedDot[nActGroupId] == nil then
           tbActGroupRedDot[nActGroupId] = false
         end
-        local isUnlock = self:IsUnlock(storyId)
+        local cfg = (ConfigTable.GetData)("ActivityStory", storyId)
+        local isUnlock = self:IsUnlock(cfg.ConditionId)
         local isClicked = (LocalData.GetPlayerLocalData)("Act_Story_New" .. actId .. storyId) == true
         local isNew = self:IsStoryReaded(storyId) == false
         local curTime = ((CS.ClientManager).Instance).serverTimeStamp
         local _ActAvg = (self.tbActAvgList)[actId]
         local isOpen = false
-        if curTime >= _ActAvg.nEndTime or _ActAvg.nOpenTime >= curTime then
-          isOpen = _ActAvg == nil
-          local actGroupData = (PlayerData.Activity):GetActivityGroupDataById(nActGroupId)
-          local bActGroupUnlock = actGroupData:IsUnlock()
-          do
-            local bNew = isUnlock and ((isClicked or isOpen) and bActGroupUnlock)
-            if bNew == true then
-              tbActGroupRedDot[nActGroupId] = true
-            end
-            ;
-            (RedDotManager.SetValid)(RedDotDefine.Activity_GroupNew_Avg_Group, {nActGroupId, actId, storyId}, bNew)
-            -- DECOMPILER ERROR at PC96: LeaveBlock: unexpected jumping out IF_THEN_STMT
-
-            -- DECOMPILER ERROR at PC96: LeaveBlock: unexpected jumping out IF_STMT
-
-            -- DECOMPILER ERROR at PC96: LeaveBlock: unexpected jumping out IF_THEN_STMT
-
-            -- DECOMPILER ERROR at PC96: LeaveBlock: unexpected jumping out IF_STMT
-
-          end
+        if _ActAvg ~= nil then
+          isOpen = self:IsOpen(cfg.StoryId)
         end
+        local actGroupData = (PlayerData.Activity):GetActivityGroupDataById(nActGroupId)
+        local bActGroupUnlock = actGroupData:IsUnlock()
+        local bNew = isUnlock and ((isClicked or isOpen) and bActGroupUnlock)
+        if bNew == true then
+          tbActGroupRedDot[nActGroupId] = true
+        end
+        ;
+        (RedDotManager.SetValid)(RedDotDefine.Activity_GroupNew_Avg_Group, {nActGroupId, actId, storyId}, bNew)
       end
     end
   end
@@ -938,7 +929,7 @@ ActivityAvgData.RefreshAvgRedDot = function(self)
   end
   ;
   (EventManager.Hit)("RefreshActivityGroupRedDot")
-  -- DECOMPILER ERROR: 11 unprocessed JMP targets
+  -- DECOMPILER ERROR: 9 unprocessed JMP targets
 end
 
 ActivityAvgData.EnterAvg = function(self, avgId, actId)

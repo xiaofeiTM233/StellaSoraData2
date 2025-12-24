@@ -1437,9 +1437,9 @@ end
 
 PlayerQuestData.CacheWeeklyActiveIds = function(self, tbIds)
   -- function num : 0_46 , upvalues : _ENV
-  self.curTime = ((CS.ClientManager).Instance).serverTimeStamp
+  self.nextWeekRefreshTime = GetNextWeekRefreshTime()
   for _,v in ipairs(tbIds) do
-    -- DECOMPILER ERROR at PC11: Confused about usage of register: R7 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC9: Confused about usage of register: R7 in 'UnsetPending'
 
     ((self.tbWeeklyActives)[v]).bReward = true
   end
@@ -1553,19 +1553,18 @@ PlayerQuestData.HandleExpire = function(self)
         for _,v in pairs(self.tbDailyActives) do
           v.bReward = false
         end
-        if not self:IsSameWeek(self.curTime, curTime, 4) then
+        if self.nextWeekRefreshTime < curTime then
           for _,v in pairs(self.tbWeeklyActives) do
             v.bReward = false
           end
+          self.nextWeekRefreshTime = GetNextWeekRefreshTime()
         end
-        do
-          self.curTime = curTime
-          self:UpdateDailyQuestRedDot()
-          self:UpdateWeeklyQuestRedDot()
-          self:UpdateBattlePassRedDot()
-          self:UpdateVampireQuestRedDot()
-          self:UpdateTeamFormationRedDot()
-        end
+        self.curTime = curTime
+        self:UpdateDailyQuestRedDot()
+        self:UpdateWeeklyQuestRedDot()
+        self:UpdateBattlePassRedDot()
+        self:UpdateVampireQuestRedDot()
+        self:UpdateTeamFormationRedDot()
       end
     end
   end
@@ -2074,31 +2073,6 @@ PlayerQuestData.ClearVampireSeasonQuest = function(self, nCurSeason)
       end
     end
   end
-end
-
-local GetCurrentYearInfo = function(time_s)
-  -- function num : 0_69 , upvalues : _ENV
-  local day = (os.date)("%d", time_s)
-  local weekIndex = (os.date)("%W", time_s)
-  local month = (os.date)("%m", time_s)
-  local yearNum = (os.date)("%Y", time_s)
-  return {year = yearNum, month = month, weekIdx = weekIndex, day = day}
-end
-
-PlayerQuestData.IsSameWeek = function(self, stampA, stampB, resetHour)
-  -- function num : 0_70 , upvalues : _ENV, GetCurrentYearInfo
-  if not resetHour then
-    resetHour = 5
-  end
-  local resetSeconds = resetHour * 3600
-  stampA = stampA - resetSeconds
-  stampB = stampB - resetSeconds
-  stampA = (math.max)(stampA, 0)
-  stampB = (math.max)(stampB, 0)
-  local dateA = GetCurrentYearInfo(stampA)
-  local dateB = GetCurrentYearInfo(stampB)
-  do return dateA.weekIdx == dateB.weekIdx and dateA.year == dateB.year end
-  -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
 return PlayerQuestData

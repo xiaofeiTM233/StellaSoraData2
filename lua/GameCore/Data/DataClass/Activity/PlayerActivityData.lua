@@ -377,8 +377,8 @@ PlayerActivityData.RefreshActivityRedDot = function(self)
   -- function num : 0_10 , upvalues : _ENV, LocalData
   local bHasNewRedDot = false
   for _,v in pairs(self.tbAllActivity) do
-    if v:CheckActShow() then
-      (RedDotManager.SetValid)(RedDotDefine.Activity_Tab, v:GetActId(), v:GetActivityRedDot())
+    if v:CheckActShow() and v:GetActivityRedDot() then
+      (RedDotManager.SetValid)(RedDotDefine.Activity_Tab, v:GetActId(), not v:CheckHideFromActList())
       if type(v.RefreshRedDot) == "function" then
         v:RefreshRedDot()
       end
@@ -386,7 +386,7 @@ PlayerActivityData.RefreshActivityRedDot = function(self)
       if (v:GetActCfgData()).ActivityThemeType > 0 or self:IsActivityInActivityGroup(v:GetActId()) then
         bInActGroup = true
       end
-      if not bInActGroup and v:CheckActShow() then
+      if not bInActGroup and v:CheckActShow() and not v:CheckHideFromActList() then
         local bTabRedDot = (RedDotManager.GetValid)(RedDotDefine.Activity_Tab, v:GetActId())
         local sData = (LocalData.GetPlayerLocalData)("Activity_Tab_New_" .. v:GetActId())
         local nValue = tonumber(sData == nil and "0" or sData)
@@ -397,9 +397,9 @@ PlayerActivityData.RefreshActivityRedDot = function(self)
         ;
         (RedDotManager.SetValid)(RedDotDefine.Activity_New_Tab, v:GetActId(), bNewRedDot)
       end
-      -- DECOMPILER ERROR at PC82: LeaveBlock: unexpected jumping out IF_THEN_STMT
+      -- DECOMPILER ERROR at PC91: LeaveBlock: unexpected jumping out IF_THEN_STMT
 
-      -- DECOMPILER ERROR at PC82: LeaveBlock: unexpected jumping out IF_STMT
+      -- DECOMPILER ERROR at PC91: LeaveBlock: unexpected jumping out IF_STMT
 
     end
   end
@@ -424,7 +424,7 @@ PlayerActivityData.GetSortedActList = function(self)
   -- function num : 0_12 , upvalues : _ENV
   local tbActList = {}
   for k,v in pairs(self.tbAllActivity) do
-    if v:CheckActShow() then
+    if v:CheckActShow() and not v:CheckHideFromActList() then
       local bInActGroup = false
       if (v:GetActCfgData()).ActivityThemeType > 0 or self:IsActivityInActivityGroup(v:GetActId()) then
         bInActGroup = true
