@@ -781,9 +781,20 @@ BaseCtrl._AutoFitIcon = function(self, imgObj, sPath, sSurfix)
   if mapAutoFix == nil then
     return sPath .. sSurfix
   end
+  local nGlobalScale = 0
+  local v3GlobalScale = (imgObj.transform).lossyScale
+  if v3GlobalScale.x < v3GlobalScale.y then
+    nGlobalScale = v3GlobalScale.x
+  else
+    nGlobalScale = v3GlobalScale.y
+  end
+  nGlobalScale = nGlobalScale / Settings.CANVAS_SCALE
+  if nGlobalScale <= 0 then
+    nGlobalScale = 1
+  end
   local rectTransform = (imgObj.gameObject):GetComponent("RectTransform")
-  local nTargetWidth = (rectTransform.rect).width
-  local nTargetHeight = (rectTransform.rect).height
+  local nTargetWidth = (rectTransform.rect).width * nGlobalScale
+  local nTargetHeight = (rectTransform.rect).height * nGlobalScale
   local sAutoFit, nRange = nil, nil
   for k,v in pairs(mapAutoFix) do
     local nMultiple_W = (math.abs)(nTargetWidth - v.w) / v.w
@@ -800,8 +811,14 @@ BaseCtrl._AutoFitIcon = function(self, imgObj, sPath, sSurfix)
     end
   end
   if sAutoFit == nil then
+    if (NovaAPI.IsEditorPlatform)() == true then
+      printLog("【抽卡角色头像 icon 自适应】未自适应")
+    end
     return sPath .. sSurfix
   else
+    if (NovaAPI.IsEditorPlatform)() == true then
+      printLog((string.format)("【抽卡角色头像 icon 自适应】全局缩放：x%f，y%f，最终取%f，应用处算上全局缩放后的尺寸：w%f，h%f，自适应至后缀：%s，宽%f，高%f。", v3GlobalScale.x, v3GlobalScale.y, nGlobalScale, nTargetWidth, nTargetHeight, sAutoFit, (mapAutoFix[sAutoFit]).w, (mapAutoFix[sAutoFit]).h))
+    end
     local _sPath = sPath .. sAutoFit
     local bExist = (GameResourceLoader.ExistsAsset)(sRootPath .. _sPath .. ".png")
     if bExist == false then
