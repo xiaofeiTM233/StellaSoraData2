@@ -205,7 +205,7 @@ return {
 , 
 {id = "avg3_107", name = "두리", name_bg_color = "#0ABEC5"}
 , 
-{id = "avg3_108", name = "크손", name_bg_color = "#0ABEC5"}
+{id = "avg3_108", name = "로손", name_bg_color = "#0ABEC5"}
 , 
 {id = "avg3_109", name = "챠이 할아버지", name_bg_color = "#0ABEC5"}
 , 
@@ -922,6 +922,20 @@ return {
 {id = "avg3_1263", name = "원거리 풀B", name_bg_color = "#0ABEC5", reuse = "avg2_958"}
 , 
 {id = "avg3_1264", name = "미스티A", name_bg_color = "#c27fe9", reuse = "avg1_135"}
+, 
+{id = "avg3_1265", name = "피렌A", name_bg_color = "#8db947", reuse = "avg1_110"}
+, 
+{id = "avg3_1266", name = "성휘 대학 여학생A", name_bg_color = "#0ABEC5", reuse = "avg3_178"}
+, 
+{id = "avg3_1267", name = "성휘 대학 여학생B", name_bg_color = "#0ABEC5", reuse = "avg3_178"}
+, 
+{id = "avg3_1268", name = "원거리 풀A", name_bg_color = "#0ABEC5", reuse = "avg2_957"}
+, 
+{id = "avg3_1269", name = "원거리 풀B", name_bg_color = "#0ABEC5", reuse = "avg2_957"}
+, 
+{id = "avg3_1270", name = "달리시아A", name_bg_color = "#0ABEC5", reuse = "avg2_985"}
+, 
+{id = "avg3_1271", name = "달리시아B", name_bg_color = "#0ABEC5", reuse = "avg2_985"}
 , 
 {id = "avg4_100", name = "빛나는 라루", name_bg_color = "#0ABEC5"}
 , 

@@ -21,7 +21,7 @@ return {
 , 
 {id = 117, icon = "Icon/Head/head_11701_S", name = "징린", landmark = "필리에 아스완가 8번지", signature = "용경루에 오신 것을 환영합니다, 예약은 미리 전화 주세요"}
 , 
-{id = 118, icon = "Icon/Head/head_11801_S", name = "크루니스", landmark = "아모르의 ‘그’ 진료소", signature = "안녕"}
+{id = 118, icon = "Icon/Head/head_11801_S", name = "크루니스", landmark = "필리에의 ‘진료소’ ", signature = "안녕"}
 , 
 {id = 119, icon = "Icon/Head/head_11901_S", name = "나노하", landmark = "가장 가까운 타니카제 가사 대행 서비스 센터에 접수하세요", signature = "타니카제 가사 대행에서 최고의 서비스를 제공합니다"}
 , 
@@ -69,19 +69,23 @@ return {
 , 
 {id = 999, icon = "Icon/Head/head_group_S", name = "일은 끝이 없다", landmark = "", signature = "지금은 근무 시간, 핸드폰 보지 마세요"}
 , 
-{id = 998, icon = "Icon/Head/head_group_S", name = "==PLAYER_NAME==", landmark = "", signature = ""}
+{id = 998, icon = "Icon/Head/head_9100_S", name = "==PLAYER_NAME==", landmark = "럭키 오아시스호", signature = "마왕 협정 인재 파견 컴퍼니 대표집행관"}
 , 
 {id = 997, icon = "Icon/Head/head_group_S", name = "오아시스호 검은방", landmark = "", signature = "여기서 하는 말은 모두가 잊지 않을 거야"}
 , 
 {id = 996, icon = "Icon/Head/head_group_S", name = "오늘 치킨 반값", landmark = "", signature = "없음"}
 , 
-{id = 995, icon = "Icon/Head/head_anonymity_S", name = "0", landmark = "", signature = ""}
+{id = 995, icon = "Icon/Head/head_anonymity_S", name = "", landmark = "", signature = ""}
 , 
 {id = 994, icon = "Icon/Head/head_group_S", name = "타니카제 가사 대행-필리에 제1분대", landmark = "", signature = "차를 내어 손님을 맞이하고, 칼로 주군을 호위한다"}
 , 
 {id = 993, icon = "Icon/Head/head_group_S", name = "하나사키 여단 재건 토론회", landmark = "", signature = "성해를 무찌르고, 의뢰를 완수하자!"}
 , 
 {id = 992, icon = "Icon/Head/head_group_S", name = "오늘 배달했나요?", landmark = "", signature = "수령증에 꼭 서명해주세요!"}
+, 
+{id = 991, icon = "Icon/Head/head_group_S", name = "논밭 샤로", landmark = "", signature = "0"}
+, 
+{id = 990, icon = "Icon/Head/head_group_S", name = "익명", landmark = "", signature = "0"}
 , 
 {id = 9152, icon = "Icon/Head/head_npc15201_S", name = "베스티나", landmark = "아모르 심상점 본사", signature = "정규직 전환 절차가 시작되었습니다~"}
 , 

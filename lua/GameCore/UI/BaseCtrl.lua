@@ -828,6 +828,9 @@ BaseCtrl._AutoFitIcon = function(self, imgObj, sPath, sSurfix)
       _sPath = sPath .. sSurfix
       ;
       (NovaAPI.SetImageColor)(imgObj, Color.cyan)
+    else
+      ;
+      (NovaAPI.SetImageColor)(imgObj, Color.white)
     end
     return _sPath
   end
