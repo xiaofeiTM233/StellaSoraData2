@@ -207,10 +207,12 @@ PlayerFriendData.DeleteRequest = function(self, nUId)
     if nUId == mapFriendInfo.nUId then
       (table.remove)(self._tbFriendRequest, nIndex)
       self._nFriendRequestNum = self._nFriendRequestNum - 1
-      return 
+      break
     end
   end
-  self:UpdateFriendApplyRedDot()
+  do
+    self:UpdateFriendApplyRedDot()
+  end
 end
 
 PlayerFriendData.UpdateFriendState = function(self, mapFriendState)

@@ -37,7 +37,7 @@ if RUNNING_ACTOR2D_EDITOR ~= true then
   (table.remove)(AvgPanel._tbDefine, 1)
 end
 AvgPanel.Awake = function(self)
-  -- function num : 0_0 , upvalues : TimerManager, _ENV
+  -- function num : 0_0 , upvalues : TimerManager, _ENV, AvgData
   self:EnableGamepad()
   ;
   (TimerManager.ForceFrameUpdate)(true)
@@ -94,6 +94,7 @@ AvgPanel.Awake = function(self)
     (EventManager.Add)(EventId.AvgSpeedUp, self, self.OnEvent_AvgSpeedUp)
     self.sExecutingCMDName = nil
     self.nBEIndex = 0
+    AvgData:MarkSkip(false)
     -- DECOMPILER ERROR: 6 unprocessed JMP targets
   end
 end
@@ -876,12 +877,18 @@ AvgPanel.FindCmdProcFunc = function(self, sCtrlName, sCmd)
 end
 
 AvgPanel.GetAvgCharName = function(self, sAvgCharId)
-  -- function num : 0_8
-  local tbChar = (self.tbAvgCharacter)[sAvgCharId]
-  if tbChar == nil then
-    return sAvgCharId, "#0ABEC5"
-  else
-    return tbChar.name or sAvgCharId, tbChar.color or "#0ABEC5"
+  -- function num : 0_8 , upvalues : _ENV
+  do
+    if sAvgCharId == "avg3_100" or sAvgCharId == "avg3_101" then
+      local sName = (PlayerData.Base):GetPlayerNickName()
+      return sName, "#0ABEC5"
+    end
+    local tbChar = (self.tbAvgCharacter)[sAvgCharId]
+    if tbChar == nil then
+      return sAvgCharId, "#0ABEC5"
+    else
+      return tbChar.name or sAvgCharId, tbChar.color or "#0ABEC5"
+    end
   end
 end
 
@@ -961,7 +968,11 @@ AvgPanel.GetNextProcFunc = function(self, nextIndex)
 end
 
 AvgPanel.OnEvent_AvgSkipCheck = function(self)
-  -- function num : 0_14 , upvalues : _ENV, WwiseAudioMgr
+  -- function num : 0_14 , upvalues : AvgData, _ENV, WwiseAudioMgr
+  if self.nCurIndex <= 1 then
+    return 
+  end
+  AvgData:MarkSkip(true)
   if self.timerWaiting ~= nil then
     (self.timerWaiting):Pause(true)
   end

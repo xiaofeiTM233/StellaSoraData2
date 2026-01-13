@@ -71,9 +71,21 @@ local GetMonthAndDays = function()
       nMonth = nMonth - 1
     end
   end
-  local nNextMonthTime = (os.time)({year = tostring(nYear), month = nMonth + 1, day = 0})
-  local nDays = tonumber((os.date)("!%d", nNextMonthTime))
-  return nYear, nMonth, nDays
+  local nDays = 31
+  if nMonth == 12 then
+    local t1 = (os.time)({year = nYear, month = 12, day = 1})
+    local t2 = (os.time)({year = nYear + 1, month = 1, day = 1})
+    nDays = (t2 - t1) / 86400
+  else
+    do
+      local t1 = (os.time)({year = nYear, month = nMonth, day = 1})
+      do
+        local t2 = (os.time)({year = nYear, month = nMonth + 1, day = 1})
+        nDays = (t2 - t1) / 86400
+        return nYear, nMonth, nDays
+      end
+    end
+  end
 end
 
 local GetDailyCheckInIndex = function()

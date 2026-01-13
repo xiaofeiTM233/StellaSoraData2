@@ -76,7 +76,7 @@ BaseCtrl._Exit = function(self)
       -- DECOMPILER ERROR at PC22: Confused about usage of register: R6 in 'UnsetPending'
 
       if type(obj) ~= "table" then
-        (self._mapNode)[sKey] = 0
+        (self._mapNode)[sKey] = nil
       else
       end
       if type(obj.__cname) == "string" then
@@ -84,7 +84,7 @@ BaseCtrl._Exit = function(self)
           -- DECOMPILER ERROR at PC41: Confused about usage of register: R11 in 'UnsetPending'
 
           if type(_obj) ~= "table" then
-            ((self._mapNode)[sKey])[i] = 0
+            ((self._mapNode)[sKey])[i] = nil
           end
         end
         do

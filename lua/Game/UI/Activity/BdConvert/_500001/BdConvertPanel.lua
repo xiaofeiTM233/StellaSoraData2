@@ -7,6 +7,7 @@ BdConvertPanel._tbDefine = {
 }
 BdConvertPanel.Awake = function(self)
   -- function num : 0_0
+  self.nTab = nil
 end
 
 BdConvertPanel.OnEnable = function(self)

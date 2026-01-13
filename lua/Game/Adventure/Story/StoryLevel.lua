@@ -58,6 +58,12 @@ end
 StoryLevel.RefreshCharDamageData = function(self)
   -- function num : 0_1 , upvalues : _ENV
   self.tbCharDamage = (UTILS.GetCharDamageResult)(self.tbCharId)
+  for k,v in pairs(self.tbCharDamage) do
+    local mapSkin = (ConfigTable.GetData_CharacterSkin)((PlayerData.Char):GetCharSkinId(v.nCharId))
+    if mapSkin ~= nil then
+      v.nSkinId = mapSkin.Id
+    end
+  end
 end
 
 StoryLevel.OnEvent_LoadLevelRefresh = function(self)

@@ -294,8 +294,16 @@ end
 
 TrialLevel.OnEvent_QuestComplete = function(self)
   -- function num : 0_15 , upvalues : _ENV
+  local bOpen = false
+  local actData = (PlayerData.Activity):GetActivityDataById((self.parent).nActId)
+  if actData then
+    bOpen = actData:CheckActivityOpen()
+  end
+  if not bOpen then
+    (EventManager.Hit)(EventId.OpenMessageBox, {nType = (AllEnum.MessageBox).Alert, sContent = (ConfigTable.GetUIText)("Activity_Invalid_Tip_3")})
+  end
   local bReceived = (PlayerData.Trial):CheckGroupReceived()
-  if not bReceived then
+  if not bReceived and bOpen then
     (PanelManager.InputDisable)()
     local callback = function(mapChangeInfo)
     -- function num : 0_15_0 , upvalues : _ENV, self

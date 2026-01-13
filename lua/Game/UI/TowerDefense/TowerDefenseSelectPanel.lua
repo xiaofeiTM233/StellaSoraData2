@@ -6,6 +6,8 @@ TowerDefenseSelectPanel._tbDefine = {
 }
 TowerDefenseSelectPanel.Awake = function(self)
   -- function num : 0_0
+  self.nlevelId = 0
+  self.nSelectedTabIndex = 0
 end
 
 TowerDefenseSelectPanel.OnEnable = function(self)

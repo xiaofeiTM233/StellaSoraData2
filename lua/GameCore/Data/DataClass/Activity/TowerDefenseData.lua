@@ -654,16 +654,27 @@ TowerDefenseData.RequestFinishLevel = function(self, levelId, bResult, nHp, cb)
   end
 end
 
+TowerDefenseData.RequestFinishLevelFailed = function(self, levelId, nHp, cb)
+  -- function num : 0_40
+  local levelData = self:GetLevelData(levelId)
+  local mapMsg = {LevelId = levelId, Star = 0}
+  if cb ~= nil then
+    cb(levelData.nStar, levelData.nStar)
+  end
+  local result = {action = 5, nActId = self.nActId, nlevelId = levelId, nStar = 0, nHp = 0, bIsFirstPass = false}
+  self:EventUpload(result)
+end
+
 TowerDefenseData.SkipLevel = function(self, levelId, characterList, itemId, cb)
-  -- function num : 0_40 , upvalues : _ENV
+  -- function num : 0_41 , upvalues : _ENV
   local mapMsg = {Level = levelId, Characters = characterList, ItemId = itemId}
   local callback = function()
-    -- function num : 0_40_0 , upvalues : self, levelId, _ENV, cb
+    -- function num : 0_41_0 , upvalues : self, levelId, _ENV, cb
     self:CreateTempData(levelId, true)
     local mapMsg = {LevelId = levelId, Star = 3}
     ;
     (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_tower_defense_level_settle_req, mapMsg, nil, function(_, mapMsgData)
-      -- function num : 0_40_0_0 , upvalues : self, levelId, _ENV, cb
+      -- function num : 0_41_0_0 , upvalues : self, levelId, _ENV, cb
       self:UpdateLevelData({Id = levelId, Star = 3})
       local mapReward = (PlayerData.Item):ProcessRewardChangeInfo(mapMsgData)
       local tbItem = {}
@@ -690,22 +701,22 @@ TowerDefenseData.SkipLevel = function(self, levelId, characterList, itemId, cb)
 end
 
 TowerDefenseData.CreateTempData = function(self, nLevelId, bResult)
-  -- function num : 0_41
+  -- function num : 0_42
   self.tempData = {nLevelId = nLevelId, bResult = bResult}
 end
 
 TowerDefenseData.GetTempData = function(self)
-  -- function num : 0_42
+  -- function num : 0_43
   return self.tempData
 end
 
 TowerDefenseData.ClearTempData = function(self)
-  -- function num : 0_43
+  -- function num : 0_44
   self.tempData = nil
 end
 
 TowerDefenseData.EventUpload = function(self, result)
-  -- function num : 0_44 , upvalues : _ENV
+  -- function num : 0_45 , upvalues : _ENV
   local tabUpLevel = {}
   ;
   (table.insert)(tabUpLevel, {"role_id", tostring((PlayerData.Base)._nPlayerId)})
@@ -726,10 +737,10 @@ TowerDefenseData.EventUpload = function(self, result)
 end
 
 TowerDefenseData.RequestReadAVG = function(self, storyId)
-  -- function num : 0_45 , upvalues : _ENV
+  -- function num : 0_46 , upvalues : _ENV
   local mapMsg = {Value = storyId}
   local cb = function(_, mapMsgData)
-    -- function num : 0_45_0 , upvalues : storyId, self, _ENV
+    -- function num : 0_46_0 , upvalues : storyId, self, _ENV
     local data = {nId = storyId, bIsRead = true}
     self:UpdateStoryData(data)
     local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
@@ -743,10 +754,10 @@ TowerDefenseData.RequestReadAVG = function(self, storyId)
 end
 
 TowerDefenseData.RequestReceiveQuest = function(self, nGroupId, nQuestId)
-  -- function num : 0_46 , upvalues : _ENV
+  -- function num : 0_47 , upvalues : _ENV
   local mapMsg = {ActivityId = self.nActId, GroupId = nQuestId == 0 and nGroupId or 0, QuestId = nQuestId}
   local cb = function(_, mapMsgData)
-    -- function num : 0_46_0 , upvalues : nQuestId, self, nGroupId, _ENV
+    -- function num : 0_47_0 , upvalues : nQuestId, self, nGroupId, _ENV
     if nQuestId == 0 then
       local quests = self:GetQuestbyGroupId(nGroupId)
       for _,quest in pairs(quests) do

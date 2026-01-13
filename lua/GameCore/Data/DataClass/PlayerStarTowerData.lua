@@ -205,7 +205,13 @@ PlayerStarTowerData.EnterTowerFastBattle = function(self, nTowerId, nTeamIdx)
     (table.insert)(tbCharSkinId, (PlayerData.Char):GetCharSkinId(nCharId))
   end
   local applyCallback = function(_, mapMsgData)
-    -- function num : 0_5_0 , upvalues : nTowerId, tbTeam, _ENV
+    -- function num : 0_5_0 , upvalues : _ENV, nTowerId, self, nTeamIdx, tbTeam
+    local mapStartowerCfg = (ConfigTable.GetData)("StarTower", nTowerId)
+    -- DECOMPILER ERROR at PC10: Confused about usage of register: R3 in 'UnsetPending'
+
+    if mapStartowerCfg ~= nil then
+      (self.mapGroupFormation)[mapStartowerCfg.GroupId] = nTeamIdx
+    end
     local mapStateInfo = {Id = nTowerId, ReConnection = 0, BuildId = 0, CharIds = tbTeam, Floor = 0, Sweep = true}
     ;
     (PlayerData.State):CacheStarTowerStateData(mapStateInfo)

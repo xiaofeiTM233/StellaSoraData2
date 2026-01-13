@@ -535,8 +535,20 @@ Avg_ProcEnquotes = function(s)
   return s
 end
 
+Avg_ProcContactsIcon_M_F = function(sIcon)
+  -- function num : 0_31 , upvalues : _ENV
+  local tb = {"Icon/Head/head_9100_S", "Icon/Head/head_9101_S"}
+  do
+    if (PlayerData.Base):GetPlayerSex() ~= true or not 2 then
+      local nIndex = (table.indexof)(tb, sIcon) <= 0 or 1
+    end
+    do return tb[nIndex] end
+    do return sIcon end
+  end
+end
+
 decodeJson = function(sJson)
-  -- function num : 0_31 , upvalues : _ENV, rapidjson
+  -- function num : 0_32 , upvalues : _ENV, rapidjson
   local tbData = {}
   if type(sJson) == "string" and sJson ~= "" then
     tbData = (rapidjson.decode)(sJson)
@@ -549,13 +561,13 @@ decodeJson = function(sJson)
 end
 
 IsStartsWith = function(str, start)
-  -- function num : 0_32 , upvalues : _ENV
+  -- function num : 0_33 , upvalues : _ENV
   do return (string.sub)(str, 1, (string.len)(start)) == start end
   -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
 UFT8ToUnicode = function(convertStr)
-  -- function num : 0_33 , upvalues : _ENV
+  -- function num : 0_34 , upvalues : _ENV
   if type(convertStr) ~= "string" then
     return convertStr
   end
@@ -606,15 +618,15 @@ UFT8ToUnicode = function(convertStr)
 end
 
 AddKrParticle = function(str, nParticleIdx)
-  -- function num : 0_34 , upvalues : _ENV
+  -- function num : 0_35 , upvalues : _ENV
   local is_korean = function(cp)
-    -- function num : 0_34_0
+    -- function num : 0_35_0
     do return ((((cp < 4352 or cp > 4607) and (cp < 12592 or cp > 12687) and (cp < 44032 or cp > 55215) and (cp < 43360 or cp > 43391) and (cp >= 55216 and cp <= 55295)))) end
     -- DECOMPILER ERROR: 1 unprocessed JMP targets
   end
 
   local is_al = function(cp)
-    -- function num : 0_34_1
+    -- function num : 0_35_1
     do return (cp >= 65 and cp <= 90) or (cp >= 97 and cp <= 122) end
     -- DECOMPILER ERROR: 1 unprocessed JMP targets
   end
@@ -652,7 +664,7 @@ AddKrParticle = function(str, nParticleIdx)
 end
 
 local DecodeChangeInfo = function(mapChangeInfo)
-  -- function num : 0_35 , upvalues : _ENV, PB
+  -- function num : 0_36 , upvalues : _ENV, PB
   local mapDecodedChangeInfo = {}
   if type(mapChangeInfo) ~= "table" then
     return mapDecodedChangeInfo
@@ -678,14 +690,14 @@ local DecodeChangeInfo = function(mapChangeInfo)
 end
 
 local OpenReceiveByChangeInfo = function(mapChangeInfo, callback, sTip, nTitleType, mapNpc)
-  -- function num : 0_36 , upvalues : _ENV
+  -- function num : 0_37 , upvalues : _ENV
   local mapReward = (PlayerData.Item):ProcessRewardChangeInfo(mapChangeInfo)
   ;
   (UTILS.OpenReceiveByReward)(mapReward, callback, sTip, nTitleType, mapNpc)
 end
 
 local OpenReceiveByDisplayItem = function(tbItem, mapChangeInfo, callback, sTip, nTitleType, mapNpc)
-  -- function num : 0_37 , upvalues : _ENV
+  -- function num : 0_38 , upvalues : _ENV
   local mapTrans = (PlayerData.Item):ProcessTransChangeInfo(mapChangeInfo)
   local tbReward, tbSpReward = (PlayerData.Item):ProcessRewardDisplayItem(tbItem, mapTrans)
   local mapReward = {tbReward = tbReward, tbSpReward = tbSpReward, tbSrc = mapTrans.tbSrc, tbDst = mapTrans.tbDst}
@@ -694,10 +706,10 @@ local OpenReceiveByDisplayItem = function(tbItem, mapChangeInfo, callback, sTip,
 end
 
 local OpenReceiveByReward = function(mapReward, callback, sTip, nTitleType, mapNpc)
-  -- function num : 0_38 , upvalues : _ENV
+  -- function num : 0_39 , upvalues : _ENV
   local bOverflow = (PlayerData.State):GetMailOverflow()
   local open_mail = function()
-    -- function num : 0_38_0 , upvalues : bOverflow, _ENV, callback
+    -- function num : 0_39_0 , upvalues : bOverflow, _ENV, callback
     if bOverflow then
       (EventManager.Hit)(EventId.OpenMessageBox, {nType = (AllEnum.MessageBox).Alert, sContent = (ConfigTable.GetUIText)("Mail_Overflow_Tip"), callbackConfirm = callback})
       ;
@@ -710,7 +722,7 @@ local OpenReceiveByReward = function(mapReward, callback, sTip, nTitleType, mapN
   end
 
   local open_trans = function()
-    -- function num : 0_38_1 , upvalues : _ENV, mapReward, open_mail
+    -- function num : 0_39_1 , upvalues : _ENV, mapReward, open_mail
     local tbSrc, tbDst = {}, {}
     local mapOverTrans = (PlayerData.Item):GetFragmentsOverflow()
     if mapOverTrans and mapOverTrans.tbSrc and #mapOverTrans.tbSrc > 0 then
@@ -741,7 +753,7 @@ local OpenReceiveByReward = function(mapReward, callback, sTip, nTitleType, mapN
   end
 
   local open_normal = function()
-    -- function num : 0_38_2 , upvalues : mapReward, mapNpc, _ENV, open_trans, nTitleType, sTip
+    -- function num : 0_39_2 , upvalues : mapReward, mapNpc, _ENV, open_trans, nTitleType, sTip
     if mapReward and mapReward.tbReward and #mapReward.tbReward > 0 then
       if mapNpc then
         (EventManager.Hit)(EventId.OpenPanel, PanelId.ReceivePropsNPC, mapReward.tbReward, mapNpc, open_trans, nTitleType)
@@ -797,7 +809,7 @@ tbRange = {
 , sType = "全角符号", nCount = 2}
 }
 local GetParamStrLen = function(sParam)
-  -- function num : 0_39 , upvalues : _ENV, strLengthConfig
+  -- function num : 0_40 , upvalues : _ENV, strLengthConfig
   sParam = (string.gsub)(sParam, "</?[^>]+>", "")
   local nLength = 0
   local nIndex = 1
@@ -856,12 +868,12 @@ local GetParamStrLen = function(sParam)
 end
 
 local ParseByteString = function(sByte)
-  -- function num : 0_40 , upvalues : _ENV
+  -- function num : 0_41 , upvalues : _ENV
   return {(string.byte)(sByte, 1, -1)}
 end
 
 local IsBitSet = function(tbByte, nIndex)
-  -- function num : 0_41 , upvalues : _ENV
+  -- function num : 0_42 , upvalues : _ENV
   local nGroup64 = (math.ceil)(nIndex / 64) - 1
   local nIndexInGroup64 = nIndex - nGroup64 * 64
   local nGroup8 = (math.ceil)(nIndexInGroup64 / 8) - 1
@@ -875,32 +887,32 @@ local IsBitSet = function(tbByte, nIndex)
 end
 
 local GetBuildAttributeId = function(nGroupId, nLevel)
-  -- function num : 0_42
+  -- function num : 0_43
   return nGroupId * 100000 + nLevel
 end
 
 local GetCharacterAttributeId = function(nCharId, nAdvance, nLevel)
-  -- function num : 0_43
+  -- function num : 0_44
   return nCharId * 100000 + nAdvance * 1000 + nLevel
 end
 
 local GetDiscAttributeId = function(nGroupId, nPhase, nLevel)
-  -- function num : 0_44
+  -- function num : 0_45
   return nGroupId * 1000 + nPhase * 100 + nLevel
 end
 
 local GetDiscExtraAttributeId = function(nGroupId, nStar)
-  -- function num : 0_45
+  -- function num : 0_46
   return nGroupId * 10 + nStar
 end
 
 local GetPotentialId = function(nCharId, nIndex)
-  -- function num : 0_46
+  -- function num : 0_47
   return 500000 + nCharId * 100 + nIndex
 end
 
 local ParseNoBrokenDesc = function(sDesc)
-  -- function num : 0_47 , upvalues : _ENV
+  -- function num : 0_48 , upvalues : _ENV
   if Settings.sCurrentTxtLanguage == (AllEnum.Language).EN or Settings.sCurrentTxtLanguage == (AllEnum.Language).KR then
     return sDesc
   else
@@ -909,10 +921,10 @@ local ParseNoBrokenDesc = function(sDesc)
 end
 
 local SubDesc = function(str, nLevel, nCompareLevel, mapLinkParam)
-  -- function num : 0_48 , upvalues : _ENV, GetPotentialId, ParseNoBrokenDesc
+  -- function num : 0_49 , upvalues : _ENV, GetPotentialId, ParseNoBrokenDesc
   local ConfigData = require("GameCore.Data.ConfigData")
   local SubDescLink = function(originStr, mapParam)
-    -- function num : 0_48_0 , upvalues : _ENV, GetPotentialId
+    -- function num : 0_49_0 , upvalues : _ENV, GetPotentialId
     if originStr == nil or originStr == "" then
       return ""
     end
@@ -961,7 +973,7 @@ local SubDesc = function(str, nLevel, nCompareLevel, mapLinkParam)
   end
 
   local ParseHitDamageDesc = function(nHitDamageId, nHitDamageLevel)
-    -- function num : 0_48_1 , upvalues : _ENV, ConfigData
+    -- function num : 0_49_1 , upvalues : _ENV, ConfigData
     local mapDamage = (ConfigTable.GetData_HitDamage)(nHitDamageId)
     if not mapDamage then
       return (string.format)("<color=#BD3059>该 hit damage id 找不到数据:%s</color>", nHitDamageId)
@@ -988,7 +1000,7 @@ local SubDesc = function(str, nLevel, nCompareLevel, mapLinkParam)
   end
 
   local GetValueKey = function(nDataId, nType, nValueLevel)
-    -- function num : 0_48_2 , upvalues : _ENV
+    -- function num : 0_49_2 , upvalues : _ENV
     local ret = nDataId
     if nType == (GameEnum.levelTypeData).Exclusive or nType == (GameEnum.levelTypeData).SkillSlot then
       ret = nDataId + nValueLevel * 10
@@ -1000,7 +1012,7 @@ local SubDesc = function(str, nLevel, nCompareLevel, mapLinkParam)
   end
 
   local ParseEffectDesc = function(nEffectId, nEffectLevel, nShowType)
-    -- function num : 0_48_3 , upvalues : _ENV, GetValueKey
+    -- function num : 0_49_3 , upvalues : _ENV, GetValueKey
     local mapEffectCfgData = (ConfigTable.GetData_Effect)(nEffectId)
     if mapEffectCfgData == nil then
       return (string.format)("<color=#BD3059>该EffectId找不到数据:%s</color>", nEffectId)
@@ -1024,7 +1036,7 @@ local SubDesc = function(str, nLevel, nCompareLevel, mapLinkParam)
   end
 
   local ParseOnceDesc = function(nOnceId, nOnceLevel, nShowType)
-    -- function num : 0_48_4 , upvalues : _ENV, GetValueKey, ConfigData
+    -- function num : 0_49_4 , upvalues : _ENV, GetValueKey, ConfigData
     local mapCfgData = (ConfigTable.GetData)("OnceAdditionalAttribute", nOnceId)
     if mapCfgData == nil then
       return (string.format)("<color=#BD3059>该OnceAdditionalAttributeId找不到数据:%s</color>", nOnceId)
@@ -1044,7 +1056,7 @@ local SubDesc = function(str, nLevel, nCompareLevel, mapLinkParam)
   end
 
   local ParseShieldDesc = function(nShieldId, nShieldLevel, nShowType)
-    -- function num : 0_48_5 , upvalues : _ENV, GetValueKey, ConfigData
+    -- function num : 0_49_5 , upvalues : _ENV, GetValueKey, ConfigData
     local mapCfgData = (ConfigTable.GetData)("Shield", nShieldId)
     if mapCfgData == nil then
       return (string.format)("<color=#BD3059>该ShieldId找不到数据:%s</color>", nShieldId)
@@ -1065,7 +1077,7 @@ local SubDesc = function(str, nLevel, nCompareLevel, mapLinkParam)
   end
 
   local ParseSriptDesc = function(nSriptId, nSriptLevel, nShowType)
-    -- function num : 0_48_6 , upvalues : _ENV, GetValueKey, ConfigData
+    -- function num : 0_49_6 , upvalues : _ENV, GetValueKey, ConfigData
     local mapCfgData = (ConfigTable.GetData)("ScriptParameter", nSriptId)
     if mapCfgData == nil then
       return (string.format)("<color=#BD3059>该SriptId找不到数据:%s</color>", nSriptId)
@@ -1229,7 +1241,7 @@ local SubDesc = function(str, nLevel, nCompareLevel, mapLinkParam)
 end
 
 local ParseDesc = function(mapDescConfig, nCompareLevelType, nCompareLevel, bSimple, nOverrideLevel, mapLinkParam)
-  -- function num : 0_49 , upvalues : _ENV, GetPotentialId, ParseNoBrokenDesc
+  -- function num : 0_50 , upvalues : _ENV, GetPotentialId, ParseNoBrokenDesc
   if mapDescConfig == nil then
     printError("解析描述失败!")
     return ""
@@ -1239,7 +1251,7 @@ local ParseDesc = function(mapDescConfig, nCompareLevelType, nCompareLevel, bSim
     local str = mapDescConfig.Desc
   end
   local SubDescLink = function(originStr, mapParam)
-    -- function num : 0_49_0 , upvalues : _ENV, GetPotentialId
+    -- function num : 0_50_0 , upvalues : _ENV, GetPotentialId
     if originStr == nil or originStr == "" then
       return ""
     end
@@ -1289,7 +1301,7 @@ local ParseDesc = function(mapDescConfig, nCompareLevelType, nCompareLevel, bSim
 
   local linkStr = SubDescLink(str, mapLinkParam)
   local ParseHitDamageDesc = function(nHitDamageId, nHitDamageLevel)
-    -- function num : 0_49_1 , upvalues : _ENV, ConfigData
+    -- function num : 0_50_1 , upvalues : _ENV, ConfigData
     local sDesc = ""
     local mapDamage = (ConfigTable.GetData_HitDamage)(nHitDamageId)
     if not mapDamage then
@@ -1322,7 +1334,7 @@ local ParseDesc = function(mapDescConfig, nCompareLevelType, nCompareLevel, bSim
   end
 
   local FormatValueShow = function(sValue, sShowType, sEnumType)
-    -- function num : 0_49_2 , upvalues : _ENV, ConfigData
+    -- function num : 0_50_2 , upvalues : _ENV, ConfigData
     if sShowType == "Text" then
       return sValue
     else
@@ -1384,9 +1396,9 @@ local ParseDesc = function(mapDescConfig, nCompareLevelType, nCompareLevel, bSim
   end
 
   local ParseLevelUpDesc = function(sTable, nId, nLevel, sParameter, sShowType, sEnumType)
-    -- function num : 0_49_3 , upvalues : _ENV, FormatValueShow
+    -- function num : 0_50_3 , upvalues : _ENV, FormatValueShow
     local GetValueKey = function(nDataId, nType, nValueLevel)
-      -- function num : 0_49_3_0
+      -- function num : 0_50_3_0
       return nDataId + nValueLevel * 10
     end
 
@@ -1439,7 +1451,7 @@ local ParseDesc = function(mapDescConfig, nCompareLevelType, nCompareLevel, bSim
   end
 
   local ParseNoLevelUpDesc = function(sTable, nId, sParameter, sShowType, sEnumType)
-    -- function num : 0_49_4 , upvalues : _ENV, FormatValueShow
+    -- function num : 0_50_4 , upvalues : _ENV, FormatValueShow
     local sDesc, sErrorInfo = nil, nil
     local mapCfgData = DataTable[sTable]
     if mapCfgData ~= nil then
@@ -1475,7 +1487,7 @@ local ParseDesc = function(mapDescConfig, nCompareLevelType, nCompareLevel, bSim
   end
 
   local ParseLanguageParam = function(sParam)
-    -- function num : 0_49_5 , upvalues : _ENV
+    -- function num : 0_50_5 , upvalues : _ENV
     local param, lang, num = sParam:match("^(.-)_([a-zA-Z]+)(%d+)$")
     if not param then
       return sParam, nil, nil
@@ -1484,7 +1496,7 @@ local ParseDesc = function(mapDescConfig, nCompareLevelType, nCompareLevel, bSim
   end
 
   local LanguagePost = function(sLang, nIdx, sStr)
-    -- function num : 0_49_6 , upvalues : _ENV
+    -- function num : 0_50_6 , upvalues : _ENV
     if sLang == "kr" and nIdx ~= nil then
       return AddKrParticle(sStr, nIdx)
     end
@@ -1622,7 +1634,7 @@ local ParseDesc = function(mapDescConfig, nCompareLevelType, nCompareLevel, bSim
 end
 
 local ParseDiscDesc = function(originStr, mapSkill, mapSkillNext, nLayer, mapLinkParam)
-  -- function num : 0_50 , upvalues : _ENV, ParseNoBrokenDesc
+  -- function num : 0_51 , upvalues : _ENV, ParseNoBrokenDesc
   originStr = (UTILS.SubDesc)(originStr, nil, nil, mapLinkParam)
   local mapWord = {}
   for word in (string.gmatch)(originStr, "{[0-9]*}") do
@@ -1688,7 +1700,7 @@ local ParseDiscDesc = function(originStr, mapSkill, mapSkillNext, nLayer, mapLin
 end
 
 local ParseParamDesc = function(originStr, mapCfg, mapCfgNext, mapLinkParam, sColor)
-  -- function num : 0_51 , upvalues : _ENV, ParseNoBrokenDesc
+  -- function num : 0_52 , upvalues : _ENV, ParseNoBrokenDesc
   originStr = (UTILS.SubDesc)(originStr, nil, nil, mapLinkParam)
   local mapWord = {}
   for word in (string.gmatch)(originStr, "{[0-9]*}") do
@@ -1737,7 +1749,7 @@ local ParseParamDesc = function(originStr, mapCfg, mapCfgNext, mapLinkParam, sCo
 end
 
 local ParseRewardItemCount = function(tbReward)
-  -- function num : 0_52 , upvalues : _ENV
+  -- function num : 0_53 , upvalues : _ENV
   if tbReward == nil then
     return -1
   end
@@ -1759,7 +1771,7 @@ local ParseRewardItemCount = function(tbReward)
 end
 
 local QueryLevelInfo = function(nId, nType, nParam1, nParam2)
-  -- function num : 0_53 , upvalues : _ENV
+  -- function num : 0_54 , upvalues : _ENV
   local ret = nil
   ret = (PlayerData.StarTower):QueryLevelInfo(nId, nType, nParam1, nParam2)
   if ret == nil then
@@ -1769,7 +1781,7 @@ local QueryLevelInfo = function(nId, nType, nParam1, nParam2)
 end
 
 local ParseLevelQuestTargetDesc = function(originStr, mapTarget)
-  -- function num : 0_54 , upvalues : _ENV
+  -- function num : 0_55 , upvalues : _ENV
   local mapSkillType = {[(GameEnum.LevelQuestTargetType).CastSkill] = true, [(GameEnum.LevelQuestTargetType).CastSkillEnd] = true}
   local mapWord = {}
   for word in (string.gmatch)(originStr, "{Param" .. "[0-9]*}") do
@@ -1852,7 +1864,7 @@ local ParseLevelQuestTargetDesc = function(originStr, mapTarget)
 end
 
 local GetLevelQuestTargetProcess = function(mapTarget, nCur)
-  -- function num : 0_55 , upvalues : _ENV
+  -- function num : 0_56 , upvalues : _ENV
   local mapSkipProcess = {[(GameEnum.LevelQuestTargetType).ReceiveTriggerOpId] = true, [(GameEnum.LevelQuestTargetType).Null] = true, [(GameEnum.LevelQuestTargetType).RecoverEnergy] = true, [(GameEnum.LevelQuestTargetType).KillAllMonster] = true}
   if mapSkipProcess[mapTarget.QuestType] then
     return ""
@@ -1865,7 +1877,7 @@ local GetLevelQuestTargetProcess = function(mapTarget, nCur)
 end
 
 local GetBezierPointByT = function(beginPos, handlePos, endPos, deltaTime)
-  -- function num : 0_56
+  -- function num : 0_57
   local pow = 1 - deltaTime ^ 2
   local x = pow * beginPos.x + 2 * deltaTime * (1 - deltaTime) * handlePos.x + deltaTime * deltaTime * endPos.x
   local y = pow * beginPos.y + 2 * deltaTime * (1 - deltaTime) * handlePos.y + deltaTime * deltaTime * endPos.y
@@ -1881,7 +1893,7 @@ _ = (ColorUtility.TryParseHtmlString)("#FAFAFA")
 _ = (ColorUtility.TryParseHtmlString)("#2d4257")
 _ = (ColorUtility.TryParseHtmlString)("#505c67")
 local AddEffect = function(nCharId, nEffectId, nLevel, nUseCount)
-  -- function num : 0_57 , upvalues : _ENV
+  -- function num : 0_58 , upvalues : _ENV
   if nUseCount == nil then
     nUseCount = 0
   end
@@ -1912,7 +1924,7 @@ local AddEffect = function(nCharId, nEffectId, nLevel, nUseCount)
 end
 
 local AddFateCardEft = function(nCharId, nEffectId, nRemainCount)
-  -- function num : 0_58 , upvalues : _ENV
+  -- function num : 0_59 , upvalues : _ENV
   if nRemainCount == 0 then
     printLog("效果次数已用完:" .. nEffectId)
     return nil
@@ -1922,7 +1934,7 @@ local AddFateCardEft = function(nCharId, nEffectId, nRemainCount)
 end
 
 local AddBuildEffect = function(mapCharEffect, mapDiscEffect, mapNoteEffect)
-  -- function num : 0_59 , upvalues : _ENV
+  -- function num : 0_60 , upvalues : _ENV
   local retCharEffect = {}
   local retDiscEffect = {}
   local retNoteEffect = {}
@@ -2050,12 +2062,12 @@ local AddBuildEffect = function(mapCharEffect, mapDiscEffect, mapNoteEffect)
 end
 
 local RemoveEffect = function(nEftUid, nCharId)
-  -- function num : 0_60 , upvalues : _ENV
+  -- function num : 0_61 , upvalues : _ENV
   safe_call_cs_func((CS.AdventureModuleHelper).RemoveActorEffect, nCharId, nEftUid)
 end
 
 local GetBattleSamples = function(sFileName)
-  -- function num : 0_61 , upvalues : _ENV
+  -- function num : 0_62 , upvalues : _ENV
   if sFileName == nil or sFileName == "" then
     traceback("【战报】传入的 fileName 为空")
     return 
@@ -2065,7 +2077,7 @@ local GetBattleSamples = function(sFileName)
   if lstBattleSamples ~= nil then
     local nCount = lstBattleSamples.Count - 1
     local csList2Table = function(list)
-    -- function num : 0_61_0 , upvalues : _ENV
+    -- function num : 0_62_0 , upvalues : _ENV
     if list == nil then
       return {}
     end
@@ -2108,7 +2120,7 @@ local GetBattleSamples = function(sFileName)
 end
 
 local GetCharDamageResult = function(tbCharId)
-  -- function num : 0_62 , upvalues : _ENV
+  -- function num : 0_63 , upvalues : _ENV
   local tbResult = {}
   for i = 1, #tbCharId do
     local nCharId = tbCharId[i]
@@ -2123,7 +2135,7 @@ local GetCharDamageResult = function(tbCharId)
 end
 
 local ClickItemGridWithTips = function(nTid, transform, bOnlyItemTips, bShowDepot, bShowJumpto, nHasCount)
-  -- function num : 0_63 , upvalues : _ENV
+  -- function num : 0_64 , upvalues : _ENV
   local mapItemCfgData = (ConfigTable.GetData_Item)(nTid)
   if mapItemCfgData == nil then
     return 
@@ -2151,14 +2163,14 @@ local ClickItemGridWithTips = function(nTid, transform, bOnlyItemTips, bShowDepo
 end
 
 local CheckIsTipsPanel = function(nPanelId)
-  -- function num : 0_64 , upvalues : _ENV
+  -- function num : 0_65 , upvalues : _ENV
   local tbAllTipsPanelId = {PanelId.ItemTips, PanelId.PerkTips, PanelId.SkillTips, PanelId.BtnTips, PanelId.MonsterTips, PanelId.EquipmentTips, PanelId.DiscSkillTips}
   do return (table.indexof)(tbAllTipsPanelId, nPanelId) > 0 end
   -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
 local ClickWordLink = function(link, sWordId, mapLinkParam)
-  -- function num : 0_65 , upvalues : _ENV, GetPotentialId
+  -- function num : 0_66 , upvalues : _ENV, GetPotentialId
   local nWordId = tonumber(sWordId)
   local mapWordData = (ConfigTable.GetData)("Word", nWordId)
   if mapWordData == nil then
@@ -2190,7 +2202,7 @@ local ClickWordLink = function(link, sWordId, mapLinkParam)
 end
 
 local build_priority = function(selected, default_priority)
-  -- function num : 0_66 , upvalues : _ENV
+  -- function num : 0_67 , upvalues : _ENV
   local priority = {}
   local selected_map = {}
   for _,field in ipairs(selected) do
@@ -2206,7 +2218,7 @@ local build_priority = function(selected, default_priority)
 end
 
 local compare_roles = function(a, b, sort_priority, bOrder)
-  -- function num : 0_67 , upvalues : _ENV
+  -- function num : 0_68 , upvalues : _ENV
   for i,field in ipairs(sort_priority) do
     local va, vb = a[field], b[field]
     if field == "Rare" or field == "nRarity" then
@@ -2247,18 +2259,18 @@ local compare_roles = function(a, b, sort_priority, bOrder)
 end
 
 local SortByPriority = function(items, selected_fields, default_priority, bOrder)
-  -- function num : 0_68 , upvalues : build_priority, _ENV, compare_roles
+  -- function num : 0_69 , upvalues : build_priority, _ENV, compare_roles
   local sort_priority = build_priority(selected_fields, default_priority)
   ;
   (table.sort)(items, function(a, b)
-    -- function num : 0_68_0 , upvalues : compare_roles, sort_priority, bOrder
+    -- function num : 0_69_0 , upvalues : compare_roles, sort_priority, bOrder
     return compare_roles(a, b, sort_priority, bOrder)
   end
 )
 end
 
 local GetDayRefreshTimeOffset = function()
-  -- function num : 0_69 , upvalues : _ENV
+  -- function num : 0_70 , upvalues : _ENV
   local nNewDayTime = (ConfigTable.GetConfigNumber)("DailyRefreshOffsetHour") or 5
   if nNewDayTime > 24 then
     nNewDayTime = nNewDayTime % 24
@@ -2267,7 +2279,7 @@ local GetDayRefreshTimeOffset = function()
 end
 
 local SDK_Logout = function()
-  -- function num : 0_70 , upvalues : _ENV
+  -- function num : 0_71 , upvalues : _ENV
   local SDKManager = (CS.SDKManager).Instance
   if SDKManager:IsSDKInit() ~= true then
     return 
@@ -2276,7 +2288,7 @@ local SDK_Logout = function()
 end
 
 local SDK_ShowAgreement = function()
-  -- function num : 0_71 , upvalues : _ENV
+  -- function num : 0_72 , upvalues : _ENV
   local SDKManager = (CS.SDKManager).Instance
   if SDKManager:IsSDKInit() ~= true then
     return 
@@ -2307,7 +2319,7 @@ local ServerChannel_US = {[1] = "us_android_official", [2] = "us_ios_official", 
 local ServerChannel_KR = {[1] = "kr_android_official", [2] = "kr_ios_official", [4] = "kr_android_onestore", [8] = "kr_pc_official"}
 local ServerChannel_TW = {[1] = "tw_android_official", [2] = "tw_ios_official", [4] = "tw_android_onestore", [8] = "tw_pc_official"}
 local GetChannelConfigList = function()
-  -- function num : 0_72 , upvalues : _ENV, ServerChannel_CN, ServerChannel_JP, ServerChannel_US, ServerChannel_KR, ServerChannel_TW
+  -- function num : 0_73 , upvalues : _ENV, ServerChannel_CN, ServerChannel_JP, ServerChannel_US, ServerChannel_KR, ServerChannel_TW
   local resultList = nil
   local clientPublishRegion = (CS.ClientConfig).ClientPublishRegion
   if clientPublishRegion == (CS.ClientPublishRegion).CN then
@@ -2333,7 +2345,7 @@ local GetChannelConfigList = function()
 end
 
 local CheckChannel = function(channel)
-  -- function num : 0_73 , upvalues : _ENV, GetChannelConfigList
+  -- function num : 0_74 , upvalues : _ENV, GetChannelConfigList
   local fullChannnel = (CS.ClientConfig).FullClientPublishChannelName
   local channelList = GetChannelConfigList()
   if channelList == nil then
@@ -2361,7 +2373,7 @@ local CheckChannel = function(channel)
 end
 
 local CheckChannelList = function(channelList)
-  -- function num : 0_74 , upvalues : _ENV, CheckChannel
+  -- function num : 0_75 , upvalues : _ENV, CheckChannel
   local sCurClientPublishRegion = (CS.ClientConfig).ClientPublishRegion
   if sCurClientPublishRegion == (CS.ClientPublishRegion).Other then
     return true
@@ -2375,7 +2387,7 @@ local CheckChannelList = function(channelList)
 end
 
 local CheckChannelList_Notice = function(channelList)
-  -- function num : 0_75 , upvalues : _ENV, CheckChannel
+  -- function num : 0_76 , upvalues : _ENV, CheckChannel
   local sCurClientPublishRegion = (CS.ClientConfig).ClientPublishRegion
   if sCurClientPublishRegion == (CS.ClientPublishRegion).Other then
     return true
@@ -2389,7 +2401,7 @@ local CheckChannelList_Notice = function(channelList)
 end
 
 local VersionCompare = function(v1, v2, num)
-  -- function num : 0_76 , upvalues : _ENV
+  -- function num : 0_77 , upvalues : _ENV
   local v1List = (string.split)(v1, ".")
   local v2List = (string.split)(v2, ".")
   for i = 1, num do
@@ -2418,7 +2430,7 @@ local VersionCompare = function(v1, v2, num)
 end
 
 local GetBBSUrl = function()
-  -- function num : 0_77 , upvalues : _ENV
+  -- function num : 0_78 , upvalues : _ENV
   local result = false
   local url = ""
   local sChannel = (NovaAPI.GetClientChannel)()
@@ -2435,7 +2447,7 @@ local GetBBSUrl = function()
 end
 
 local GetToolBoxUrl = function()
-  -- function num : 0_78 , upvalues : _ENV
+  -- function num : 0_79 , upvalues : _ENV
   local result = false
   local url = ""
   local sChannel = (NovaAPI.GetClientChannel)()
@@ -2493,7 +2505,7 @@ local GetToolBoxUrl = function()
 end
 
 local GetExchangeCodeUrl = function()
-  -- function num : 0_79 , upvalues : _ENV
+  -- function num : 0_80 , upvalues : _ENV
   local result = false
   local url = ""
   local sChannel = (NovaAPI.GetClientChannel)()
@@ -2540,7 +2552,7 @@ local GetExchangeCodeUrl = function()
   return result, url
 end
 
--- DECOMPILER ERROR at PC463: Confused about usage of register: R57 in 'UnsetPending'
+-- DECOMPILER ERROR at PC465: Confused about usage of register: R57 in 'UnsetPending'
 
 _G.UTILS = {DecodeChangeInfo = DecodeChangeInfo, OpenReceiveByChangeInfo = OpenReceiveByChangeInfo, OpenReceiveByDisplayItem = OpenReceiveByDisplayItem, OpenReceiveByReward = OpenReceiveByReward, GetParamStrLen = GetParamStrLen, ParseByteString = ParseByteString, IsBitSet = IsBitSet, GetBuildAttributeId = GetBuildAttributeId, GetCharacterAttributeId = GetCharacterAttributeId, GetDiscAttributeId = GetDiscAttributeId, GetDiscExtraAttributeId = GetDiscExtraAttributeId, GetPotentialId = GetPotentialId, SubDesc = SubDesc, ParseDesc = ParseDesc, ParseDiscDesc = ParseDiscDesc, ParseParamDesc = ParseParamDesc, ParseLevelQuestTargetDesc = ParseLevelQuestTargetDesc, GetLevelQuestTargetProcess = GetLevelQuestTargetProcess, ParseRewardItemCount = ParseRewardItemCount, GetBezierPointByT = GetBezierPointByT, AddEffect = AddEffect, AddFateCardEft = AddFateCardEft, AddBuildEffect = AddBuildEffect, RemoveEffect = RemoveEffect, GetBattleSamples = GetBattleSamples, GetCharDamageResult = GetCharDamageResult, ClickItemGridWithTips = ClickItemGridWithTips, QueryLevelInfo = QueryLevelInfo, SDK_Logout = SDK_Logout, SDK_ShowAgreement = SDK_ShowAgreement, ParseNoBrokenDesc = ParseNoBrokenDesc, CheckIsTipsPanel = CheckIsTipsPanel, ClickWordLink = ClickWordLink, CheckChannelList = CheckChannelList, VersionCompare = VersionCompare, SortByPriority = SortByPriority, GetDayRefreshTimeOffset = GetDayRefreshTimeOffset, GetBBSUrl = GetBBSUrl, GetToolBoxUrl = GetToolBoxUrl, GetExchangeCodeUrl = GetExchangeCodeUrl, CheckChannelList_Notice = CheckChannelList_Notice}
 

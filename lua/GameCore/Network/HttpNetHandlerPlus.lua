@@ -334,5 +334,10 @@ HttpNetHandlerPlus.activity_story_settle_succeed_ack = function(mapMsgData)
   (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
 end
 
+HttpNetHandlerPlus.activity_tower_defense_level_settle_failed_ack = function(mapMsgData)
+  -- function num : 0_48 , upvalues : _ENV
+  (EventManager.Hit)("ActivityTowerDefenseLevelSettleFailed")
+end
+
 return HttpNetHandlerPlus
 

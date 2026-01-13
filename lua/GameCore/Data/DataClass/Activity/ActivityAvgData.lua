@@ -1196,8 +1196,9 @@ Personality = {}
     end
   end
 
+          local eventStoryId = self.CURRENT_STORY_ID
           local func_succ = function(_, mapChangeInfo)
-    -- function num : 0_40_2 , upvalues : self, func_merge, _ENV, func_overwrite, callBack, bBattle, TimerManager
+    -- function num : 0_40_2 , upvalues : self, func_merge, _ENV, func_overwrite, callBack, bBattle, eventStoryId, TimerManager
     do
       if #self.tbTempStoryIds > 1 then
         local nRecentChapterId = (self.CFG_Story)[(self.tbTempStoryIds)[#self.tbTempStoryIds]]
@@ -1273,6 +1274,16 @@ Personality = {}
             (table.insert)(tbItem, {Tid = value.Tid, Qty = value.Qty, rewardType = (AllEnum.RewardType).First})
           end
         end
+        local tabEvent = {}
+        ;
+        (table.insert)(tabEvent, {"story_id", tostring(eventStoryId)})
+        local _skip = (PlayerData.Avg).bSkip == true and "1" or "0"
+        ;
+        (table.insert)(tabEvent, {"is_skip", _skip})
+        ;
+        (table.insert)(tabEvent, {"role_id", tostring((PlayerData.Base)._nPlayerId)})
+        ;
+        (NovaAPI.UserEventUpload)("activity_story", tabEvent)
         local AfterRewardDisplay = function()
       -- function num : 0_40_2_0 , upvalues : _ENV
       (EventManager.Hit)("Story_RewardClosed")
@@ -1292,7 +1303,7 @@ Personality = {}
       ;
       (EventManager.Hit)("Story_Done", bHasReward)
       printLog("通关结算完成")
-      -- DECOMPILER ERROR: 5 unprocessed JMP targets
+      -- DECOMPILER ERROR: 7 unprocessed JMP targets
     end
   end
 

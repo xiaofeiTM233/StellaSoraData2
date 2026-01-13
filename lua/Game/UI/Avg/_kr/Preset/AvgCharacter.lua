@@ -3,7 +3,7 @@ return {
 , 
 {id = "1", name = "", name_bg_color = "#0ABEC5", surfix = "玩家"}
 , 
-{id = "avg1_103", name = "코하쿠", name_bg_color = "#99d2d9"}
+{id = "avg1_103", name = "코하쿠", name_bg_color = "#99d2d9", ver = "1.0.0"}
 , 
 {id = "avg1_1994", name = "나츠카A", name_bg_color = "#99d2d9", reuse = "avg1_133"}
 , 
@@ -99,6 +99,12 @@ return {
 , 
 {id = "avg1_150", name = "라루", name_bg_color = "#c5bbb5"}
 , 
+{id = "avg1_151", name = "윈슈", name_bg_color = "#476370", ver = "1.6.0"}
+, 
+{id = "avg1_152", name = "단윈", name_bg_color = "#fcce7f", ver = "1.6.0"}
+, 
+{id = "avg1_153", name = "지웨", name_bg_color = "#8c322c", ver = "1.6.0"}
+, 
 {id = "avg1_155", name = "시아", name_bg_color = "#c4a5e6"}
 , 
 {id = "avg1_156", name = "나즈나", name_bg_color = "#b5e6b2"}
@@ -107,13 +113,15 @@ return {
 , 
 {id = "avg1_158", name = "라루", name_bg_color = "#79092e"}
 , 
-{id = "avg1_159", name = "크루니스", name_bg_color = "#c553a5"}
+{id = "avg1_159", name = "크루니스", name_bg_color = "#c553a5", ver = "1.6.0"}
 , 
 {id = "avg2_001", name = "우드모트 잔챙이", name_bg_color = "#0ABEC5"}
 , 
 {id = "avg2_002", name = "우드모트 허수아비", name_bg_color = "#0ABEC5"}
 , 
 {id = "avg2_003", name = "우드모트 척탄병", name_bg_color = "#0ABEC5"}
+, 
+{id = "avg2_952", name = "라이푸", name_bg_color = "#0ABEC5", ver = "1.6.0"}
 , 
 {id = "avg2_953", name = "난로의 섬망", name_bg_color = "#0ABEC5"}
 , 
@@ -205,7 +213,7 @@ return {
 , 
 {id = "avg3_107", name = "두리", name_bg_color = "#0ABEC5"}
 , 
-{id = "avg3_108", name = "로손", name_bg_color = "#0ABEC5"}
+{id = "avg3_108", name = "로슨", name_bg_color = "#0ABEC5"}
 , 
 {id = "avg3_109", name = "챠이 할아버지", name_bg_color = "#0ABEC5"}
 , 
@@ -217,7 +225,7 @@ return {
 , 
 {id = "avg3_113", name = "소아", name_bg_color = "#0ABEC5"}
 , 
-{id = "avg3_115", name = "언치새", name_bg_color = "#0ABEC5"}
+{id = "avg3_115", name = "캐레스", name_bg_color = "#0ABEC5"}
 , 
 {id = "avg3_118", name = "분홍 머리 여행가", name_bg_color = "#0ABEC5"}
 , 
@@ -379,7 +387,7 @@ return {
 , 
 {id = "avg3_205", name = "이그나", name_bg_color = "#4579b4"}
 , 
-{id = "avg3_206", name = "암월", name_bg_color = "#394444"}
+{id = "avg3_206", name = "루나르", name_bg_color = "#394444"}
 , 
 {id = "avg3_210", name = "하사나", name_bg_color = "#0ABEC5"}
 , 
@@ -936,6 +944,8 @@ return {
 {id = "avg3_1270", name = "달리시아A", name_bg_color = "#0ABEC5", reuse = "avg2_985"}
 , 
 {id = "avg3_1271", name = "달리시아B", name_bg_color = "#0ABEC5", reuse = "avg2_985"}
+, 
+{id = "avg3_1272", name = "중독된 아그리 유니온 사원C", name_bg_color = "#0ABEC5", reuse = "avg2_962"}
 , 
 {id = "avg4_100", name = "빛나는 라루", name_bg_color = "#0ABEC5"}
 , 

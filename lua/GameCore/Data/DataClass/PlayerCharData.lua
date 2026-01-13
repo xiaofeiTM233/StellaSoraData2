@@ -598,11 +598,22 @@ PlayerCharData.EnterCharPlotAvg = function(self, nCharId, nPlotId, callback, bSh
     return 
   end
   local Callback = function()
-    -- function num : 0_18_0 , upvalues : bGetReward, bShowReward, TimerManager, self, mapPlot, _ENV, callback, nCharId, nPlotId
+    -- function num : 0_18_0 , upvalues : bGetReward, bShowReward, _ENV, nPlotId, TimerManager, self, mapPlot, callback, nCharId
     if not bGetReward then
       local finishCallBack = function(mapMsgData, nCharId)
-      -- function num : 0_18_0_0 , upvalues : bShowReward, TimerManager, self, mapPlot, _ENV, callback
+      -- function num : 0_18_0_0 , upvalues : bShowReward, _ENV, nPlotId, TimerManager, self, mapPlot, callback
       if bShowReward then
+        local tabEvent = {}
+        ;
+        (table.insert)(tabEvent, {"story_id", tostring(nPlotId)})
+        local _skip = (PlayerData.Avg).bSkip == true and "1" or "0"
+        ;
+        (table.insert)(tabEvent, {"is_skip", _skip})
+        ;
+        (table.insert)(tabEvent, {"role_id", tostring((PlayerData.Base)._nPlayerId)})
+        ;
+        (NovaAPI.UserEventUpload)("character_favor_story", tabEvent)
+        ;
         (TimerManager.Add)(1, 1.3, self, function()
         -- function num : 0_18_0_0_0 , upvalues : mapMsgData, mapPlot, _ENV, nCharId
         local rewardFunc = function()
@@ -637,8 +648,10 @@ tbItemList = {}
       end
 , true, true)
       end
-      if callback ~= nil then
-        callback(nCharId)
+      do
+        if callback ~= nil then
+          callback(nCharId)
+        end
       end
     end
 

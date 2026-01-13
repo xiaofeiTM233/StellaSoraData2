@@ -67,7 +67,7 @@ return {
 , 
 {id = 158, icon = "Icon/Head/head_15801_S", name = "라루(이브)", landmark = "크리스마스 축제 운영위원회 사무소", signature = "초집중 열일 모드 중! 방해 금지!"}
 , 
-{id = 999, icon = "Icon/Head/head_group_S", name = "일은 끝이 없다", landmark = "", signature = "지금은 근무 시간, 핸드폰 보지 마세요"}
+{id = 999, icon = "Icon/Head/head_group_S", name = "일은 끝이 없다", landmark = "", signature = "지금은 근무 시간, 휴대폰 보지 마세요"}
 , 
 {id = 998, icon = "Icon/Head/head_9100_S", name = "==PLAYER_NAME==", landmark = "럭키 오아시스호", signature = "마왕 협정 인재 파견 컴퍼니 대표집행관"}
 , 
@@ -83,9 +83,9 @@ return {
 , 
 {id = 992, icon = "Icon/Head/head_group_S", name = "오늘 배달했나요?", landmark = "", signature = "수령증에 꼭 서명해주세요!"}
 , 
-{id = 991, icon = "Icon/Head/head_group_S", name = "논밭 샤로", landmark = "", signature = "0"}
+{id = 991, icon = "Icon/Head/head_group_S", name = "논밭 샤로", landmark = "", signature = ""}
 , 
-{id = 990, icon = "Icon/Head/head_group_S", name = "익명", landmark = "", signature = "0"}
+{id = 990, icon = "Icon/Head/head_group_S", name = "익명", landmark = "", signature = ""}
 , 
 {id = 9152, icon = "Icon/Head/head_npc15201_S", name = "베스티나", landmark = "아모르 심상점 본사", signature = "정규직 전환 절차가 시작되었습니다~"}
 , 
