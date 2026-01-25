@@ -951,6 +951,8 @@ return {
 , 
 {id = "avg4_101", name = "빛나는 어린 라루", name_bg_color = "#0ABEC5"}
 , 
+{id = "avg4_102", name = "의문의 인물A", name_bg_color = "#0ABEC5"}
+, 
 {id = "avg4_999", name = "비타", name_bg_color = "#0ABEC5"}
 }
 

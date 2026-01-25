@@ -1,5 +1,5 @@
 return {
-{id = 103, icon = "Icon/Head/head_10301_S", name = "코하쿠", landmark = "럭키 오아시스호 차량 지붕", signature = "읽씹은 범죄"}
+{id = 103, icon = "Icon/Head/head_10301_S", name = "코하쿠", landmark = "럭키 오아시스호 차량 지붕", signature = "읽씹은 범죄", ver = "1.0.0"}
 , 
 {id = 107, icon = "Icon/Head/head_10701_S", name = "틸리아", landmark = "아모르 애시 에리어 성문역 옆 비탈길 아파트 2층 3호", signature = "휴대폰 사기 방지는 모두의 책임"}
 , 
