@@ -5,7 +5,7 @@ JointDrillBattlePanel._bAddToBackHistory = false
 JointDrillBattlePanel._tbDefine = {
 {sPrefabPath = "Battle/BattleDashboard.prefab", sCtrlName = "Game.UI.Battle.BattleDashboardCtrl"}
 , 
-{sPrefabPath = "JointDrillBattle/JointDrillMenu.prefab", sCtrlName = "Game.UI.JointDrill.JointDrillMenuCtrl"}
+{sPrefabPath = "JointDrillBattle/JointDrillMenu.prefab", sCtrlName = "Game.UI.JointDrill.Battle.JointDrillMenuCtrl"}
 , 
 {sPrefabPath = "Battle/AdventureMainUI/AdventureMainUI.prefab", sCtrlName = "Game.UI.Battle.MainBattleCtrl"}
 , 
@@ -17,9 +17,9 @@ JointDrillBattlePanel._tbDefine = {
 , 
 {sPrefabPath = "Battle/CommonMonsterWarning.prefab", sCtrlName = "Game.UI.Battle.CommonMonsterWarningCtrl"}
 , 
-{sPrefabPath = "JointDrillBattle/JointDrillBossTime.prefab", sCtrlName = "Game.UI.JointDrill.JintDrillTimeCtrl"}
+{sPrefabPath = "JointDrillBattle/JointDrillBossTime.prefab", sCtrlName = "Game.UI.JointDrill.Battle.JointDrillTimeCtrl"}
 , 
-{sPrefabPath = "JointDrillBattle/JointDrillPausePanel.prefab", sCtrlName = "Game.UI.JointDrill.JointDrillPauseCtrl"}
+{sPrefabPath = "JointDrillBattle/JointDrillPausePanel.prefab", sCtrlName = "Game.UI.JointDrill.Battle.JointDrillPauseCtrl"}
 }
 JointDrillBattlePanel.Awake = function(self)
   -- function num : 0_0 , upvalues : _ENV, GamepadUIManager
@@ -32,9 +32,11 @@ JointDrillBattlePanel.Awake = function(self)
   (GamepadUIManager.EnableGamepadUI)("BattleMenu", {})
   self.tbTeam = (self._tbParam)[1]
   self.nLevelId = (self._tbParam)[2]
+  self.nTotalTime = (self._tbParam)[3]
+  self.nType = (self._tbParam)[4]
   self.mapCharData = {}
   for _,nCharId in ipairs(self.tbTeam) do
-    -- DECOMPILER ERROR at PC40: Confused about usage of register: R6 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC46: Confused about usage of register: R6 in 'UnsetPending'
 
     (self.mapCharData)[nCharId] = clone((PlayerData.Char):GetCharDataByTid(nCharId))
   end

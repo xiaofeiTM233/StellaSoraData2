@@ -196,89 +196,140 @@ HttpNetHandlerPlus.story_set_state_notify = function(mapMsgData)
   (PlayerData.StorySet):UnlockNewChapter(mapMsgData.Value)
 end
 
+HttpNetHandlerPlus.unlock_activity_story_notify = function(mapMsgData)
+  -- function num : 0_32
+end
+
+HttpNetHandlerPlus.clear_story_set_notify = function(mapMsgData)
+  -- function num : 0_33 , upvalues : _ENV
+  (PlayerData.StorySet):CacheStorySetData(mapMsgData)
+end
+
 HttpNetHandlerPlus.vampire_survivor_new_season_notify = function(mapMsgData)
-  -- function num : 0_32 , upvalues : _ENV
+  -- function num : 0_34 , upvalues : _ENV
   (PlayerData.VampireSurvivor):OnNotifyRefresh(mapMsgData.Value)
 end
 
 HttpNetHandlerPlus.vampire_survivor_talent_node_notify = function(mapData)
-  -- function num : 0_33 , upvalues : _ENV
+  -- function num : 0_35 , upvalues : _ENV
   (PlayerData.VampireSurvivor):CacheTalentData(mapData)
 end
 
 HttpNetHandlerPlus.battle_pass_common_fail = function(mapMsgData)
-  -- function num : 0_34 , upvalues : _ENV
+  -- function num : 0_36 , upvalues : _ENV
   (EventManager.Hit)("BattlePassNeedRefresh")
 end
 
 HttpNetHandlerPlus.activity_levels_settle_failed_ack = function()
-  -- function num : 0_35 , upvalues : _ENV
+  -- function num : 0_37 , upvalues : _ENV
   (EventManager.Hit)("ActivityLevelSettle_Failed")
 end
 
 HttpNetHandlerPlus.joint_drill_game_over_failed_ack = function(mapMsgData)
-  -- function num : 0_36 , upvalues : _ENV
-  if mapMsgData ~= nil and mapMsgData.Code ~= nil and mapMsgData.Code == 112701 then
+  -- function num : 0_38 , upvalues : _ENV
+  if mapMsgData ~= nil and mapMsgData.Code ~= nil and (mapMsgData.Code == 112701 or mapMsgData.Code == 112704 or mapMsgData.Code == 119905) then
     (EventManager.Hit)("JointDrillChallengeFinishError")
   end
 end
 
 HttpNetHandlerPlus.joint_drill_sync_failed_ack = function(mapMsgData)
-  -- function num : 0_37 , upvalues : _ENV
-  if mapMsgData ~= nil and mapMsgData.Code ~= nil and mapMsgData.Code == 112704 then
+  -- function num : 0_39 , upvalues : _ENV
+  if mapMsgData ~= nil and mapMsgData.Code ~= nil and (mapMsgData.Code == 112701 or mapMsgData.Code == 112704 or mapMsgData.Code == 119905) then
     (EventManager.Hit)("JointDrillChallengeFinishError")
   end
 end
 
 HttpNetHandlerPlus.joint_drill_give_up_failed_ack = function(mapMsgData)
-  -- function num : 0_38 , upvalues : _ENV
-  if mapMsgData ~= nil and mapMsgData.Code ~= nil and mapMsgData.Code == 112704 then
+  -- function num : 0_40 , upvalues : _ENV
+  if mapMsgData ~= nil and mapMsgData.Code ~= nil and (mapMsgData.Code == 112701 or mapMsgData.Code == 112704 or mapMsgData.Code == 119905) then
     (EventManager.Hit)("JointDrillChallengeFinishError")
   end
 end
 
-HttpNetHandlerPlus.build_convert_submit_succeed_ack = function(mapMsgData)
-  -- function num : 0_39 , upvalues : _ENV
-  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData.Change)
-  ;
-  (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
-end
-
-HttpNetHandlerPlus.build_convert_group_reward_receive_succeed_ack = function(mapMsgData)
-  -- function num : 0_40 , upvalues : _ENV
-  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData.Change)
-  ;
-  (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
-end
-
-HttpNetHandlerPlus.item_expired_change_notify = function(mapMsgData)
+HttpNetHandlerPlus.joint_drill_2_apply_succeed_ack = function(mapMsgData)
   -- function num : 0_41 , upvalues : _ENV
-  (EventManager.Hit)(EventId.OpenMessageBox, (ConfigTable.GetUIText)("Item_Change_Expired_Tips"))
-end
-
-HttpNetHandlerPlus.quest_assist_reward_receive_succeed_ack = function(mapMsgData)
-  -- function num : 0_42 , upvalues : _ENV
-  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
+  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData.Change)
   ;
   (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
 end
 
-HttpNetHandlerPlus.quest_assist_group_reward_receive_succeed_ack = function(mapMsgData)
+HttpNetHandlerPlus.joint_drill_2_settle_succeed_ack = function(mapMsgData)
+  -- function num : 0_42 , upvalues : _ENV
+  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData.Change)
+  ;
+  (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
+end
+
+HttpNetHandlerPlus.joint_drill_2_game_over_succeed_ack = function(mapMsgData)
   -- function num : 0_43 , upvalues : _ENV
   local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData.Change)
   ;
   (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
 end
 
-HttpNetHandlerPlus.assist_add_build_notify = function(mapMsgData)
+HttpNetHandlerPlus.joint_drill_2_game_over_failed_ack = function(mapMsgData)
   -- function num : 0_44 , upvalues : _ENV
+  if mapMsgData ~= nil and mapMsgData.Code ~= nil and (mapMsgData.Code == 112701 or mapMsgData.Code == 112704 or mapMsgData.Code == 119905) then
+    (EventManager.Hit)("JointDrillChallengeFinishError")
+  end
+end
+
+HttpNetHandlerPlus.joint_drill_2_sync_failed_ack = function(mapMsgData)
+  -- function num : 0_45 , upvalues : _ENV
+  if mapMsgData ~= nil and mapMsgData.Code ~= nil and (mapMsgData.Code == 112701 or mapMsgData.Code == 112704 or mapMsgData.Code == 119905) then
+    (EventManager.Hit)("JointDrillChallengeFinishError")
+  end
+end
+
+HttpNetHandlerPlus.joint_drill_2_give_up_failed_ack = function(mapMsgData)
+  -- function num : 0_46 , upvalues : _ENV
+  if mapMsgData ~= nil and mapMsgData.Code ~= nil and (mapMsgData.Code == 112701 or mapMsgData.Code == 112704 or mapMsgData.Code == 119905) then
+    (EventManager.Hit)("JointDrillChallengeFinishError")
+  end
+end
+
+HttpNetHandlerPlus.build_convert_submit_succeed_ack = function(mapMsgData)
+  -- function num : 0_47 , upvalues : _ENV
+  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData.Change)
+  ;
+  (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
+end
+
+HttpNetHandlerPlus.build_convert_group_reward_receive_succeed_ack = function(mapMsgData)
+  -- function num : 0_48 , upvalues : _ENV
+  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData.Change)
+  ;
+  (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
+end
+
+HttpNetHandlerPlus.item_expired_change_notify = function(mapMsgData)
+  -- function num : 0_49 , upvalues : _ENV
+  (EventManager.Hit)(EventId.OpenMessageBox, (ConfigTable.GetUIText)("Item_Change_Expired_Tips"))
+end
+
+HttpNetHandlerPlus.quest_assist_reward_receive_succeed_ack = function(mapMsgData)
+  -- function num : 0_50 , upvalues : _ENV
+  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
+  ;
+  (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
+end
+
+HttpNetHandlerPlus.quest_assist_group_reward_receive_succeed_ack = function(mapMsgData)
+  -- function num : 0_51 , upvalues : _ENV
+  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData.Change)
+  ;
+  (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
+end
+
+HttpNetHandlerPlus.assist_add_build_notify = function(mapMsgData)
+  -- function num : 0_52 , upvalues : _ENV
   if mapMsgData.BuildInfo ~= nil then
     if (mapMsgData.BuildInfo).Brief ~= nil then
       (PlayerData.Build):CacheRogueBuild(mapMsgData.BuildInfo)
     else
       if (mapMsgData.BuildInfo).BuildCoin ~= nil and (mapMsgData.BuildInfo).BuildCoin > 0 then
         local checkLimitCb = function()
-    -- function num : 0_44_0 , upvalues : _ENV, mapMsgData
+    -- function num : 0_52_0 , upvalues : _ENV, mapMsgData
     local nLimit = (PlayerData.StarTower):GetStarTowerRewardLimit()
     local nCur = (PlayerData.StarTower):GetStarTowerTicket()
     if nLimit < (mapMsgData.BuildInfo).BuildCoin + nCur then
@@ -314,29 +365,73 @@ HttpNetHandlerPlus.assist_add_build_notify = function(mapMsgData)
 end
 
 HttpNetHandlerPlus.activity_trekker_versus_reward_receive_succeed_ack = function(mapMsgData)
-  -- function num : 0_45 , upvalues : _ENV
+  -- function num : 0_53 , upvalues : _ENV
   local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData.Change)
   ;
   (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
 end
 
 HttpNetHandlerPlus.player_destroy_succeed_ack = function(mapMsgData)
-  -- function num : 0_46 , upvalues : _ENV
+  -- function num : 0_54 , upvalues : _ENV
   if mapMsgData.NotifyUrl ~= nil then
     (PlayerData.Base):SetDestoryUrl(mapMsgData.NotifyUrl)
   end
 end
 
 HttpNetHandlerPlus.activity_story_settle_succeed_ack = function(mapMsgData)
-  -- function num : 0_47 , upvalues : _ENV
+  -- function num : 0_55 , upvalues : _ENV
+  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
+  ;
+  (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
+end
+
+HttpNetHandlerPlus.milkout_settle_succeed_ack = function(mapMsgData)
+  -- function num : 0_56 , upvalues : _ENV
+  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
+  ;
+  (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
+end
+
+HttpNetHandlerPlus.milkout_character_unlock_notify = function(mapMsgData)
+  -- function num : 0_57 , upvalues : _ENV
+  (EventManager.Hit)("MilkoutCharacterUnlock", mapMsgData)
+end
+
+HttpNetHandlerPlus.daily_mall_reward_receive_succeed_ack = function(mapMsgData)
+  -- function num : 0_58 , upvalues : _ENV
+  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
+  ;
+  (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
+end
+
+HttpNetHandlerPlus.clear_all_activity_breakout_levels_notify = function(mapMsgData)
+  -- function num : 0_59 , upvalues : _ENV
+  (EventManager.Hit)("ClearAllLevels", mapMsgData)
+end
+
+HttpNetHandlerPlus.activity_throw_gift_settle_succeed_ack = function(mapMsgData)
+  -- function num : 0_60 , upvalues : _ENV
   local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
   ;
   (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
 end
 
 HttpNetHandlerPlus.activity_tower_defense_level_settle_failed_ack = function(mapMsgData)
-  -- function num : 0_48 , upvalues : _ENV
-  (EventManager.Hit)("ActivityTowerDefenseLevelSettleFailed")
+  -- function num : 0_61
+end
+
+HttpNetHandlerPlus.activity_penguin_card_level_settle_succeed_ack = function(mapMsgData)
+  -- function num : 0_62 , upvalues : _ENV
+  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
+  ;
+  (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
+end
+
+HttpNetHandlerPlus.activity_penguin_card_quest_reward_receive_succeed_ack = function(mapMsgData)
+  -- function num : 0_63 , upvalues : _ENV
+  local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
+  ;
+  (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
 end
 
 return HttpNetHandlerPlus

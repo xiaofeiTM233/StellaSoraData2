@@ -609,11 +609,24 @@ end
 TowerDefenseData.RequestFinishLevel = function(self, levelId, bResult, nHp, cb)
   -- function num : 0_39 , upvalues : _ENV
   local levelData = self:GetLevelData(levelId)
+  local bIsInActivityTime = self:CheckActivityOpen()
+  if not bIsInActivityTime then
+    local mapMsg = {LevelId = levelId, Star = 0}
+    if cb ~= nil then
+      cb(levelData.nStar, levelData.nStar)
+    end
+    local result = {action = 5, nActId = self.nActId, nlevelId = levelId, nStar = 0, nHp = 0, bIsFirstPass = false}
+    self:EventUpload(result)
+    ;
+    (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_tower_defense_level_settle_req, mapMsg, nil, nil)
+    return 
+  end
   do
-    if not bResult then
-      local mapMsg = {LevelId = levelId, Star = 0}
-      ;
-      (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_tower_defense_level_settle_req, mapMsg, nil, function()
+    do
+      if not bResult then
+        local mapMsg = {LevelId = levelId, Star = 0}
+        ;
+        (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_tower_defense_level_settle_req, mapMsg, nil, function()
     -- function num : 0_39_0 , upvalues : cb, levelData, self, levelId
     if cb ~= nil then
       cb(levelData.nStar, levelData.nStar)
@@ -622,23 +635,30 @@ TowerDefenseData.RequestFinishLevel = function(self, levelId, bResult, nHp, cb)
     self:EventUpload(result)
   end
 )
-      return 
-    end
-    self:CreateTempData(levelId, bResult)
-    ;
-    (EventManager.Hit)(EventId.ClosePanel, PanelId.TowerDefenseLevelDetailPanel)
-    local nStar = 1
-    local config = (ConfigTable.GetData)("TowerDefenseLevel", levelId)
-    if config.Condition2 < nHp then
-      nStar = nStar + 1
-    end
-    if config.Condition3 < nHp then
-      nStar = nStar + 1
-    end
-    local mapMsg = {LevelId = levelId, Star = nStar}
-    local oldStar = levelData.nStar
-    ;
-    (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_tower_defense_level_settle_req, mapMsg, nil, function(_, mapMsgData)
+        return 
+      end
+      self:CreateTempData(levelId, bResult)
+      ;
+      (EventManager.Hit)(EventId.ClosePanel, PanelId.TowerDefenseLevelDetailPanel)
+      local nStar = 1
+      local config = (ConfigTable.GetData)("TowerDefenseLevel", levelId)
+      if config.Condition2 < nHp then
+        nStar = nStar + 1
+      end
+      if config.Condition3 < nHp then
+        nStar = nStar + 1
+      end
+      do
+        if nStar == 3 then
+          local bPerfect = self:IsPerfectClear(levelId, nHp)
+          if bPerfect then
+            nStar = nStar + 10
+          end
+        end
+        local mapMsg = {LevelId = levelId, Star = nStar}
+        local oldStar = levelData.nStar
+        ;
+        (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_tower_defense_level_settle_req, mapMsg, nil, function(_, mapMsgData)
     -- function num : 0_39_1 , upvalues : cb, nStar, levelData, self, levelId, _ENV, nHp, oldStar
     cb(nStar, levelData.nStar, mapMsgData)
     self:UpdateLevelData({Id = levelId, Star = (math.max)(nStar, levelData.nStar)})
@@ -651,6 +671,8 @@ TowerDefenseData.RequestFinishLevel = function(self, levelId, bResult, nHp, cb)
     self:EventUpload(result)
   end
 )
+      end
+    end
   end
 end
 
@@ -700,23 +722,37 @@ TowerDefenseData.SkipLevel = function(self, levelId, characterList, itemId, cb)
   (self.TempLevelTeamData)[levelId] = {charList = clone(characterList), itemId = itemId}
 end
 
+TowerDefenseData.IsPerfectClear = function(self, levelId, nHp)
+  -- function num : 0_42 , upvalues : _ENV
+  local levelConfig = (ConfigTable.GetData)("TowerDefenseLevel", levelId)
+  if levelConfig == nil then
+    return false
+  end
+  local floorConfig = (ConfigTable.GetData)("TowerDefenseFloor", levelConfig.FloorId)
+  if floorConfig == nil then
+    return false
+  end
+  do return nHp == floorConfig.Durability end
+  -- DECOMPILER ERROR: 1 unprocessed JMP targets
+end
+
 TowerDefenseData.CreateTempData = function(self, nLevelId, bResult)
-  -- function num : 0_42
+  -- function num : 0_43
   self.tempData = {nLevelId = nLevelId, bResult = bResult}
 end
 
 TowerDefenseData.GetTempData = function(self)
-  -- function num : 0_43
+  -- function num : 0_44
   return self.tempData
 end
 
 TowerDefenseData.ClearTempData = function(self)
-  -- function num : 0_44
+  -- function num : 0_45
   self.tempData = nil
 end
 
 TowerDefenseData.EventUpload = function(self, result)
-  -- function num : 0_45 , upvalues : _ENV
+  -- function num : 0_46 , upvalues : _ENV
   local tabUpLevel = {}
   ;
   (table.insert)(tabUpLevel, {"role_id", tostring((PlayerData.Base)._nPlayerId)})
@@ -737,10 +773,10 @@ TowerDefenseData.EventUpload = function(self, result)
 end
 
 TowerDefenseData.RequestReadAVG = function(self, storyId)
-  -- function num : 0_46 , upvalues : _ENV
+  -- function num : 0_47 , upvalues : _ENV
   local mapMsg = {Value = storyId}
   local cb = function(_, mapMsgData)
-    -- function num : 0_46_0 , upvalues : storyId, self, _ENV
+    -- function num : 0_47_0 , upvalues : storyId, self, _ENV
     local data = {nId = storyId, bIsRead = true}
     self:UpdateStoryData(data)
     local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
@@ -754,10 +790,10 @@ TowerDefenseData.RequestReadAVG = function(self, storyId)
 end
 
 TowerDefenseData.RequestReceiveQuest = function(self, nGroupId, nQuestId)
-  -- function num : 0_47 , upvalues : _ENV
+  -- function num : 0_48 , upvalues : _ENV
   local mapMsg = {ActivityId = self.nActId, GroupId = nQuestId == 0 and nGroupId or 0, QuestId = nQuestId}
   local cb = function(_, mapMsgData)
-    -- function num : 0_47_0 , upvalues : nQuestId, self, nGroupId, _ENV
+    -- function num : 0_48_0 , upvalues : nQuestId, self, nGroupId, _ENV
     if nQuestId == 0 then
       local quests = self:GetQuestbyGroupId(nGroupId)
       for _,quest in pairs(quests) do

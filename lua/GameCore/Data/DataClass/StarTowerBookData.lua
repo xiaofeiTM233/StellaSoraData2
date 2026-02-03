@@ -847,10 +847,42 @@ StarTowerBookData.SendReceivePotentialRewardMsg = function(self, nCharId, callba
   (HttpNetHandler.SendMsg)((NetMsgId.Id).star_tower_book_potential_reward_receive_req, {Value = nCharId}, nil, sucCall)
 end
 
-StarTowerBookData.SendGetFateCardBookMsg = function(self, callback)
+StarTowerBookData.SendReceiveAllPotentialRewardMsg = function(self, callback)
   -- function num : 0_26 , upvalues : _ENV
   local sucCall = function(_, mapMsgData)
-    -- function num : 0_26_0 , upvalues : self, _ENV, callback
+    -- function num : 0_26_0 , upvalues : _ENV, self, callback
+    for _,v in ipairs(mapMsgData.ReceivedIds) do
+      local mapCfg = (ConfigTable.GetData)("StarTowerBookPotentialReward", v)
+      -- DECOMPILER ERROR at PC23: Confused about usage of register: R8 in 'UnsetPending'
+
+      if mapCfg ~= nil and (self.mapPotentialQuest)[mapCfg.CharId] ~= nil then
+        (((self.mapPotentialQuest)[mapCfg.CharId])[v]).Status = (AllEnum.BookQuestStatus).Received
+      end
+    end
+    local tbCharHave = (PlayerData.Char):GetCharIdList()
+    for k,v in pairs(tbCharHave) do
+      local nCharId = v.nId
+      local mapCharCfg = (ConfigTable.GetData_Character)(nCharId)
+      if mapCharCfg ~= nil and mapCharCfg.Available then
+        (RedDotManager.SetValid)(RedDotDefine.StarTowerBook_Potential_Reward, {mapCharCfg.EET, nCharId}, false)
+        ;
+        (RedDotManager.SetValid)(RedDotDefine.StarTowerBook_Potential_Reward, {0, nCharId}, false)
+      end
+    end
+    ;
+    (EventManager.Hit)("ReceivePotentialBookReward")
+    ;
+    (UTILS.OpenReceiveByChangeInfo)(mapMsgData.Change, callback)
+  end
+
+  ;
+  (HttpNetHandler.SendMsg)((NetMsgId.Id).star_tower_book_potential_reward_receive_req, {Value = 0}, nil, sucCall)
+end
+
+StarTowerBookData.SendGetFateCardBookMsg = function(self, callback)
+  -- function num : 0_27 , upvalues : _ENV
+  local sucCall = function(_, mapMsgData)
+    -- function num : 0_27_0 , upvalues : self, _ENV, callback
     self.bFateCardInit = true
     for _,v in ipairs(mapMsgData.Cards) do
       -- DECOMPILER ERROR at PC14: Confused about usage of register: R7 in 'UnsetPending'
@@ -884,9 +916,9 @@ StarTowerBookData.SendGetFateCardBookMsg = function(self, callback)
 end
 
 StarTowerBookData.SendReceiveFateCardRewardMsg = function(self, nBundleId, nQuestId, callback)
-  -- function num : 0_27 , upvalues : _ENV
+  -- function num : 0_28 , upvalues : _ENV
   local sucCall = function(_, mapMsgData)
-    -- function num : 0_27_0 , upvalues : self, nBundleId, _ENV, callback
+    -- function num : 0_28_0 , upvalues : self, nBundleId, _ENV, callback
     if (self.mapFateCardQuest)[nBundleId] ~= nil then
       for nId,v in pairs((self.mapFateCardQuest)[nBundleId]) do
         -- DECOMPILER ERROR at PC24: Confused about usage of register: R7 in 'UnsetPending'
@@ -911,12 +943,47 @@ StarTowerBookData.SendReceiveFateCardRewardMsg = function(self, nBundleId, nQues
   (HttpNetHandler.SendMsg)((NetMsgId.Id).tower_book_fate_card_reward_receive_req, msgData, nil, sucCall)
 end
 
+StarTowerBookData.SendReceiveFateCardAllRewardMsg = function(self, callback)
+  -- function num : 0_29 , upvalues : _ENV
+  local sucCall = function(_, mapMsgData)
+    -- function num : 0_29_0 , upvalues : _ENV, self, callback
+    local tbFateCardBundleList = (PlayerData.StarTowerBook):GetAllFateCardBundle()
+    for nBundleId,_ in pairs(tbFateCardBundleList) do
+      if (self.mapFateCardQuest)[nBundleId] ~= nil then
+        for nId,v in pairs((self.mapFateCardQuest)[nBundleId]) do
+          -- DECOMPILER ERROR at PC29: Confused about usage of register: R13 in 'UnsetPending'
+
+          if v.Status == (AllEnum.BookQuestStatus).Complete then
+            (((self.mapFateCardQuest)[nBundleId])[nId]).Status = (AllEnum.BookQuestStatus).Received
+          end
+        end
+      end
+      do
+        do
+          ;
+          (RedDotManager.SetValid)(RedDotDefine.StarTowerBook_FateCard_Reward, nBundleId, false)
+          -- DECOMPILER ERROR at PC39: LeaveBlock: unexpected jumping out DO_STMT
+
+        end
+      end
+    end
+    ;
+    (EventManager.Hit)("ReceiveFateCardBookReward")
+    ;
+    (UTILS.OpenReceiveByChangeInfo)(mapMsgData, callback)
+  end
+
+  local msgData = {CardBundleId = 0, QuestId = 0}
+  ;
+  (HttpNetHandler.SendMsg)((NetMsgId.Id).tower_book_fate_card_reward_receive_req, msgData, nil, sucCall)
+end
+
 StarTowerBookData.OnEvent_UpdateWorldClass = function(self)
-  -- function num : 0_28
+  -- function num : 0_30
 end
 
 StarTowerBookData.OnEvent_StarTowerPass = function(self)
-  -- function num : 0_29
+  -- function num : 0_31
 end
 
 return StarTowerBookData

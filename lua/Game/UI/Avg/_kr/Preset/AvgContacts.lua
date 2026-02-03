@@ -67,6 +67,8 @@ return {
 , 
 {id = 158, icon = "Icon/Head/head_15801_S", name = "라루(이브)", landmark = "크리스마스 축제 운영위원회 사무소", signature = "초집중 열일 모드 중! 방해 금지!"}
 , 
+{id = 159, icon = "Icon/Head/head_15901_S", name = "크루니스(새해)", landmark = "필리에의 ‘진료소’ ", signature = "휴가 중."}
+, 
 {id = 999, icon = "Icon/Head/head_group_S", name = "일은 끝이 없다", landmark = "", signature = "지금은 근무 시간, 휴대폰 보지 마세요"}
 , 
 {id = 998, icon = "Icon/Head/head_9100_S", name = "==PLAYER_NAME==", landmark = "럭키 오아시스호", signature = "마왕 협정 인재 파견 컴퍼니 대표집행관"}

@@ -1221,7 +1221,7 @@ StarTowerSweepData.HandleNpc = function(self, nNpcId, nNpcUid)
     local nSkinId = (PlayerData.Board):GetNPCUsingSkinId(nBoardNpcId)
     local nCoin = (self._mapItem)[(AllEnum.CoinItemId).FixedRogCurrency] or 0
     ;
-    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, true, nCoin, self.nTowerId, self._mapNote)
+    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, true, nCoin, self.nTowerId, self._mapNote, self.tbDisc)
     return 
   else
     do
@@ -1767,7 +1767,7 @@ StarTowerSweepData.OpenNpcOptionPanel = function(self, nCaseId, nNpcConfigId)
     end
     local nCoin = (self._mapItem)[(AllEnum.CoinItemId).FixedRogCurrency] or 0
     ;
-    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, true, nCoin, self.nTowerId, self._mapNote)
+    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, true, nCoin, self.nTowerId, self._mapNote, self.tbDisc)
     return 
   end
   do
@@ -1888,7 +1888,7 @@ StarTowerSweepData.OpenNpcOptionPanel = function(self, nCaseId, nNpcConfigId)
     mapCase.bFirst = false
     local nCoin = (self._mapItem)[(AllEnum.CoinItemId).FixedRogCurrency] or 0
     ;
-    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 1, nEventId, tbOption, nSkinId, callback, tbUnabledOption, nTableEvtId, nTalkId, mapCase.nActionId, false, true, nCoin, self.nTowerId, self._mapNote)
+    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 1, nEventId, tbOption, nSkinId, callback, tbUnabledOption, nTableEvtId, nTalkId, mapCase.nActionId, false, true, nCoin, self.nTowerId, self._mapNote, self.tbDisc)
   end
 end
 
@@ -1951,7 +1951,7 @@ StarTowerSweepData.HandleNpcRecover = function(self, nCaseId, nNpcConfigId)
     end
     local nCoin = (self._mapItem)[(AllEnum.CoinItemId).FixedRogCurrency] or 0
     ;
-    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, true, nCoin, self.nTowerId, self._mapNote)
+    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, true, nCoin, self.nTowerId, self._mapNote, self.tbDisc)
     return 
   end
   do
@@ -1959,7 +1959,7 @@ StarTowerSweepData.HandleNpcRecover = function(self, nCaseId, nNpcConfigId)
     local msg = {}
     msg.Id = nCaseId
     msg.RecoveryHPReq = {}
-    -- DECOMPILER ERROR at PC92: Confused about usage of register: R6 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC93: Confused about usage of register: R6 in 'UnsetPending'
 
     ;
     (msg.RecoveryHPReq).Hp = nHp
@@ -2010,7 +2010,7 @@ StarTowerSweepData.HandleNpcDangerRoom = function(self, nCaseId, nNpcConfigId)
   end
   local nCoin = (self._mapItem)[(AllEnum.CoinItemId).FixedRogCurrency] or 0
   ;
-  (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 2, nCaseId, {}, nSkinId, callback, {}, 0, nTalkId, 0, false, true, nCoin, self.nTowerId, self._mapNote)
+  (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 2, nCaseId, {}, nSkinId, callback, {}, 0, nTalkId, 0, false, true, nCoin, self.nTowerId, self._mapNote, self.tbDisc)
 end
 
 StarTowerSweepData.HandlePopupDisc = function(self, mapData)

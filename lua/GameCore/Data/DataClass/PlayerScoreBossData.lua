@@ -315,23 +315,24 @@ end
 
 PlayerScoreBossData.EnterScoreBossInstance = function(self, nLevelId, nBuildId)
   -- function num : 0_12 , upvalues : _ENV
-  if self.curLevel ~= nil then
-    printError("当前关卡level不为空1")
-    return 
-  end
   self._EntryTime = ((CS.ClientManager).Instance).serverTimeStampWithTimeZone
   self.entryLevelId = nLevelId
   self.entryBuild = nBuildId
-  local luaClass = require("Game.Adventure.ScoreBoss.ScoreBossLevel")
-  if luaClass == nil then
-    return 
-  end
-  self.curLevel = luaClass
-  if type((self.curLevel).BindEvent) == "function" then
-    (self.curLevel):BindEvent()
-  end
-  if type((self.curLevel).Init) == "function" then
-    (self.curLevel):Init(self, nLevelId, nBuildId)
+  do
+    if self.curLevel == nil then
+      local luaClass = require("Game.Adventure.ScoreBoss.ScoreBossLevel")
+      if luaClass == nil then
+        return 
+      end
+      self.curLevel = luaClass
+    end
+    if type((self.curLevel).BindEvent) == "function" and not self.isGoAgain then
+      (self.curLevel):BindEvent()
+    end
+    if type((self.curLevel).Init) == "function" then
+      (self.curLevel):Init(self, nLevelId, nBuildId, self.isGoAgain)
+    end
+    self.isGoAgain = false
   end
 end
 
@@ -743,11 +744,45 @@ PlayerScoreBossData.SendScoreBossStarRewardReceiveReq = function(self, cb, star)
   (HttpNetHandler.SendMsg)((NetMsgId.Id).score_boss_star_reward_receive_req, msg, nil, msgCallback)
 end
 
-PlayerScoreBossData.SendScoreBossApplyReq = function(self, cb)
+PlayerScoreBossData.SendEnterLvAgain = function(self)
   -- function num : 0_36 , upvalues : _ENV
+  self.isGoAgain = true
+  ;
+  (NovaAPI.StopRecord)()
+  ;
+  ((CS.AdventureModuleHelper).LevelStateChanged)(false)
+  ;
+  (EventManager.Hit)("BattleRestart")
+end
+
+PlayerScoreBossData.EntryLvAgain = function(self)
+  -- function num : 0_37 , upvalues : _ENV, LocalData
+  if self.isGoAgain then
+    ((CS.AdventureModuleHelper).ClearCharacterDamageRecord)(false)
+    self.CurHPLvScore = 0
+    self.HPLvScore = 0
+    self.CurHPDamage = 0
+    self.BehaviorScore = 0
+    self.BehaviorScoreCount = 0
+    local curTimeStamp = ((CS.ClientManager).Instance).serverTimeStampWithTimeZone
+    local sKey = (LocalData.GetPlayerLocalData)("ScoreBossRecordKey")
+    if sKey ~= nil and sKey ~= "" then
+      (NovaAPI.DeleteRecFile)(sKey)
+    end
+    sKey = tostring(curTimeStamp)
+    ;
+    (LocalData.SetPlayerLocalData)("ScoreBossRecordKey", sKey)
+    ;
+    (EventManager.Hit)("ScoreBoss_Restart_Again")
+    self:EnterScoreBossInstance(self.entryLevelId, self.entryBuild)
+  end
+end
+
+PlayerScoreBossData.SendScoreBossApplyReq = function(self, cb)
+  -- function num : 0_38 , upvalues : _ENV
   self:InitRankData()
   local msgCallback = function(_, mapMsgData)
-    -- function num : 0_36_0 , upvalues : self, cb
+    -- function num : 0_38_0 , upvalues : self, cb
     self:SetRankMsg(mapMsgData, cb)
   end
 
@@ -756,7 +791,7 @@ PlayerScoreBossData.SendScoreBossApplyReq = function(self, cb)
 end
 
 PlayerScoreBossData.InitRankData = function(self)
-  -- function num : 0_37
+  -- function num : 0_39
   self.RankLastRefreshTime = 0
   self.RankSelfMsg = nil
   self.RankPlayerMsg = {}
@@ -765,7 +800,7 @@ PlayerScoreBossData.InitRankData = function(self)
 end
 
 PlayerScoreBossData.SetRankMsg = function(self, mapMsgData, cb)
-  -- function num : 0_38 , upvalues : _ENV
+  -- function num : 0_40 , upvalues : _ENV
   self.RankLastRefreshTime = mapMsgData.LastRefreshTime
   if mapMsgData.Self then
     self.RankSelfMsg = mapMsgData.Self
@@ -791,7 +826,7 @@ PlayerScoreBossData.SetRankMsg = function(self, mapMsgData, cb)
 end
 
 PlayerScoreBossData.CheckRankDataLastest = function(self)
-  -- function num : 0_39
+  -- function num : 0_41
   if self.RankSelfMsg == nil or (self.RankSelfMsg).Rank == 0 then
     return true
   end
@@ -808,12 +843,12 @@ PlayerScoreBossData.CheckRankDataLastest = function(self)
 end
 
 PlayerScoreBossData.GetRankSelfMsg = function(self)
-  -- function num : 0_40
+  -- function num : 0_42
   return self.RankSelfMsg
 end
 
 PlayerScoreBossData.GetSelfRankIndex = function(self)
-  -- function num : 0_41
+  -- function num : 0_43
   if self.RankSelfMsg then
     return (self.RankSelfMsg).Rank
   end
@@ -821,12 +856,12 @@ PlayerScoreBossData.GetSelfRankIndex = function(self)
 end
 
 PlayerScoreBossData.GetRankBorderCount = function(self, index)
-  -- function num : 0_42
+  -- function num : 0_44
   return (self.RankBorder)[index] or 0
 end
 
 PlayerScoreBossData.GetSelfBorderIndex = function(self)
-  -- function num : 0_43 , upvalues : _ENV
+  -- function num : 0_45 , upvalues : _ENV
   for i,v in pairs(self.RankBorder) do
     if v <= (self.RankSelfMsg).Score then
       return i
@@ -836,22 +871,22 @@ PlayerScoreBossData.GetSelfBorderIndex = function(self)
 end
 
 PlayerScoreBossData.GetRankPlayerCount = function(self)
-  -- function num : 0_44
+  -- function num : 0_46
   return self.nRankTotalCount or 0
 end
 
 PlayerScoreBossData.GetRankTableCount = function(self)
-  -- function num : 0_45
+  -- function num : 0_47
   return #self.RankPlayerMsg or 0
 end
 
 PlayerScoreBossData.GetPlayerRankMsg = function(self, index)
-  -- function num : 0_46
+  -- function num : 0_48
   return (self.RankPlayerMsg)[index] or nil
 end
 
 PlayerScoreBossData.GetVoiceKey = function(self)
-  -- function num : 0_47 , upvalues : _ENV
+  -- function num : 0_49 , upvalues : _ENV
   local isFirst = false
   if not self.isFirstVoice then
     isFirst = true

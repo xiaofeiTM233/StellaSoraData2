@@ -315,7 +315,7 @@ AllEnum.ElementIconType = {Skill = "db_common_element_skill_", Icon = "icon_comm
 AllEnum.MessageBox = {Confirm = 1, Alert = 2, Tips = 3, Desc = 4, Item = 5, ItemList = 6, PlainText = 7, Char = 8}
 AllEnum.SuccessBar = {Blue = 1, Yellow = 2, Purple = 3}
 AllEnum.PerkState = {Replace = 1, New = 2, Max = 3, Up = 4}
-AllEnum.MallToggle = {MonthlyCard = 1, Package = 2, Gem = 3, Shop = 4, Skin = 5}
+AllEnum.MallToggle = {MonthlyCard = 1, Package = 2, Gem = 3, Shop = 4, Skin = 5, Recommend = 6}
 AllEnum.AvgBubbleShowType = {Avg = 1, Voice = 2}
 AllEnum.SkillTypeShow = {
 [1] = {iconIndex = 1, bgIconIndex = 1, sLanguageId = "Char_Skill_Type_1", bgColor = "#4f658f"}
@@ -538,6 +538,18 @@ AllEnum.Star_Tag = {
 [806] = {sLanguage = 806}
 , 
 [807] = {sLanguage = 807}
+, 
+[808] = {sLanguage = 808}
+, 
+[809] = {sLanguage = 809}
+, 
+[810] = {sLanguage = 810}
+, 
+[811] = {sLanguage = 811}
+, 
+[818] = {sLanguage = 818}
+, 
+[823] = {sLanguage = 823}
 }
 AllEnum.Equip_Rarity = {
 [(GameEnum.itemRarity).R] = {}
@@ -674,7 +686,7 @@ AllEnum.ChooseOptionCfg = {
 AllEnum.OptionType = {Char = 1, Disc = 2, Equipment = 3}
 AllEnum.RewardType = {First = 1, Three = 2, Extra = 3}
 AllEnum.FormationEnterType = {MainLine = 0, FixedRoguelike = 1, StarTower = 2}
-AllEnum.RegionBossFormationType = {RegionBoss = 1, TravelerDuel = 2, DailyInstance = 3, InfinityTower = 4, EquipmentInstance = 5, Story = 6, Vampire = 7, ScoreBoss = 8, SkillInstance = 9, WeeklyCopies = 10, JointDrill = 11, ActivityLevels = 12, ActivityStory = 13}
+AllEnum.RegionBossFormationType = {RegionBoss = 1, TravelerDuel = 2, DailyInstance = 3, InfinityTower = 4, EquipmentInstance = 5, Story = 6, Vampire = 7, ScoreBoss = 8, SkillInstance = 9, WeeklyCopies = 10, JointDrill = 11, ActivityLevels = 12, ActivityStory = 13, JointDrill_2 = 14}
 AllEnum.EnergyPanelType = {Main = 1, BuyConfirm = 2, ItemUse = 3, BatteryUse = 4}
 AllEnum.DispatchState = {CanAccept = 0, Accepting = 1, Complete = 2, Done = 3}
 AllEnum.PopUpType = {DailyCheckIn = 1, MonthlyCard = 2, Activity = 3, ActivityLogin = 4, NewChat = 5, FuncUnlock = 6, WorldClass = 7}
@@ -696,7 +708,7 @@ AllEnum.KrTags = {
 AllEnum.PotentialCardType = {StarTower = 1, CharInfo = 2, Book = 3, TowerDefense = 4, Detial = 5}
 AllEnum.PhoneTogType = {Chat = 1, Dating = 2, Gift = 3}
 AllEnum.ReceivePropsTitle = {Common = 1, Dating = 2}
-AllEnum.DiscSkillIconSurfix = {Small = "_S", Corner = "_jb"}
+AllEnum.DiscSkillIconSurfix = {Small = "_S", Corner = "_jb", S_Light = "_S_Light"}
 AllEnum.QuestPanelTab = {GuideQuest = 1, DailyQuest = 2, WeeklyQuest = 3, WorldClass = 4}
 AllEnum.QuestNewbieTab = {TeamFormation = 1, Tutorial = 2}
 AllEnum.StarTowerFastBattleBg = {Bg_L = "bg_fastBattle_%s_l", Bg_R = "bg_fastBattle_%s_r", Flag = "zs_fastBattle_%s"}
@@ -709,8 +721,9 @@ AllEnum.UI_SORTING_ORDER = {AVG_Bubble = 298, AVG_ST = 299, Guide = 32000, GMMon
 AllEnum.PhoneMsgType = {ReceiveMsg = 0, ReplyMsg = 1, ReplyChoiceMgs = 2, ReceiveImgMsg = 3, ReplyImgMsg = 4, SystemMsg = 5, InputingMsgLeft = 6, InputingMsgRight = 7}
 AllEnum.CharAdvancePreview = {LevelMax = 1, SkillLevelMax = 2, SkinUnlock = 3}
 AllEnum.DiscBgSurfix = {Main = "_M", L2d = "_L", Image = "_B", Card = "_G"}
-AllEnum.BossBloodType = {Single = 1, Multiple = 2}
+AllEnum.BossBloodType = {Single = 1, Multiple = 2, JointDrill_Mode_2 = 3}
 AllEnum.JointDrillResultType = {Success = 1, BattleEnd = 2, Retreat = 3, ChallengeEnd = 4}
+AllEnum.JointDrillLevelStartType = {Start = 1, Continue = 2, ChangeLevel = 3, Restart = 4}
 AllEnum.ActivityMainType = {Activity = 1, ActivityGroup = 2}
 AllEnum.TutorialLevelLockType = {None = 1, WorldClass = 2, PreLevel = 3}
 AllEnum.JointDrillActStatus = {WaitStart = 1, Start = 2, WaitClose = 3, Closed = 4}
@@ -725,5 +738,6 @@ AllEnum.LevelMenuResourceList = {[1] = (GameEnum.OpenFuncType).DailyInstance, [2
 AllEnum.CookieModeIcon = {[(GameEnum.CookiePackModel).CookiePackNormalModel] = "UI/Play_Cookie/SpriteAtlas/Sprite/zs_activity_cookie_s_01", [(GameEnum.CookiePackModel).CookiePackPathsModel] = "UI/Play_Cookie/SpriteAtlas/Sprite/zs_activity_cookie_s_02", [(GameEnum.CookiePackModel).CookiePackRhythmlModel] = "UI/Play_Cookie/SpriteAtlas/Sprite/zs_activity_cookie_s_03"}
 AllEnum.TransitionStatus = {IsPlayingInAnim = 1, InAnimDone = 2, IsPlayingOutAnim = 3, OutAnimDone = 4}
 AllEnum.HandBookTab = {Skin = 1, Disc = 2, MainScreenCG = 3}
+AllEnum.PenguinCardSuitSprite = {[(GameEnum.PenguinBaseCardSuit).Blue] = "icon_PengCard_Water", [(GameEnum.PenguinBaseCardSuit).Red] = "icon_PengCard_Fire", [(GameEnum.PenguinBaseCardSuit).Green] = "icon_PengCard_Wind"}
 return AllEnum
 

@@ -1,7 +1,7 @@
 local ScoreBossLevel = class("ScoreBossLevel")
 local LocalData = require("GameCore.Data.LocalData")
-local mapEventConfig = {LoadLevelRefresh = "OnEvent_LoadLevelRefresh", AdventureModuleEnter = "OnEvent_AdventureModuleEnter", BattlePause = "OnEvent_Pause", [EventId.AbandonBattle] = "OnEvent_AbandonBattle", ScoreBossLevelGameEnd = "OnEvent_LevelResult", BossRush_Spawn_Id = "OnEvent_BossRushSpawnId", ScoreBoss_Result_Time = "ScoreBossResultTime", LevelStateChanged = "ScoreBossResult", ScoreBoss_BehaviorScore = "OnEvent_ControlScore", ScoreBossSettleSuccess = "OnEvent_ScoreBossSettleSuccess", ScoreBossSettleGiveUp = "OnEvent_ScoreBossSettleGiveUp", Upload_Dodge_Event = "OnEvent_UploadDodgeEvent"}
-ScoreBossLevel.Init = function(self, parent, nLevelId, nBuildId)
+local mapEventConfig = {LoadLevelRefresh = "OnEvent_LoadLevelRefresh", AdventureModuleEnter = "OnEvent_AdventureModuleEnter", BattlePause = "OnEvent_Pause", [EventId.AbandonBattle] = "OnEvent_AbandonBattle", ScoreBossLevelGameEnd = "OnEvent_LevelResult", BossRush_Spawn_Id = "OnEvent_BossRushSpawnId", ScoreBoss_Result_Time = "ScoreBossResultTime", LevelStateChanged = "ScoreBossResult", ScoreBoss_BehaviorScore = "OnEvent_ControlScore", ScoreBossSettleSuccess = "OnEvent_ScoreBossSettleSuccess", ScoreBossSettleGiveUp = "OnEvent_ScoreBossSettleGiveUp", Upload_Dodge_Event = "OnEvent_UploadDodgeEvent", ADVENTURE_LEVEL_UNLOAD_COMPLETE = "OnEvent_UnloadComplete"}
+ScoreBossLevel.Init = function(self, parent, nLevelId, nBuildId, isAgain)
   -- function num : 0_0 , upvalues : _ENV, LocalData
   self.isSettlement = false
   self.parent = parent
@@ -34,7 +34,7 @@ ScoreBossLevel.Init = function(self, parent, nLevelId, nBuildId)
     self.SwitchRate = getSwitchData.SwitchRate
   end
   local GetBuildCallback = function(mapBuildData)
-    -- function num : 0_0_0 , upvalues : self, _ENV, LocalData
+    -- function num : 0_0_0 , upvalues : self, _ENV, LocalData, isAgain
     self.mapBuildData = mapBuildData
     self.tbCharId = {}
     for _,mapChar in ipairs((self.mapBuildData).tbChar) do
@@ -63,9 +63,12 @@ ScoreBossLevel.Init = function(self, parent, nLevelId, nBuildId)
     ((CS.AdventureModuleHelper).EnterScoreBossFloor)(self.LevelId, self.tbCharId)
     local sKey = (LocalData.GetPlayerLocalData)("ScoreBossRecordKey")
     safe_call_cs_func((CS.AdventureModuleHelper).SetDamageRecordId, sKey)
-    ;
-    (NovaAPI.EnterModule)("AdventureModuleScene", true, 17)
-    -- DECOMPILER ERROR: 2 unprocessed JMP targets
+    if not isAgain then
+      (NovaAPI.EnterModule)("AdventureModuleScene", true, 17)
+    else
+      self:OnEvent_AdventureModuleEnter()
+    end
+    -- DECOMPILER ERROR: 4 unprocessed JMP targets
   end
 
   ;
@@ -351,6 +354,11 @@ ScoreBossLevel.OnEvent_UploadDodgeEvent = function(self, padMode)
   (table.insert)(tab, {"up_time", tostring(((CS.ClientManager).Instance).serverTimeStamp)})
   ;
   (NovaAPI.UserEventUpload)("use_dodge_key", tab)
+end
+
+ScoreBossLevel.OnEvent_UnloadComplete = function(self)
+  -- function num : 0_23
+  (self.parent):EntryLvAgain()
 end
 
 return ScoreBossLevel

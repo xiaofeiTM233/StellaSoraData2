@@ -109,6 +109,32 @@ StarTowerPanel.Awake = function(self)
     -- DECOMPILER ERROR: 1 unprocessed JMP targets
   end
 )
+    self.mapNoteNeed = {}
+    for nIndex,nDiscId in ipairs(self.tbDisc) do
+      if nIndex <= 3 then
+        local mapDiscData = (self.mapDiscData)[nDiscId]
+        if mapDiscData ~= nil then
+          local tbNeedNote = mapDiscData.tbSkillNeedNote
+          for _,mapNeedNote in ipairs(tbNeedNote) do
+            -- DECOMPILER ERROR at PC88: Confused about usage of register: R14 in 'UnsetPending'
+
+            if (self.mapNoteNeed)[mapNeedNote.nId] == nil then
+              (self.mapNoteNeed)[mapNeedNote.nId] = 0
+            end
+            -- DECOMPILER ERROR at PC96: Confused about usage of register: R14 in 'UnsetPending'
+
+            ;
+            (self.mapNoteNeed)[mapNeedNote.nId] = (self.mapNoteNeed)[mapNeedNote.nId] + mapNeedNote.nCount
+          end
+        end
+        do
+          -- DECOMPILER ERROR at PC99: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+          -- DECOMPILER ERROR at PC99: LeaveBlock: unexpected jumping out IF_STMT
+
+        end
+      end
+    end
     ;
     (GamepadUIManager.EnterAdventure)()
     ;

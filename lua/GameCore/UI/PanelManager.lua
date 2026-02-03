@@ -48,38 +48,56 @@ local GetPanelName = function(nPanelId)
   end
 end
 
-local AddTbGoSnapShot = function(nPanelId, goIns)
+local AddTbGoSnapShot = function(panel, goIns)
   -- function num : 0_3 , upvalues : _ENV, tbGoSnapShot
   if Settings.bDestroyHistoryUIInstance then
     if tbGoSnapShot == nil then
       tbGoSnapShot = {}
     end
     if goIns ~= nil then
-      tbGoSnapShot[nPanelId] = {goIns = goIns, bMove = false}
+      local nInstanceId = goIns:GetInstanceID()
+      panel._nGoBlurInsId = nInstanceId
+      if tbGoSnapShot[panel._nPanelId] == nil then
+        tbGoSnapShot[panel._nPanelId] = {}
+      end
+      -- DECOMPILER ERROR at PC26: Confused about usage of register: R3 in 'UnsetPending'
+
+      ;
+      (tbGoSnapShot[panel._nPanelId])[nInstanceId] = {goIns = goIns, bMove = false}
     end
   end
 end
 
-local MoveSnapShot = function(nPanelId)
+local MoveSnapShot = function(panel)
   -- function num : 0_4 , upvalues : _ENV, tbGoSnapShot, trSnapshotParent
-  -- DECOMPILER ERROR at PC8: Confused about usage of register: R1 in 'UnsetPending'
+  if panel == nil then
+    return 
+  end
+  local nPanelId = panel._nPanelId
+  local goInsId = panel._nGoBlurInsId
+  -- DECOMPILER ERROR at PC18: Confused about usage of register: R3 in 'UnsetPending'
 
-  if Settings.bDestroyHistoryUIInstance and tbGoSnapShot[nPanelId] ~= nil then
-    (tbGoSnapShot[nPanelId]).bMove = true
+  if Settings.bDestroyHistoryUIInstance and tbGoSnapShot[nPanelId] ~= nil and (tbGoSnapShot[nPanelId])[goInsId] ~= nil then
+    ((tbGoSnapShot[nPanelId])[goInsId]).bMove = true
     ;
-    ((((tbGoSnapShot[nPanelId]).goIns).gameObject).transform):SetParent(trSnapshotParent)
+    (((((tbGoSnapShot[nPanelId])[goInsId]).goIns).gameObject).transform):SetParent(trSnapshotParent)
   end
 end
 
-local GetSnapShot = function(nPanelId)
+local GetSnapShot = function(panel)
   -- function num : 0_5 , upvalues : _ENV, tbGoSnapShot
-  -- DECOMPILER ERROR at PC8: Confused about usage of register: R1 in 'UnsetPending'
+  if panel == nil then
+    return 
+  end
+  local nPanelId = panel._nPanelId
+  local goInsId = panel._nGoBlurInsId
+  -- DECOMPILER ERROR at PC18: Confused about usage of register: R3 in 'UnsetPending'
 
-  if Settings.bDestroyHistoryUIInstance and tbGoSnapShot[nPanelId] ~= nil then
-    (tbGoSnapShot[nPanelId]).bMove = false
+  if Settings.bDestroyHistoryUIInstance and tbGoSnapShot[nPanelId] ~= nil and (tbGoSnapShot[nPanelId])[goInsId] ~= nil then
+    ((tbGoSnapShot[nPanelId])[goInsId]).bMove = false
     ;
-    (((tbGoSnapShot[nPanelId]).goIns).gameObject):SetActive(true)
-    return (tbGoSnapShot[nPanelId]).goIns
+    ((((tbGoSnapShot[nPanelId])[goInsId]).goIns).gameObject):SetActive(true)
+    return ((tbGoSnapShot[nPanelId])[goInsId]).goIns
   end
 end
 
@@ -87,21 +105,31 @@ local HideMoveSnapshot = function()
   -- function num : 0_6 , upvalues : _ENV, tbGoSnapShot
   if Settings.bDestroyHistoryUIInstance and tbGoSnapShot ~= nil then
     for _,v in pairs(tbGoSnapShot) do
-      if v.bMove and v.goIns ~= nil then
-        ((v.goIns).gameObject):SetActive(false)
+      for insId,data in pairs(v) do
+        if data.bMove and data.goIns ~= nil then
+          ((data.goIns).gameObject):SetActive(false)
+        end
       end
     end
   end
 end
 
-local RemoveTbSnapShot = function(nPanelId)
+local RemoveTbSnapShot = function(panel)
   -- function num : 0_7 , upvalues : _ENV, tbGoSnapShot
-  if Settings.bDestroyHistoryUIInstance and tbGoSnapShot[nPanelId] ~= nil then
-    local goIns = (tbGoSnapShot[nPanelId]).goIns
+  if panel == nil then
+    return 
+  end
+  local nPanelId = panel._nPanelId
+  local goInsId = panel._nGoBlurInsId
+  if Settings.bDestroyHistoryUIInstance and tbGoSnapShot[nPanelId] ~= nil and (tbGoSnapShot[nPanelId])[goInsId] ~= nil then
+    local goIns = ((tbGoSnapShot[nPanelId])[goInsId]).goIns
     if goIns ~= nil then
       destroy(goIns)
     end
-    tbGoSnapShot[nPanelId] = nil
+    -- DECOMPILER ERROR at PC25: Confused about usage of register: R4 in 'UnsetPending'
+
+    ;
+    (tbGoSnapShot[nPanelId])[goInsId] = nil
   end
 end
 
@@ -126,7 +154,7 @@ local CheckThresholdCount = function()
         if nDelCount == nCurCount - nThresholdHistoryPanelCount then
           for i = nDelCount, 1, -1 do
             local nPanelIndex = tbNeedRemovePanelIndex[i]
-            RemoveTbSnapShot((tbBackHistory[nPanelIndex])._nPanelId)
+            RemoveTbSnapShot(tbBackHistory[nPanelIndex])
             ;
             (tbBackHistory[nPanelIndex]):_Exit()
             ;
@@ -156,7 +184,7 @@ local DoBackToTarget = function(nTargetIndex)
     nCount = #tbBackHistory
     for i = nCount, nTargetIndex + 1, -1 do
       local objPanel = tbBackHistory[i]
-      RemoveTbSnapShot(objPanel._nPanelId)
+      RemoveTbSnapShot(objPanel)
       objPanel:_PreExit()
       objPanel:_Exit()
       objPanel:_Destroy()
@@ -167,7 +195,7 @@ local DoBackToTarget = function(nTargetIndex)
     if type(objBackPanel.Awake) == "function" then
       objBackPanel:Awake()
     end
-    local goSnapshot = GetSnapShot(objBackPanel._nPanelId)
+    local goSnapshot = GetSnapShot(objBackPanel)
     objBackPanel:_PreEnter(nil, goSnapshot)
     objCurPanel:_Exit()
     objBackPanel:_Enter()
@@ -197,7 +225,7 @@ local CloseCurPanel = function()
     end
     nLastIndex = #tbBackHistory
     local objBackPanel = tbBackHistory[nLastIndex]
-    local goSnapshot = GetSnapShot(objBackPanel._nPanelId)
+    local goSnapshot = GetSnapShot(objBackPanel)
     objBackPanel:_PreEnter(nil, goSnapshot)
     objCurPanel:_Exit()
     objBackPanel:_Enter()
@@ -207,7 +235,7 @@ local CloseCurPanel = function()
     printLog("[界面切换] 已完成：关闭当前并打开历史队列的最后一个， 当前打开的界面：" .. GetPanelName(objCurPanel._nPanelId))
   end
 
-    RemoveTbSnapShot(objCurPanel._nPanelId)
+    RemoveTbSnapShot(objCurPanel)
     objCurPanel:_PreExit(func_DoBack, true)
   end
 end
@@ -224,7 +252,7 @@ local ClosePanel = function(nPanelId)
         if objPanel._nPanelId == nPanelId then
           (table.remove)(tbBackHistory, i)
           objPanel:_Destroy()
-          RemoveTbSnapShot(objPanel._nPanelId)
+          RemoveTbSnapShot(objPanel)
           objPanel = nil
           printLog("[界面切换] 仅关闭指定的界面：" .. GetPanelName(nPanelId))
           break
@@ -251,7 +279,7 @@ local OnClosePanel = function(listener, nPanelId)
           v:_Destroy()
           ;
           (table.remove)(tbDisposablePanel, i)
-          RemoveTbSnapShot(v._nPanelId)
+          RemoveTbSnapShot(v)
           bIsMainPanel = false
           printLog("[界面切换] 关闭了非主 Panel 界面：" .. GetPanelName(nPanelId))
           break
@@ -302,7 +330,7 @@ end
 local PreEnterNext = function()
   -- function num : 0_16 , upvalues : TakeSnapshot, objNextPanel, AddTbGoSnapShot, _ENV, ExitCurrent, HideMoveSnapshot
   local goSnapshot = TakeSnapshot(objNextPanel._nSnapshotPrePanel)
-  AddTbGoSnapShot(objNextPanel._nPanelId, goSnapshot)
+  AddTbGoSnapShot(objNextPanel, goSnapshot)
   ;
   (cs_coroutine.start)(function()
     -- function num : 0_16_0 , upvalues : _ENV, objNextPanel, ExitCurrent, goSnapshot, HideMoveSnapshot
@@ -318,7 +346,7 @@ local PreExitCurrent = function()
   if objCurPanel == nil then
     PreEnterNext()
   else
-    MoveSnapShot(objCurPanel._nPanelId)
+    MoveSnapShot(objCurPanel)
     objCurPanel:_PreExit(PreEnterNext, true)
   end
 end
@@ -361,7 +389,7 @@ local OnOpenPanel = function(listener, nPanelId, ...)
         _bHasOpenTips = (UTILS.CheckIsTipsPanel)(v._nPanelId)
       end
       if v._nPanelId == nPanelId then
-        MoveSnapShot(v._nPanelId)
+        MoveSnapShot(v)
         objTempPanel:_PreExit()
         objTempPanel:_Exit()
         objTempPanel:_Destroy()
@@ -487,6 +515,8 @@ local AddEventCallback = function()
   (EventManager.Add)(EventId.MarkFullRectWH, PanelManager, OnMarkCurCanvasFullRectWH)
   ;
   (EventManager.Add)("ClearRequiredLua", PanelManager, OnClearRequiredLua)
+  ;
+  (EventManager.Add)("Test_SwitchAllUI", PanelManager, PanelManager.SwitchAllUI)
 end
 
 local InitGuidePanel = function()
@@ -573,7 +603,6 @@ PanelManager.Init = function()
     func_CacheRootTransform((AllEnum.SortingLayerName).HUD, "---- HUD ----")
     func_CacheRootTransform((AllEnum.SortingLayerName).UI, "---- UI ----")
     func_CacheRootTransform((AllEnum.SortingLayerName).UI_Top, "---- UI TOP ----")
-    func_CacheRootTransform((AllEnum.SortingLayerName).UI_Video, "---- UI Video ----")
     func_CacheRootTransform((AllEnum.SortingLayerName).Overlay, "---- UI OVERLAY ----")
     trSnapshotParent = (mapUIRootTransform[0]):Find("---- UI ----/Snapshot")
     tbTemplateSnapshot = {}
@@ -644,7 +673,7 @@ PanelManager.OnConfirmBackToLogIn = function()
     objPanel:_Destroy()
     ;
     (table.remove)(tbBackHistory, i)
-    RemoveTbSnapShot(objPanel._nPanelId)
+    RemoveTbSnapShot(objPanel)
     if objCurPanel ~= nil and objCurPanel == objPanel then
       objCurPanel = nil
     end
@@ -889,8 +918,33 @@ PanelManager.SwitchSkillBtn = function()
   end
 end
 
+local bAllUIVisible = true
+PanelManager.SwitchAllUI = function()
+  -- function num : 0_46 , upvalues : bAllUIVisible, mapUIRootTransform, _ENV
+  if bAllUIVisible == true then
+    bAllUIVisible = false
+  else
+    bAllUIVisible = true
+  end
+  local SetVisible = function(trRoot)
+    -- function num : 0_46_0 , upvalues : bAllUIVisible
+    local n = trRoot.childCount - 1
+    for i = 0, n do
+      local canvas = (trRoot:GetChild(i)):GetComponent("Canvas")
+      if canvas ~= nil and canvas:IsNull() == false then
+        canvas.enabled = bAllUIVisible
+      end
+    end
+  end
+
+  SetVisible(mapUIRootTransform[(AllEnum.SortingLayerName).HUD])
+  SetVisible(mapUIRootTransform[(AllEnum.SortingLayerName).UI])
+  SetVisible(mapUIRootTransform[(AllEnum.SortingLayerName).UI_Top])
+  SetVisible(mapUIRootTransform[(AllEnum.SortingLayerName).Overlay])
+end
+
 PanelManager.CloseAllDisposablePanel = function()
-  -- function num : 0_46 , upvalues : _ENV, tbDisposablePanel
+  -- function num : 0_47 , upvalues : _ENV, tbDisposablePanel
   if type(tbDisposablePanel) == "table" then
     local n = #tbDisposablePanel
     for i = n, 1, -1 do
@@ -909,7 +963,7 @@ PanelManager.CloseAllDisposablePanel = function()
 end
 
 PanelManager.CheckInTransition = function()
-  -- function num : 0_47 , upvalues : objTransitionPanel, _ENV
+  -- function num : 0_48 , upvalues : objTransitionPanel, _ENV
   do
     if objTransitionPanel ~= nil then
       local nStatus = objTransitionPanel:GetTransitionStatus()

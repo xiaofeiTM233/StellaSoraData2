@@ -143,6 +143,12 @@ BaseRoom.Enter = function(self)
   (EventManager.Hit)("RefreshFateCard", clone((self.parent)._mapFateCard))
   if nType == (GameEnum.starTowerRoomType).ShopRoom then
     (EventManager.Hit)("Guide_PassiveCheck_Msg", "Guide_ShopRoom")
+    local nVoiceDelay = (ConfigTable.GetConfigNumber)("StarTowerPlayerVoiceDelay")
+    self:AddTimer(1, nVoiceDelay, function()
+    -- function num : 0_5_0 , upvalues : _ENV, nLevel, nType
+    (EventManager.Hit)("PlayEnterShopRoomCharVoice", nLevel, nType)
+  end
+, true, true)
   end
 end
 
@@ -680,7 +686,7 @@ BaseRoom.HandleNpc = function(self, nNpcId, nNpcUid)
     local nSkinId = (PlayerData.Board):GetNPCUsingSkinId(nBoardNpcId)
     local nCoin = ((self.parent)._mapItem)[(AllEnum.CoinItemId).FixedRogCurrency] or 0
     ;
-    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, false, nCoin, (self.parent).nTowerId, (self.parent)._mapNote)
+    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, false, nCoin, (self.parent).nTowerId, (self.parent)._mapNote, (self.parent).tbDisc)
     return 
   else
     do
@@ -1257,7 +1263,7 @@ BaseRoom.OpenNpcOptionPanel = function(self, nCaseId, nNpcConfigId)
     end
     local nCoin = ((self.parent)._mapItem)[(AllEnum.CoinItemId).FixedRogCurrency] or 0
     ;
-    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, false, nCoin, (self.parent).nTowerId, (self.parent)._mapNote)
+    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, false, nCoin, (self.parent).nTowerId, (self.parent)._mapNote, (self.parent).tbDisc)
     return 
   end
   do
@@ -1368,7 +1374,7 @@ BaseRoom.OpenNpcOptionPanel = function(self, nCaseId, nNpcConfigId)
     mapCase.bFirst = false
     local nCoin = ((self.parent)._mapItem)[(AllEnum.CoinItemId).FixedRogCurrency] or 0
     ;
-    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 1, nEventId, tbOption, nSkinId, callback, tbUnabledOption, nTableEvtId, nTalkId, mapCase.nActionId, false, false, nCoin, (self.parent).nTowerId, (self.parent)._mapNote)
+    (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 1, nEventId, tbOption, nSkinId, callback, tbUnabledOption, nTableEvtId, nTalkId, mapCase.nActionId, false, false, nCoin, (self.parent).nTowerId, (self.parent)._mapNote, (self.parent).tbDisc)
   end
 end
 
@@ -1442,7 +1448,7 @@ BaseRoom.HandleNpcRecover = function(self, nCaseId, nNpcConfigId)
       do
         local nCoin = ((self.parent)._mapItem)[(AllEnum.CoinItemId).FixedRogCurrency] or 0
         ;
-        (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, false, nCoin, (self.parent).nTowerId, (self.parent)._mapNote)
+        (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 0, 0, {}, nSkinId, 1, {}, {}, nTalkId, 0, true, false, nCoin, (self.parent).nTowerId, (self.parent)._mapNote, (self.parent).tbDisc)
         do return  end
         local nEftId = mapCase.EffectId
         local nHp = (self.parent):RecoverHp(nEftId)
@@ -1451,7 +1457,7 @@ BaseRoom.HandleNpcRecover = function(self, nCaseId, nNpcConfigId)
         local msg = {}
         msg.Id = nCaseId
         msg.RecoveryHPReq = {}
-        -- DECOMPILER ERROR at PC146: Confused about usage of register: R8 in 'UnsetPending'
+        -- DECOMPILER ERROR at PC148: Confused about usage of register: R8 in 'UnsetPending'
 
         ;
         (msg.RecoveryHPReq).Hp = nHp
@@ -1504,7 +1510,7 @@ BaseRoom.HandleNpcDangerRoom = function(self, nCaseId, nNpcConfigId)
   end
   local nCoin = ((self.parent)._mapItem)[(AllEnum.CoinItemId).FixedRogCurrency] or 0
   ;
-  (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 2, nCaseId, {}, nSkinId, callback, {}, 0, nTalkId, 0, false, false, nCoin, (self.parent).nTowerId, (self.parent)._mapNote)
+  (EventManager.Hit)(EventId.OpenPanel, PanelId.NpcOptionPanel, 2, nCaseId, {}, nSkinId, callback, {}, 0, nTalkId, 0, false, false, nCoin, (self.parent).nTowerId, (self.parent)._mapNote, (self.parent).tbDisc)
 end
 
 BaseRoom.HandlePopupDisc = function(self, mapData)

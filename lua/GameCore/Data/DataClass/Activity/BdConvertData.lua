@@ -222,51 +222,82 @@ BdConvertData.CheckBuildData = function(self, mapData, nCondId)
         if nBdRequest == (GameEnum.BdRequest).BdMainCharElementNum and mapData.tbChar ~= nil then
           local mainCharId = ((mapData.tbChar)[1]).nTid
           local charCfg = (ConfigTable.GetData)("Character", mainCharId)
-          if charCfg.EET ~= (condiCfg.CondParams)[1] then
-            do
-              bResult = charCfg == nil
-              do
-                -- DECOMPILER ERROR at PC162: Unhandled construct in 'MakeBoolean' P1
+          if charCfg ~= nil then
+            for _,value in ipairs(condiCfg.CondParams) do
+              if charCfg.EET == value then
+                bResult = true
+                break
+              end
+            end
+          end
+        end
+        do
+          -- DECOMPILER ERROR at PC166: Unhandled construct in 'MakeBoolean' P1
 
-                if nBdRequest == (GameEnum.BdRequest).BdCharElementNum and mapData.tbChar ~= nil then
-                  local nCount = 0
-                  for _,charData in ipairs(mapData.tbChar) do
-                    local charCfg = (ConfigTable.GetData)("Character", charData.nTid)
-                    if charCfg ~= nil and charCfg.EET == (condiCfg.CondParams)[2] then
-                      nCount = nCount + 1
-                    end
-                  end
-                  bResult = (condiCfg.CondParams)[1] <= nCount
+          if nBdRequest == (GameEnum.BdRequest).BdCharElementNum and mapData.tbChar ~= nil then
+            local nCount = 0
+            for _,charData in ipairs(mapData.tbChar) do
+              local charCfg = (ConfigTable.GetData)("Character", charData.nTid)
+              if charCfg ~= nil and charCfg.EET == (condiCfg.CondParams)[2] then
+                nCount = nCount + 1
+              end
+            end
+            bResult = (condiCfg.CondParams)[1] <= nCount
+          end
+          do
+            -- DECOMPILER ERROR at PC201: Unhandled construct in 'MakeBoolean' P1
+
+            if nBdRequest == (GameEnum.BdRequest).BdCharJobNum and mapData.tbChar ~= nil then
+              local nCount = 0
+              for _,charData in ipairs(mapData.tbChar) do
+                local charCfg = (ConfigTable.GetData)("Character", charData.nTid)
+                if charCfg ~= nil and charCfg.Class == (condiCfg.CondParams)[2] then
+                  nCount = nCount + 1
                 end
-                do
-                  -- DECOMPILER ERROR at PC197: Unhandled construct in 'MakeBoolean' P1
+              end
+              bResult = (condiCfg.CondParams)[1] <= nCount
+            end
+            do
+              -- DECOMPILER ERROR at PC236: Unhandled construct in 'MakeBoolean' P1
 
-                  if nBdRequest == (GameEnum.BdRequest).BdCharJobNum and mapData.tbChar ~= nil then
-                    local nCount = 0
-                    for _,charData in ipairs(mapData.tbChar) do
-                      local charCfg = (ConfigTable.GetData)("Character", charData.nTid)
-                      if charCfg ~= nil and charCfg.Class == (condiCfg.CondParams)[2] then
-                        nCount = nCount + 1
-                      end
-                    end
-                    bResult = (condiCfg.CondParams)[1] <= nCount
+              if nBdRequest == (GameEnum.BdRequest).BdActivateSkillLevelNum and mapData.tbSecondarySkill ~= nil then
+                local nCount = 0
+                for _,skillId in ipairs(mapData.tbSecondarySkill) do
+                  local skillCfg = (ConfigTable.GetData)("SecondarySkill", skillId)
+                  if skillCfg ~= nil and (condiCfg.CondParams)[2] <= skillCfg.Level then
+                    nCount = nCount + 1
                   end
-                  do
-                    if nBdRequest == (GameEnum.BdRequest).BdActivateSkillLevelNum and mapData.tbSecondarySkill ~= nil then
-                      local nCount = 0
-                      for _,skillId in ipairs(mapData.tbSecondarySkill) do
-                        local skillCfg = (ConfigTable.GetData)("SecondarySkill", skillId)
-                        if skillCfg ~= nil and (condiCfg.CondParams)[2] <= skillCfg.Level then
-                          nCount = nCount + 1
-                        end
-                      end
-                      bResult = (condiCfg.CondParams)[1] <= nCount
+                end
+                bResult = (condiCfg.CondParams)[1] <= nCount
+              end
+              if nBdRequest == (GameEnum.BdRequest).BdAllCharElement and mapData.tbChar ~= nil then
+                local bSameEET = true
+                local nTeampEET = nil
+                for _,charData in ipairs(mapData.tbChar) do
+                  local charCfg = (ConfigTable.GetData)("Character", charData.nTid)
+                  if charCfg ~= nil then
+                    if nTeampEET == nil then
+                      nTeampEET = charCfg.EET
                     end
-                    do return bResult end
-                    -- DECOMPILER ERROR: 27 unprocessed JMP targets
+                    if nTeampEET ~= charCfg.EET then
+                      bSameEET = false
+                      break
+                    end
+                  end
+                end
+                if not bSameEET then
+                  bResult = false
+                else
+                  for _,value in ipairs(condiCfg.CondParams) do
+                    if nTeampEET == value then
+                      bResult = true
+                      break
+                    end
                   end
                 end
               end
+              do return bResult end
+              -- DECOMPILER ERROR: 33 unprocessed JMP targets
             end
           end
         end

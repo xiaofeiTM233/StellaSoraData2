@@ -1,23 +1,25 @@
-local JointDrillLevelData = class("JointDrillLevelData")
+local JointDrillLevelData_1 = class("JointDrillLevelData_1")
 local FP = (CS.TrueSync).FP
 local PB = require("pb")
 local AdventureModuleHelper = CS.AdventureModuleHelper
 local TimerManager = require("GameCore.Timer.TimerManager")
 local LocalData = require("GameCore.Data.LocalData")
 local mapEventConfig = {LoadLevelRefresh = "OnEvent_LoadLevelRefresh", AdventureModuleEnter = "OnEvent_AdventureModuleEnter", BattlePause = "OnEvent_Pause", JointDrill_StartTiming = "OnEvent_BattleStart", JointDrill_MonsterSpawn = "OnEvent_MonsterSpawn", JointDrill_BattleLvsToggle = "OnEvent_BattleLvsToggle", ADVENTURE_LEVEL_UNLOAD_COMPLETE = "OnEvent_UnloadComplete", JointDrill_Gameplay_Time = "OnEvent_JointDrill_Gameplay_Time", JointDrill_DamageValue = "OnEvent_DamageValue", JointDrill_CharDamageValue = "OnEvent_CharDamageValue", GiveUpJointDrill = "OnEvent_GiveUpBattle", RestartJointDrill = "OnEvent_RestartJointDrill", RetreatJointDrill = "OnEvent_RetreatJointDrill", JointDrill_Result = "OnEvent_JointDrill_Result", InputEnable = "OnEvent_InputEnable", JointDrill_StopTime = "OnEvent_JointDrill_StopTime", JointDrillChallengeFinishError = "OnEvent_JointDrillChallengeFinishError", Upload_Dodge_Event = "OnEvent_UploadDodgeEvent"}
-JointDrillLevelData.Init = function(self, parent, nLevelId, nBuildId, nCurLevel, bChangeLevel)
+JointDrillLevelData_1.Init = function(self, parent, nLevelId, nBuildId, nCurLevel, nLevelType)
   -- function num : 0_0 , upvalues : _ENV, AdventureModuleHelper, LocalData
   self.parent = parent
   self.nLevelId = nLevelId
   self.nCurLevel = nCurLevel
   self.nBuildId = nBuildId
-  self.bChangeLevel = bChangeLevel
+  self.nLevelType = nLevelType
+  self.bChangeLevel = self.nLevelType == (AllEnum.JointDrillLevelStartType).ChangeLevel
+  self.bRestart = self.nLevelType == (AllEnum.JointDrillLevelStartType).Restart
   self.mapLevel = nil
   self.tbFloor = {}
   self.mapFloor = nil
   self.nGameTime = (self.parent):GetGameTime()
   self.bInResult = false
-  if not bChangeLevel or self.bRestart then
+  if not self.bChangeLevel then
     self.nDamageValue = 0
     self.tbCharDamage = {}
     self.mapActorInfo = nil
@@ -25,23 +27,23 @@ JointDrillLevelData.Init = function(self, parent, nLevelId, nBuildId, nCurLevel,
   self.mapTempData = {}
   if (self.parent).record ~= nil and (self.parent).record ~= "" then
     self.mapTempData = (self.parent):DecodeTempDataJson()
-    if not bChangeLevel or self.bRestart then
+    if not self.bChangeLevel then
       self.mapInitTempData = clone(self.mapTempData)
     end
   end
   if self.mapInitTempData == nil then
     self.mapInitTempData = {}
   end
-  local mapJointDrillLevelData = (ConfigTable.GetData)("JointDrillLevel", nLevelId)
-  if mapJointDrillLevelData == nil then
+  local mapJointDrillLevelData_1 = (ConfigTable.GetData)("JointDrillLevel", nLevelId)
+  if mapJointDrillLevelData_1 == nil then
     return 
   end
-  self.mapLevel = mapJointDrillLevelData
-  local nFloorGroup = mapJointDrillLevelData.FloorId
+  self.mapLevel = mapJointDrillLevelData_1
+  local nFloorGroup = mapJointDrillLevelData_1.FloorId
   self.tbFloor = (CacheTable.GetData)("_JointDrillFloor", nFloorGroup)
   self.mapFloor = (self.tbFloor)[nCurLevel]
   local GetBuildCallback = function(mapBuildData)
-    -- function num : 0_0_0 , upvalues : self, _ENV, bChangeLevel, AdventureModuleHelper, LocalData
+    -- function num : 0_0_0 , upvalues : self, _ENV, AdventureModuleHelper, LocalData
     self.mapBuildData = mapBuildData
     ;
     (self.parent):AddJointDrillTeam(self.mapBuildData, self.nGameTime, self.nDamageValue)
@@ -66,7 +68,7 @@ JointDrillLevelData.Init = function(self, parent, nLevelId, nBuildId, nCurLevel,
       PlayerData.nCurGameType = (AllEnum.WorldMapNodeType).JointDrill
       local mapParams = {tostring(self.nCurLevel), tostring(self.bChangeLevel), tostring(self.nGameTime)}
       self.bRestart = false
-      if not bChangeLevel then
+      if not self.bChangeLevel then
         (AdventureModuleHelper.EnterDynamic)(self.nLevelId, self.tbCharId, (GameEnum.dynamicLevelType).JointDrill, mapParams)
         ;
         (NovaAPI.EnterModule)("AdventureModuleScene", true, 17)
@@ -82,9 +84,10 @@ JointDrillLevelData.Init = function(self, parent, nLevelId, nBuildId, nCurLevel,
 
   ;
   (PlayerData.Build):GetBuildDetailData(GetBuildCallback, nBuildId)
+  -- DECOMPILER ERROR: 6 unprocessed JMP targets
 end
 
-JointDrillLevelData.BindEvent = function(self)
+JointDrillLevelData_1.BindEvent = function(self)
   -- function num : 0_1 , upvalues : _ENV, mapEventConfig
   if type(mapEventConfig) ~= "table" then
     return 
@@ -97,7 +100,7 @@ JointDrillLevelData.BindEvent = function(self)
   end
 end
 
-JointDrillLevelData.UnBindEvent = function(self)
+JointDrillLevelData_1.UnBindEvent = function(self)
   -- function num : 0_2 , upvalues : _ENV, mapEventConfig
   if type(mapEventConfig) ~= "table" then
     return 
@@ -110,7 +113,7 @@ JointDrillLevelData.UnBindEvent = function(self)
   end
 end
 
-JointDrillLevelData.CalCharFixedEffect = function(self, nCharId, bMainChar, tbDiscId)
+JointDrillLevelData_1.CalCharFixedEffect = function(self, nCharId, bMainChar, tbDiscId)
   -- function num : 0_3 , upvalues : _ENV
   local stActorInfo = (CS.Lua2CSharpInfo_CharAttribute)()
   ;
@@ -118,7 +121,7 @@ JointDrillLevelData.CalCharFixedEffect = function(self, nCharId, bMainChar, tbDi
   return stActorInfo
 end
 
-JointDrillLevelData.SetPersonalPerk = function(self)
+JointDrillLevelData_1.SetPersonalPerk = function(self)
   -- function num : 0_4 , upvalues : _ENV, AdventureModuleHelper
   if self.mapBuildData ~= nil then
     for nCharId,tbPerk in pairs((self.mapBuildData).tbPotentials) do
@@ -137,7 +140,7 @@ JointDrillLevelData.SetPersonalPerk = function(self)
   end
 end
 
-JointDrillLevelData.SetDiscInfo = function(self)
+JointDrillLevelData_1.SetDiscInfo = function(self)
   -- function num : 0_5 , upvalues : _ENV, AdventureModuleHelper
   local tbDiscInfo = {}
   for k,nDiscId in ipairs((self.mapBuildData).tbDisc) do
@@ -150,12 +153,12 @@ JointDrillLevelData.SetDiscInfo = function(self)
   safe_call_cs_func(AdventureModuleHelper.SetDiscInfo, tbDiscInfo)
 end
 
-JointDrillLevelData.GetSyncGameTime = function(self, nTime)
+JointDrillLevelData_1.GetSyncGameTime = function(self, nTime)
   -- function num : 0_6 , upvalues : _ENV
   return (math.floor)(tonumber((string.format)("%.3f", nTime)) * 1000)
 end
 
-JointDrillLevelData.CacheTempData = function(self, bCharacter, bBoss, bChangeTeam, bChangeLevel, bLockBossHp)
+JointDrillLevelData_1.CacheTempData = function(self, bCharacter, bBoss, bChangeTeam, bChangeLevel, bLockBossHp)
   -- function num : 0_7 , upvalues : AdventureModuleHelper, _ENV, FP, PB
   if not bCharacter and not bBoss then
     return 
@@ -391,7 +394,7 @@ mapEffect = {}
   end
 end
 
-JointDrillLevelData.SetActorHP = function(self)
+JointDrillLevelData_1.SetActorHP = function(self)
   -- function num : 0_8 , upvalues : _ENV
   local tbActorInfo = {}
   if self.mapActorInfo == nil then
@@ -407,7 +410,7 @@ JointDrillLevelData.SetActorHP = function(self)
   safe_call_cs_func((CS.AdventureModuleHelper).ResetActorAttributes, tbActorInfo)
 end
 
-JointDrillLevelData.ResetBuff = function(self)
+JointDrillLevelData_1.ResetBuff = function(self)
   -- function num : 0_9 , upvalues : _ENV
   local ret = {}
   if (self.mapTempData).mapCharacterTempData ~= nil and ((self.mapTempData).mapCharacterTempData).buffInfo ~= nil then
@@ -430,7 +433,7 @@ JointDrillLevelData.ResetBuff = function(self)
   end
 end
 
-JointDrillLevelData.ResetSkill = function(self)
+JointDrillLevelData_1.ResetSkill = function(self)
   -- function num : 0_10 , upvalues : _ENV, FP
   local ret = {}
   if (self.mapTempData).mapCharacterTempData ~= nil and ((self.mapTempData).mapCharacterTempData).skillInfo ~= nil then
@@ -454,7 +457,7 @@ JointDrillLevelData.ResetSkill = function(self)
   end
 end
 
-JointDrillLevelData.ResetAmmo = function(self)
+JointDrillLevelData_1.ResetAmmo = function(self)
   -- function num : 0_11 , upvalues : _ENV
   if (self.mapTempData).mapCharacterTempData ~= nil and ((self.mapTempData).mapCharacterTempData).ammoInfo ~= nil then
     local ret = {}
@@ -471,18 +474,18 @@ JointDrillLevelData.ResetAmmo = function(self)
   end
 end
 
-JointDrillLevelData.ResetSommon = function(self)
+JointDrillLevelData_1.ResetSommon = function(self)
   -- function num : 0_12 , upvalues : _ENV
   if (self.mapTempData).mapCharacterTempData ~= nil and ((self.mapTempData).mapCharacterTempData).sommonInfo ~= nil then
     safe_call_cs_func((CS.AdventureModuleHelper).SetSummonMonsters, ((self.mapTempData).mapCharacterTempData).sommonInfo)
   end
 end
 
-JointDrillLevelData.ResetCharacter = function(self)
+JointDrillLevelData_1.ResetCharacter = function(self)
   -- function num : 0_13
 end
 
-JointDrillLevelData.GetActorHp = function(self)
+JointDrillLevelData_1.GetActorHp = function(self)
   -- function num : 0_14 , upvalues : AdventureModuleHelper, _ENV
   local logStr = ""
   local tbActorEntity = (AdventureModuleHelper.GetCurrentGroupPlayers)()
@@ -498,7 +501,7 @@ JointDrillLevelData.GetActorHp = function(self)
   return mapCurCharInfo
 end
 
-JointDrillLevelData.JointDrillSuccess = function(self, netMsg)
+JointDrillLevelData_1.JointDrillSuccess = function(self, netMsg)
   -- function num : 0_15 , upvalues : _ENV, AdventureModuleHelper
   local tbSkin = {}
   for _,nCharId in ipairs(self.tbCharId) do
@@ -536,7 +539,7 @@ JointDrillLevelData.JointDrillSuccess = function(self, netMsg)
     local bSimulate = (self.parent):GetBattleSimulate()
     local nBattleCount = (self.parent):GetJointDrillBattleCount()
     if netMsg.Items or not netMsg.Change then
-      (EventManager.Hit)(EventId.OpenPanel, PanelId.JointDrillResult, nResultType, self.nCurLevel, 0, self.nLevelId, {}, mapScore, {}, {}, netMsg.Old, netMsg.New, bSimulate, nBattleCount, self.tbCharDamage)
+      (EventManager.Hit)(EventId.OpenPanel, PanelId.JointDrillResult_1, nResultType, self.nCurLevel, 0, self.nLevelId, {}, mapScore, {}, {}, netMsg.Old, netMsg.New, bSimulate, nBattleCount, self.tbCharDamage)
       ;
       (self.parent):ChallengeEnd()
     end
@@ -550,7 +553,7 @@ JointDrillLevelData.JointDrillSuccess = function(self, netMsg)
   (EventManager.Hit)(EventId.OpenPanel, PanelId.BattleResultMask)
 end
 
-JointDrillLevelData.CheckJointDrillGameOver = function(self)
+JointDrillLevelData_1.CheckJointDrillGameOver = function(self)
   -- function num : 0_16 , upvalues : _ENV
   local nChallengeCount = (self.parent):GetJointDrillBattleCount()
   local nAllChallengeCount = (self.parent):GetMaxChallengeCount(self.nLevelId)
@@ -581,7 +584,7 @@ JointDrillLevelData.CheckJointDrillGameOver = function(self)
   end
 end
 
-JointDrillLevelData.JointDrillFail = function(self, nResultType, netMsg)
+JointDrillLevelData_1.JointDrillFail = function(self, nResultType, netMsg)
   -- function num : 0_17 , upvalues : _ENV
   local bossInfo = {}
   local tempBossData = (self.mapTempData).mapBossTempData
@@ -617,13 +620,13 @@ JointDrillLevelData.JointDrillFail = function(self, nResultType, netMsg)
       end
     end
     ;
-    (EventManager.Hit)(EventId.OpenPanel, PanelId.JointDrillResult, nResultType, self.nCurLevel, self.nGameTime, self.nLevelId, bossInfo, mapScore, mapReward, mapChange, nOld, nNew, bSimulate, nBattleCount, self.tbCharDamage)
+    (EventManager.Hit)(EventId.OpenPanel, PanelId.JointDrillResult_1, nResultType, self.nCurLevel, self.nGameTime, self.nLevelId, bossInfo, mapScore, mapReward, mapChange, nOld, nNew, bSimulate, nBattleCount, self.tbCharDamage)
     ;
     (self.parent):LevelEnd(nResultType)
   end
 end
 
-JointDrillLevelData.SyncGameTime = function(self, nTime)
+JointDrillLevelData_1.SyncGameTime = function(self, nTime)
   -- function num : 0_18 , upvalues : _ENV
   if not nTime then
     nTime = 0
@@ -635,7 +638,7 @@ JointDrillLevelData.SyncGameTime = function(self, nTime)
   (EventManager.Hit)("RefreshJointDrillGameTime", self.nGameTime)
 end
 
-JointDrillLevelData.ResetGameTimer = function(self)
+JointDrillLevelData_1.ResetGameTimer = function(self)
   -- function num : 0_19
   if self.gameTimer ~= nil then
     (self.gameTimer):Cancel()
@@ -644,9 +647,9 @@ JointDrillLevelData.ResetGameTimer = function(self)
   self.bTimerStart = false
 end
 
-JointDrillLevelData.StartJointDrill = function(self)
+JointDrillLevelData_1.StartJointDrill = function(self)
   -- function num : 0_20 , upvalues : _ENV, AdventureModuleHelper
-  (EventManager.Hit)(EventId.OpenPanel, PanelId.JointDrillBattlePanel, self.tbCharId)
+  (EventManager.Hit)(EventId.OpenPanel, PanelId.JointDrillBattlePanel, self.tbCharId, (self.mapLevel).Id, (self.mapLevel).BattleTime, (GameEnum.JointDrillMode).JointDrill_Mode_1)
   self:SetPersonalPerk()
   self:SetDiscInfo()
   for idx,nCharId in ipairs(self.tbCharId) do
@@ -656,7 +659,7 @@ JointDrillLevelData.StartJointDrill = function(self)
   -- DECOMPILER ERROR: 2 unprocessed JMP targets
 end
 
-JointDrillLevelData.OnEvent_LoadLevelRefresh = function(self)
+JointDrillLevelData_1.OnEvent_LoadLevelRefresh = function(self)
   -- function num : 0_21 , upvalues : _ENV, AdventureModuleHelper
   local mapAllEft, mapDiscEft, mapNoteEffect, tbNoteInfo = (PlayerData.Build):GetBuildAllEft((self.mapBuildData).nBuildId)
   safe_call_cs_func(AdventureModuleHelper.SetNoteInfo, tbNoteInfo)
@@ -666,23 +669,22 @@ JointDrillLevelData.OnEvent_LoadLevelRefresh = function(self)
   self:ResetSkill()
   ;
   (self.parent):AddRecordFloorList()
-  if not self.bChangeLevel and not self.bRestart then
-    (PlayerData.Build):SetBuildReportInfo((self.mapBuildData).nBuildId)
-  end
+  ;
+  (PlayerData.Build):SetBuildReportInfo((self.mapBuildData).nBuildId)
 end
 
-JointDrillLevelData.OnEvent_AdventureModuleEnter = function(self)
+JointDrillLevelData_1.OnEvent_AdventureModuleEnter = function(self)
   -- function num : 0_22
   self:StartJointDrill()
 end
 
-JointDrillLevelData.OnEvent_BattleStart = function(self, nTime)
+JointDrillLevelData_1.OnEvent_BattleStart = function(self, nTime)
   -- function num : 0_23
   self.bTimerStart = true
   self:SyncGameTime(nTime)
 end
 
-JointDrillLevelData.OnEvent_MonsterSpawn = function(self, nBossId)
+JointDrillLevelData_1.OnEvent_MonsterSpawn = function(self, nBossId)
   -- function num : 0_24 , upvalues : _ENV, AdventureModuleHelper
   self.nBossId = nBossId
   local bBoss = (self.mapFloor).FloorType == (GameEnum.JointDrillFloorType).Boss
@@ -693,7 +695,7 @@ JointDrillLevelData.OnEvent_MonsterSpawn = function(self, nBossId)
     return 
   end
   local data, nDataLength = self:CacheTempData(true, bBoss, true)
-  local nHp, nHpMax = 0, 0
+  local nHp, nHpMax = 1, 1
   if self.mapTempData ~= nil and (self.mapTempData).mapBossTempData ~= nil then
     nHp = ((self.mapTempData).mapBossTempData).nHp
     nHpMax = ((self.mapTempData).mapBossTempData).nHpMax
@@ -704,7 +706,7 @@ JointDrillLevelData.OnEvent_MonsterSpawn = function(self, nBossId)
   -- DECOMPILER ERROR: 4 unprocessed JMP targets
 end
 
-JointDrillLevelData.OnEvent_BattleLvsToggle = function(self, nBattleLv, nTotalTime, nDamageValue)
+JointDrillLevelData_1.OnEvent_BattleLvsToggle = function(self, nBattleLv, nTotalTime, nDamageValue)
   -- function num : 0_25 , upvalues : _ENV, AdventureModuleHelper
   if nBattleLv < self.nCurLevel then
     return 
@@ -726,8 +728,15 @@ JointDrillLevelData.OnEvent_BattleLvsToggle = function(self, nBattleLv, nTotalTi
     local syncCallback = function()
       -- function num : 0_25_0_0 , upvalues : _ENV, AdventureModuleHelper
       (PanelManager.InputEnable)()
+      local wait = function()
+        -- function num : 0_25_0_0_0 , upvalues : _ENV, AdventureModuleHelper
+        (coroutine.yield)(((CS.UnityEngine).WaitForEndOfFrame)())
+        ;
+        (AdventureModuleHelper.LevelStateChanged)(false)
+      end
+
       ;
-      (AdventureModuleHelper.LevelStateChanged)(false)
+      (cs_coroutine.start)(wait)
       ;
       (EventManager.Hit)("ResetBossHUD")
     end
@@ -748,7 +757,7 @@ JointDrillLevelData.OnEvent_BattleLvsToggle = function(self, nBattleLv, nTotalTi
   -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
-JointDrillLevelData.OnEvent_UnloadComplete = function(self)
+JointDrillLevelData_1.OnEvent_UnloadComplete = function(self)
   -- function num : 0_26
   if self.bInResult == true then
     return 
@@ -762,28 +771,28 @@ JointDrillLevelData.OnEvent_UnloadComplete = function(self)
   self:ResetCharacter()
 end
 
-JointDrillLevelData.OnEvent_JointDrill_Gameplay_Time = function(self, nTime)
+JointDrillLevelData_1.OnEvent_JointDrill_Gameplay_Time = function(self, nTime)
   -- function num : 0_27
   self:SyncGameTime(nTime)
 end
 
-JointDrillLevelData.OnEvent_Pause = function(self)
+JointDrillLevelData_1.OnEvent_Pause = function(self)
   -- function num : 0_28 , upvalues : _ENV
   (EventManager.Hit)("OpenJointDrillPause", self.nLevelId, self.tbCharId, self.nGameTime)
 end
 
-JointDrillLevelData.OnEvent_DamageValue = function(self, nDamageValue)
+JointDrillLevelData_1.OnEvent_DamageValue = function(self, nDamageValue)
   -- function num : 0_29
   self.nDamageValue = self.nDamageValue + nDamageValue
 end
 
-JointDrillLevelData.OnEvent_GiveUpBattle = function(self)
+JointDrillLevelData_1.OnEvent_GiveUpBattle = function(self)
   -- function num : 0_30
   (self.parent):AddJointDrillTeam(self.mapBuildData, self.nGameTime, self.nDamageValue)
   self:CheckJointDrillGameOver()
 end
 
-JointDrillLevelData.OnEvent_RestartJointDrill = function(self)
+JointDrillLevelData_1.OnEvent_RestartJointDrill = function(self)
   -- function num : 0_31 , upvalues : AdventureModuleHelper, _ENV
   self.bRestart = true
   ;
@@ -801,7 +810,7 @@ JointDrillLevelData.OnEvent_RestartJointDrill = function(self)
   (EventManager.Hit)("ResetBossHUD")
 end
 
-JointDrillLevelData.OnEvent_RetreatJointDrill = function(self)
+JointDrillLevelData_1.OnEvent_RetreatJointDrill = function(self)
   -- function num : 0_32 , upvalues : _ENV
   local callback = function()
     -- function num : 0_32_0 , upvalues : self, _ENV
@@ -819,7 +828,7 @@ JointDrillLevelData.OnEvent_RetreatJointDrill = function(self)
   (self.parent):JointDrillRetreat(self.mapBuildData, nHp, callback)
 end
 
-JointDrillLevelData.OnEvent_JointDrill_Result = function(self, nLevelState, nTotalTime, nDamageValue)
+JointDrillLevelData_1.OnEvent_JointDrill_Result = function(self, nLevelState, nTotalTime, nDamageValue)
   -- function num : 0_33 , upvalues : _ENV
   if self.bInResult then
     return 
@@ -843,7 +852,7 @@ JointDrillLevelData.OnEvent_JointDrill_Result = function(self, nLevelState, nTot
   end
 end
 
-JointDrillLevelData.JointDrillTimeOut = function(self)
+JointDrillLevelData_1.JointDrillTimeOut = function(self)
   -- function num : 0_34 , upvalues : _ENV
   if self.bInResult then
     return 
@@ -862,7 +871,7 @@ JointDrillLevelData.JointDrillTimeOut = function(self)
   (self.parent):JointDrillGameOver(callback)
 end
 
-JointDrillLevelData.OnEvent_CharDamageValue = function(self, charDamageValue)
+JointDrillLevelData_1.OnEvent_CharDamageValue = function(self, charDamageValue)
   -- function num : 0_35 , upvalues : _ENV
   for nCharId,nValue in pairs(charDamageValue) do
     for _,v in ipairs(self.tbCharDamage) do
@@ -874,24 +883,24 @@ JointDrillLevelData.OnEvent_CharDamageValue = function(self, charDamageValue)
   end
 end
 
-JointDrillLevelData.OnEvent_InputEnable = function(self, bEnable)
+JointDrillLevelData_1.OnEvent_InputEnable = function(self, bEnable)
   -- function num : 0_36
 end
 
-JointDrillLevelData.OnEvent_JointDrill_StopTime = function(self)
+JointDrillLevelData_1.OnEvent_JointDrill_StopTime = function(self)
   -- function num : 0_37
 end
 
-JointDrillLevelData.OnEvent_JointDrillChallengeFinishError = function(self)
+JointDrillLevelData_1.OnEvent_JointDrillChallengeFinishError = function(self)
   -- function num : 0_38 , upvalues : _ENV
   self:JointDrillFail((AllEnum.JointDrillResultType).ChallengeEnd)
   ;
-  (EventManager.Hit)(EventId.ClosePanel, PanelId.JointDrillBuildList)
+  (EventManager.Hit)(EventId.ClosePanel, PanelId.JointDrillBuildList_1)
   ;
   (self.parent):ChallengeEnd()
 end
 
-JointDrillLevelData.OnEvent_UploadDodgeEvent = function(self, padMode)
+JointDrillLevelData_1.OnEvent_UploadDodgeEvent = function(self, padMode)
   -- function num : 0_39 , upvalues : _ENV
   local tab = {}
   ;
@@ -910,5 +919,5 @@ JointDrillLevelData.OnEvent_UploadDodgeEvent = function(self, padMode)
   (NovaAPI.UserEventUpload)("use_dodge_key", tab)
 end
 
-return JointDrillLevelData
+return JointDrillLevelData_1
 

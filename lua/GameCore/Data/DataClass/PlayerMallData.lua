@@ -1,6 +1,7 @@
 local PlayerMallData = class("PlayerMallData")
 local TimerManager = require("GameCore.Timer.TimerManager")
 local MessageBoxManager = require("GameCore.Module.MessageBoxManager")
+local LocalData = require("GameCore.Data.LocalData")
 local ClientManager = (CS.ClientManager).Instance
 local WwiseAudioMgr = (CS.WwiseAudioManager).Instance
 local SDKManager = (CS.SDKManager).Instance
@@ -23,10 +24,13 @@ PlayerMallData.Init = function(self)
   self._timerOrderWait = nil
   self._tbPackagePage = {}
   self._tbExchangeShop = {}
+  self._tbPackage = {}
   ;
   (EventManager.Add)("OnSdkPaySuc", PlayerMallData, self.OnEvent_PayRespone)
   ;
   (EventManager.Add)("OnSdkPayFail", PlayerMallData, self.OnEvent_PayRespone)
+  ;
+  (EventManager.Add)(EventId.IsNewDay, self, self.OnEvent_NewDay)
   self:ProcessExchangeShop()
   self:ProcessPackagePage()
 end
@@ -48,10 +52,13 @@ PlayerMallData.UnInit = function(self)
   self._timerOrderWait = nil
   self._tbPackagePage = nil
   self._tbExchangeShop = nil
+  self._tbPackage = nil
   ;
   (EventManager.Remove)("OnSdkPaySuc", PlayerMallData, self.OnEvent_PayRespone)
   ;
   (EventManager.Remove)("OnSdkPayFail", PlayerMallData, self.OnEvent_PayRespone)
+  ;
+  (EventManager.Remove)(EventId.IsNewDay, self, self.OnEvent_NewDay)
 end
 
 PlayerMallData.GetExchangeShop = function(self)
@@ -400,13 +407,23 @@ PlayerMallData.CalPackageAutoTime = function(self, tbPackageList)
   return tbTime[1] - ClientManager.serverTimeStamp
 end
 
+PlayerMallData.GetMallPackageData = function(self, sId)
+  -- function num : 0_21 , upvalues : _ENV
+  for _,mapData in pairs(self._tbPackage) do
+    if mapData.sId == sId then
+      return mapData
+    end
+  end
+  return nil
+end
+
 PlayerMallData.UpdateNextMallPackage = function(self)
-  -- function num : 0_21 , upvalues : ClientManager, _ENV
+  -- function num : 0_22 , upvalues : ClientManager, _ENV
   local nServerTimeStamp = ClientManager.serverTimeStamp
   if self._tbNextMallPackage == nil then
     self._tbNextMallPackage = {}
     local func_ForEach_Package = function(mapCfgData)
-    -- function num : 0_21_0 , upvalues : _ENV, nServerTimeStamp, self
+    -- function num : 0_22_0 , upvalues : _ENV, nServerTimeStamp, self
     local nListTime = (PlayerData.Shop):ChangeToTimeStamp(mapCfgData.ListTime)
     if nListTime > 0 and nServerTimeStamp < nListTime then
       (table.insert)(self._tbNextMallPackage, {nId = mapCfgData.Id, nListTime = nListTime})
@@ -428,8 +445,39 @@ PlayerMallData.UpdateNextMallPackage = function(self)
   end
 end
 
+PlayerMallData.CacheDailyMallReward = function(self, bDailyReward)
+  -- function num : 0_23 , upvalues : _ENV
+  self.bDailyReward = bDailyReward
+  ;
+  (RedDotManager.SetValid)(RedDotDefine.Mall_Daily, nil, self.bDailyReward)
+end
+
+PlayerMallData.GetDailyMallReward = function(self)
+  -- function num : 0_24
+  return self.bDailyReward
+end
+
+PlayerMallData.SendDailyMallRewardReceiveReq = function(self, callback)
+  -- function num : 0_25 , upvalues : _ENV
+  local successCallback = function(_, mapData)
+    -- function num : 0_25_0 , upvalues : self, _ENV, callback
+    self.bDailyReward = false
+    ;
+    (RedDotManager.SetValid)(RedDotDefine.Mall_Daily, nil, false)
+    local bMall = (RedDotManager.GetValid)(RedDotDefine.Mall)
+    ;
+    (UTILS.OpenReceiveByChangeInfo)(mapData)
+    if callback then
+      callback()
+    end
+  end
+
+  ;
+  (HttpNetHandler.SendMsg)((NetMsgId.Id).daily_mall_reward_receive_req, {}, nil, successCallback)
+end
+
 PlayerMallData.OnEvent_SdkPaySuc = function(self, nCode, sMsg, nOrderId, sExData)
-  -- function num : 0_22 , upvalues : _ENV
+  -- function num : 0_26 , upvalues : _ENV
   local mapOrder = (self._mapOrderId)[sExData]
   if mapOrder == nil then
     printError("OrderId not found:" .. sExData)
@@ -560,7 +608,7 @@ PlayerMallData.OnEvent_SdkPaySuc = function(self, nCode, sMsg, nOrderId, sExData
 end
 
 PlayerMallData.OnEvent_SdkPayFail = function(self, nCode, sMsg, nOrderId, sExData, nOrderIdPaying)
-  -- function num : 0_23 , upvalues : _ENV
+  -- function num : 0_27 , upvalues : _ENV
   printError("SdkPayFail Msg:" .. sMsg)
   printError("SdkPayFail nCode:" .. nCode)
   local mapOrder = (self._mapOrderId)[sExData]
@@ -590,7 +638,7 @@ PlayerMallData.OnEvent_SdkPayFail = function(self, nCode, sMsg, nOrderId, sExDat
 end
 
 PlayerMallData.OnEvent_PayRespone = function(self, nCode, sMsg, nOrderId, sExData)
-  -- function num : 0_24 , upvalues : _ENV
+  -- function num : 0_28 , upvalues : _ENV
   (EventManager.Hit)(EventId.BlockInput, false)
   printLog("收到SDK PayRespone")
   local nOrderIdPaying = self._nOrderIdPaying
@@ -602,15 +650,20 @@ PlayerMallData.OnEvent_PayRespone = function(self, nCode, sMsg, nOrderId, sExDat
   end
 end
 
+PlayerMallData.OnEvent_NewDay = function(self)
+  -- function num : 0_29
+  self:CacheDailyMallReward(true)
+end
+
 PlayerMallData.OpenOrderWait = function(self)
-  -- function num : 0_25 , upvalues : MessageBoxManager, _ENV, TimerManager
+  -- function num : 0_30 , upvalues : MessageBoxManager, _ENV, TimerManager
   if (MessageBoxManager.CheckOrderWaitOpen)() then
     return 
   end
   ;
   (EventManager.Hit)("OpenOrderWait")
   self._timerOrderWait = (TimerManager.Add)(1, 30, self, function()
-    -- function num : 0_25_0 , upvalues : self, _ENV
+    -- function num : 0_30_0 , upvalues : self, _ENV
     self._bWaitTimeOut = true
     ;
     (EventManager.Hit)(EventId.OpenMessageBox, {nType = (AllEnum.MessageBox).Alert, sContent = (ConfigTable.GetUIText)("Mall_OrderRetry"), bDisableSnap = true})
@@ -620,7 +673,7 @@ PlayerMallData.OpenOrderWait = function(self)
 end
 
 PlayerMallData.CloseOrderWait = function(self)
-  -- function num : 0_26 , upvalues : MessageBoxManager, _ENV
+  -- function num : 0_31 , upvalues : MessageBoxManager, _ENV
   if self._timerOrderWait ~= nil then
     (self._timerOrderWait):Cancel(false)
     self._timerOrderWait = nil
@@ -631,7 +684,7 @@ PlayerMallData.CloseOrderWait = function(self)
 end
 
 PlayerMallData.ProcessOrder = function(self, bRetry)
-  -- function num : 0_27
+  -- function num : 0_32
   if self._bProcessingOrder then
     return 
   end
@@ -655,14 +708,14 @@ tbDst = {}
 end
 
 PlayerMallData.SetReCollectTimer = function(self)
-  -- function num : 0_28 , upvalues : TimerManager
+  -- function num : 0_33 , upvalues : TimerManager
   if self._timerOrderCollect ~= nil then
     (self._timerOrderCollect):Cancel(false)
     self._timerOrderCollect = nil
   end
   if #self._tbOrderCollect > 0 then
     self._timerOrderCollect = (TimerManager.Add)(1, 2, self, function()
-    -- function num : 0_28_0 , upvalues : self
+    -- function num : 0_33_0 , upvalues : self
     self:ProcessOrder(true)
   end
 , true, true, false)
@@ -670,7 +723,7 @@ PlayerMallData.SetReCollectTimer = function(self)
 end
 
 PlayerMallData.CollectDequeue = function(self)
-  -- function num : 0_29 , upvalues : _ENV
+  -- function num : 0_34 , upvalues : _ENV
   local mapOrder = (self._tbOrderCollect)[1]
   ;
   (table.remove)(self._tbOrderCollect, 1)
@@ -687,7 +740,7 @@ PlayerMallData.CollectDequeue = function(self)
   self._mapOrderCollecting = mapOrder
   if mapOrder.nType == (AllEnum.RMBOrderType).Mall then
     local callback = function(mapData)
-    -- function num : 0_29_0 , upvalues : self, _ENV, mapOrder
+    -- function num : 0_34_0 , upvalues : self, _ENV, mapOrder
     self._mapOrderCollecting = nil
     local tbSpReward = (PlayerData.CharSkin):GetSkinForReward()
     self:CollectOrder(mapOrder, mapData, tbSpReward)
@@ -698,7 +751,7 @@ PlayerMallData.CollectDequeue = function(self)
     do
       if mapOrder.nType == (AllEnum.RMBOrderType).BattlePass then
         local callback = function(mapData)
-    -- function num : 0_29_1 , upvalues : self, _ENV, mapOrder
+    -- function num : 0_34_1 , upvalues : self, _ENV, mapOrder
     self._mapOrderCollecting = nil
     local tbSpReward = (PlayerData.CharSkin):GetSkinForReward()
     if mapData.CollectResp then
@@ -716,7 +769,7 @@ PlayerMallData.CollectDequeue = function(self)
 end
 
 PlayerMallData.CollectOrder = function(self, mapOrder, mapData, tbSpReward)
-  -- function num : 0_30 , upvalues : _ENV, OrderStatus
+  -- function num : 0_35 , upvalues : _ENV, OrderStatus
   printLog("订单：" .. mapOrder.nOrderId .. "    奖励状态：" .. mapData.Status)
   if mapData.Items and next(mapData.Items) ~= nil then
     local mapReward = (PlayerData.Item):ProcessRewardChangeInfo(mapData.Items)
@@ -781,9 +834,9 @@ PlayerMallData.CollectOrder = function(self, mapOrder, mapData, tbSpReward)
 end
 
 PlayerMallData.CollectEnd = function(self, bError)
-  -- function num : 0_31 , upvalues : _ENV
+  -- function num : 0_36 , upvalues : _ENV
   local funcClear = function()
-    -- function num : 0_31_0 , upvalues : self, _ENV
+    -- function num : 0_36_0 , upvalues : self, _ENV
     self._bProcessingOrder = false
     self._tbOrderCollect = {}
     if self._bWaitTimeOut then
@@ -828,7 +881,7 @@ PlayerMallData.CollectEnd = function(self, bError)
 end
 
 PlayerMallData.CollectEnqueue = function(self, nOrderId, nType)
-  -- function num : 0_32 , upvalues : _ENV
+  -- function num : 0_37 , upvalues : _ENV
   if not self._tbOrderCollect then
     self._tbOrderCollect = {}
   end
@@ -837,10 +890,10 @@ PlayerMallData.CollectEnqueue = function(self, nOrderId, nType)
 end
 
 PlayerMallData.SendBattlePassOrderReq = function(self, nMode, nVersion, callback)
-  -- function num : 0_33 , upvalues : _ENV
+  -- function num : 0_38 , upvalues : _ENV
   local mapMsg = {Mode = nMode, Version = nVersion}
   local successCallback = function(_, mapData)
-    -- function num : 0_33_0 , upvalues : _ENV, callback
+    -- function num : 0_38_0 , upvalues : _ENV, callback
     printLog("创建订单：" .. mapData.Id)
     callback(mapData)
   end
@@ -850,9 +903,9 @@ PlayerMallData.SendBattlePassOrderReq = function(self, nMode, nVersion, callback
 end
 
 PlayerMallData.SendMallGemListReq = function(self, callback)
-  -- function num : 0_34 , upvalues : _ENV
+  -- function num : 0_39 , upvalues : _ENV
   local successCallback = function(_, mapData)
-    -- function num : 0_34_0 , upvalues : callback
+    -- function num : 0_39_0 , upvalues : callback
     callback(mapData.List)
   end
 
@@ -861,13 +914,13 @@ PlayerMallData.SendMallGemListReq = function(self, callback)
 end
 
 PlayerMallData.SendMallGemOrderReq = function(self, sId, callback)
-  -- function num : 0_35 , upvalues : _ENV
+  -- function num : 0_40 , upvalues : _ENV
   if type(sId) == "number" then
     sId = tostring(sId)
   end
   local mapMsg = {Value = sId}
   local successCallback = function(_, mapData)
-    -- function num : 0_35_0 , upvalues : _ENV, callback
+    -- function num : 0_40_0 , upvalues : _ENV, callback
     printLog("创建订单：" .. mapData.Id)
     callback(mapData)
   end
@@ -877,7 +930,7 @@ PlayerMallData.SendMallGemOrderReq = function(self, sId, callback)
 end
 
 PlayerMallData.SendMallOrderCancelReq = function(self, nId, nCode, callback)
-  -- function num : 0_36 , upvalues : _ENV
+  -- function num : 0_41 , upvalues : _ENV
   local tbCancelCode = {200154, 200230, 200340, 200500, 200600, 201236, 101606, 101731, 201230, 201221, 201223, 201224}
   do
     if (table.indexof)(tbCancelCode, nCode) == 0 then
@@ -896,13 +949,13 @@ PlayerMallData.SendMallOrderCancelReq = function(self, nId, nCode, callback)
 end
 
 PlayerMallData.SendMallOrderCollectReq = function(self, nId, callback)
-  -- function num : 0_37 , upvalues : _ENV
+  -- function num : 0_42 , upvalues : _ENV
   if type(nId) == "number" then
     nId = tostring(nId)
   end
   local mapMsg = {Value = nId}
   local successCallback = function(_, mapData)
-    -- function num : 0_37_0 , upvalues : callback
+    -- function num : 0_42_0 , upvalues : callback
     callback(mapData)
   end
 
@@ -911,13 +964,13 @@ PlayerMallData.SendMallOrderCollectReq = function(self, nId, callback)
 end
 
 PlayerMallData.SendBattlePassOrderCollectReq = function(self, nId, callback)
-  -- function num : 0_38 , upvalues : _ENV
+  -- function num : 0_43 , upvalues : _ENV
   if type(nId) == "number" then
     nId = tostring(nId)
   end
   local mapMsg = {Value = nId}
   local successCallback = function(_, mapData)
-    -- function num : 0_38_0 , upvalues : callback
+    -- function num : 0_43_0 , upvalues : callback
     callback(mapData)
   end
 
@@ -926,10 +979,21 @@ PlayerMallData.SendBattlePassOrderCollectReq = function(self, nId, callback)
 end
 
 PlayerMallData.SendMallMonthlyCardListReq = function(self, callback)
-  -- function num : 0_39 , upvalues : _ENV
+  -- function num : 0_44 , upvalues : _ENV
   local successCallback = function(_, mapData)
-    -- function num : 0_39_0 , upvalues : callback
-    callback((mapData.List)[1])
+    -- function num : 0_44_0 , upvalues : _ENV, callback
+    (table.sort)(mapData.List, function(a, b)
+      -- function num : 0_44_0_0 , upvalues : _ENV
+      local mapCfgA = (ConfigTable.GetData)("MallMonthlyCard", a.Id)
+      local mapCfgB = (ConfigTable.GetData)("MallMonthlyCard", b.Id)
+      if mapCfgA == nil or mapCfgB == nil then
+        return false
+      end
+      do return mapCfgA.MonthlyCardId < mapCfgB.MonthlyCardId end
+      -- DECOMPILER ERROR: 1 unprocessed JMP targets
+    end
+)
+    callback(mapData.List)
   end
 
   ;
@@ -937,10 +1001,10 @@ PlayerMallData.SendMallMonthlyCardListReq = function(self, callback)
 end
 
 PlayerMallData.SendMallMonthlyCardOrderReq = function(self, sId, callback)
-  -- function num : 0_40 , upvalues : _ENV
+  -- function num : 0_45 , upvalues : _ENV
   local mapMsg = {Value = sId}
   local successCallback = function(_, mapData)
-    -- function num : 0_40_0 , upvalues : _ENV, callback
+    -- function num : 0_45_0 , upvalues : _ENV, callback
     printLog("创建订单：" .. mapData.Id)
     callback(mapData)
   end
@@ -949,15 +1013,27 @@ PlayerMallData.SendMallMonthlyCardOrderReq = function(self, sId, callback)
   (HttpNetHandler.SendMsg)((NetMsgId.Id).mall_monthlyCard_order_req, mapMsg, nil, successCallback)
 end
 
+PlayerMallData.CacheMallPackageList = function(self)
+  -- function num : 0_46
+  local callback = function(_, _)
+    -- function num : 0_46_0
+  end
+
+  self:SendMallPackageListReq(callback)
+end
+
 PlayerMallData.SendMallPackageListReq = function(self, callback)
-  -- function num : 0_41 , upvalues : _ENV
+  -- function num : 0_47 , upvalues : _ENV
   local successCallback = function(_, mapData)
-    -- function num : 0_41_0 , upvalues : self, callback
+    -- function num : 0_47_0 , upvalues : self, callback
     self:UpdateNextMallPackage()
     local tbPackageList = self:ParsePackageList(mapData.List)
     local nAutoTime = self:CalPackageAutoTime(tbPackageList)
+    self._tbPackage = tbPackageList
     callback(tbPackageList, nAutoTime)
     self:UpdateMallRedDot(tbPackageList)
+    self:ResetPackageNew()
+    self:UpdateMallPackageRedDot(tbPackageList)
   end
 
   ;
@@ -965,10 +1041,10 @@ PlayerMallData.SendMallPackageListReq = function(self, callback)
 end
 
 PlayerMallData.SendMallPackageOrderReq = function(self, sId, callback)
-  -- function num : 0_42 , upvalues : _ENV, WwiseAudioMgr
+  -- function num : 0_48 , upvalues : _ENV, WwiseAudioMgr
   local mapMsg = {Value = sId}
   local successCallback = function(_, mapData)
-    -- function num : 0_42_0 , upvalues : _ENV, callback, WwiseAudioMgr
+    -- function num : 0_48_0 , upvalues : _ENV, callback, WwiseAudioMgr
     if mapData.Order then
       printLog("创建订单：" .. (mapData.Order).Id)
       callback(mapData.Order)
@@ -987,9 +1063,9 @@ PlayerMallData.SendMallPackageOrderReq = function(self, sId, callback)
 end
 
 PlayerMallData.SendMallShopListReq = function(self, callback)
-  -- function num : 0_43 , upvalues : _ENV
+  -- function num : 0_49 , upvalues : _ENV
   local successCallback = function(_, mapData)
-    -- function num : 0_43_0 , upvalues : self, callback
+    -- function num : 0_49_0 , upvalues : self, callback
     self:UpdateNextMallShop()
     local tbList = self:ParseShopList(mapData.List)
     local nAutoTime = self:CalShopAutoTime(tbList)
@@ -1001,10 +1077,10 @@ PlayerMallData.SendMallShopListReq = function(self, callback)
 end
 
 PlayerMallData.SendMallShopOrderReq = function(self, sId, nCount)
-  -- function num : 0_44 , upvalues : _ENV, WwiseAudioMgr
+  -- function num : 0_50 , upvalues : _ENV, WwiseAudioMgr
   local mapMsg = {Id = sId, Qty = nCount}
   local successCallback = function(_, mapData)
-    -- function num : 0_44_0 , upvalues : _ENV, WwiseAudioMgr
+    -- function num : 0_50_0 , upvalues : _ENV, WwiseAudioMgr
     (UTILS.OpenReceiveByChangeInfo)(mapData)
     local bMoney = false
     ;
@@ -1017,14 +1093,14 @@ PlayerMallData.SendMallShopOrderReq = function(self, sId, nCount)
 end
 
 PlayerMallData.SendCharFragmentConvertReq = function(self, callBack)
-  -- function num : 0_45 , upvalues : _ENV
+  -- function num : 0_51 , upvalues : _ENV
   local mapMsg = {}
   ;
   (HttpNetHandler.SendMsg)((NetMsgId.Id).fragments_convert_req, mapMsg, nil, callBack)
 end
 
 PlayerMallData.ProcessOrderPaidNotify = function(self, mapData)
-  -- function num : 0_46 , upvalues : _ENV
+  -- function num : 0_52 , upvalues : _ENV
   if self._mapOrderCollecting and (self._mapOrderCollecting).nOrderId == mapData.OrderId then
     return 
   end
@@ -1037,7 +1113,7 @@ PlayerMallData.ProcessOrderPaidNotify = function(self, mapData)
 end
 
 PlayerMallData.UpdateMallRedDot = function(self, tbPackageList)
-  -- function num : 0_47 , upvalues : _ENV
+  -- function num : 0_53 , upvalues : _ENV
   local bCheck = false
   for _,mallData in ipairs(tbPackageList) do
     local mapCfg = (ConfigTable.GetData)("MallPackage", mallData.sId)
@@ -1056,6 +1132,122 @@ PlayerMallData.UpdateMallRedDot = function(self, tbPackageList)
   end
   ;
   (RedDotManager.SetValid)(RedDotDefine.Mall_Free, nil, bCheck)
+  ;
+  (EventManager.Hit)("Mall_Refresh_Reddot")
+end
+
+PlayerMallData.ResetPackageNew = function(self)
+  -- function num : 0_54 , upvalues : _ENV
+  local foreachFunc = function(mapCfg)
+    -- function num : 0_54_0 , upvalues : _ENV
+    local groupCfg = (ConfigTable.GetData)("MallPackagePage", mapCfg.GroupId)
+    if groupCfg == nil then
+      return 
+    end
+    if mapCfg.Tag == (GameEnum.MallItemType).Package then
+      (RedDotManager.SetValid)(RedDotDefine.Mall_Package_New, {(AllEnum.MallToggle).Package, groupCfg.Sort, mapCfg.Id}, false)
+    else
+      if mapCfg.Tag == (GameEnum.MallItemType).Skin then
+        (RedDotManager.SetValid)(RedDotDefine.Mall_Package_New, {(AllEnum.MallToggle).Skin, groupCfg.Sort, mapCfg.Id}, false)
+      end
+    end
+  end
+
+  ForEachTableLine(DataTable.MallPackage, foreachFunc)
+end
+
+PlayerMallData.RemovePackageNew = function(self, nPage, nTab)
+  -- function num : 0_55 , upvalues : _ENV, LocalData
+  if #self._tbPackage == 0 then
+    return 
+  end
+  local tbPackage = {}
+  if nPage == (GameEnum.MallItemType).Package then
+    for _,v in pairs(self._tbPackage) do
+      local mapCfg = (ConfigTable.GetData)("MallPackage", v.sId)
+      local groupCfg = (ConfigTable.GetData)("MallPackagePage", mapCfg.GroupId)
+      if mapCfg.Tag == (GameEnum.MallItemType).Package and groupCfg.Sort == nTab then
+        (table.insert)(tbPackage, v)
+      end
+    end
+  else
+    do
+      if nPage == (GameEnum.MallItemType).Skin then
+        for _,v in pairs(self._tbPackage) do
+          local mapCfg = (ConfigTable.GetData)("MallPackage", v.sId)
+          local groupCfg = (ConfigTable.GetData)("MallPackagePage", mapCfg.GroupId)
+          if mapCfg.Tag == (GameEnum.MallItemType).Skin then
+            if nTab == nil then
+              (table.insert)(tbPackage, v)
+            else
+              if groupCfg.Sort == nTab then
+                (table.insert)(tbPackage, v)
+              end
+            end
+          end
+        end
+      end
+      do
+        for _,v in pairs(tbPackage) do
+          local mapCfg = (ConfigTable.GetData)("MallPackage", v.sId)
+          if mapCfg ~= nil then
+            local groupCfg = (ConfigTable.GetData)("MallPackagePage", mapCfg.GroupId)
+            if groupCfg == nil then
+              return 
+            end
+            if mapCfg.Tag == (GameEnum.MallItemType).Package then
+              (RedDotManager.SetValid)(RedDotDefine.Mall_Package_New, {(AllEnum.MallToggle).Package, groupCfg.Sort, mapCfg.Id}, false)
+            else
+              if mapCfg.Tag == (GameEnum.MallItemType).Skin then
+                (RedDotManager.SetValid)(RedDotDefine.Mall_Package_New, {(AllEnum.MallToggle).Skin, groupCfg.Sort, mapCfg.Id}, false)
+              end
+            end
+            local sCheckNew = (LocalData.GetPlayerLocalData)("Mall_Package_New") or ""
+            local tbCheckNew = (string.split)(sCheckNew, ",")
+            if (table.indexof)(tbCheckNew, mapCfg.Id) == 0 then
+              sCheckNew = sCheckNew .. "," .. mapCfg.Id
+              ;
+              (LocalData.SetPlayerLocalData)("Mall_Package_New", sCheckNew)
+            end
+          end
+        end
+        ;
+        (EventManager.Hit)("Mall_Refresh_Reddot")
+      end
+    end
+  end
+end
+
+PlayerMallData.UpdateMallPackageRedDot = function(self, tbPackageList)
+  -- function num : 0_56 , upvalues : LocalData, _ENV
+  local sCheckNew = (LocalData.GetPlayerLocalData)("Mall_Package_New") or ""
+  local tbCheckNew = (string.split)(sCheckNew, ",")
+  for _,mallData in ipairs(tbPackageList) do
+    local mapCfg = (ConfigTable.GetData)("MallPackage", mallData.sId)
+    if mapCfg ~= nil and mapCfg.IsNew then
+      local tbCond = decodeJson(mapCfg.OrderCondParams)
+      local bPurchaseAble = (PlayerData.Shop):CheckShopCond(mapCfg.OrderCondType, tbCond)
+      local bNotNew = (table.indexof)(tbCheckNew, mallData.sId) ~= 0
+      local groupCfg = (ConfigTable.GetData)("MallPackagePage", mapCfg.GroupId)
+      if groupCfg == nil then
+        return 
+      end
+      if mallData.nCurStock > 0 and bPurchaseAble and not bNotNew then
+        if mapCfg.Tag == (GameEnum.MallItemType).Package then
+          (RedDotManager.SetValid)(RedDotDefine.Mall_Package_New, {(AllEnum.MallToggle).Package, groupCfg.Sort, mallData.sId}, true)
+        elseif mapCfg.Tag == (GameEnum.MallItemType).Skin then
+          (RedDotManager.SetValid)(RedDotDefine.Mall_Package_New, {(AllEnum.MallToggle).Skin, groupCfg.Sort, mallData.sId}, true)
+        end
+      elseif mapCfg.Tag == (GameEnum.MallItemType).Package then
+        (RedDotManager.SetValid)(RedDotDefine.Mall_Package_New, {(AllEnum.MallToggle).Package, groupCfg.Sort, mallData.sId}, false)
+      elseif mapCfg.Tag == (GameEnum.MallItemType).Skin then
+        (RedDotManager.SetValid)(RedDotDefine.Mall_Package_New, {(AllEnum.MallToggle).Skin, groupCfg.Sort, mallData.sId}, false)
+      end
+    end
+  end
+  ;
+  (EventManager.Hit)("Mall_UpdateMallPackageRedDot")
+  -- DECOMPILER ERROR: 6 unprocessed JMP targets
 end
 
 return PlayerMallData

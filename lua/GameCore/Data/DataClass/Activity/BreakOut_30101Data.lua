@@ -38,13 +38,20 @@ BreakOut_30101Data.GetActivityDataByIndex = function(self, nIndex)
   end
 end
 
+BreakOut_30101Data.IsActCloseTime = function(self)
+  -- function num : 0_3 , upvalues : _ENV
+  local nCurTime = ((CS.ClientManager).Instance).serverTimeStamp
+  do return self.nEndTime < nCurTime end
+  -- DECOMPILER ERROR: 1 unprocessed JMP targets
+end
+
 BreakOut_30101Data.PlayCG = function(self)
-  -- function num : 0_3
+  -- function num : 0_4
   self:SendMsg_CG_READ(self.nCGActivityId)
 end
 
 BreakOut_30101Data.GetActivityGroupCGPlayed = function(self)
-  -- function num : 0_4 , upvalues : _ENV
+  -- function num : 0_5 , upvalues : _ENV
   if self.bPlayedCG then
     return true
   end
@@ -52,7 +59,7 @@ BreakOut_30101Data.GetActivityGroupCGPlayed = function(self)
 end
 
 BreakOut_30101Data.IsActivityInActivityGroup = function(self, nActivityId)
-  -- function num : 0_5 , upvalues : _ENV
+  -- function num : 0_6 , upvalues : _ENV
   for _,activity in pairs(self.tbAllActivity) do
     if activity.ActivityId == nActivityId then
       return true, self.nActGroupId
@@ -62,9 +69,9 @@ BreakOut_30101Data.IsActivityInActivityGroup = function(self, nActivityId)
 end
 
 BreakOut_30101Data.SendMsg_CG_READ = function(self, nActivityId)
-  -- function num : 0_6 , upvalues : _ENV
+  -- function num : 0_7 , upvalues : _ENV
   local Callback = function()
-    -- function num : 0_6_0 , upvalues : self
+    -- function num : 0_7_0 , upvalues : self
     self.bPlayedCG = true
   end
 

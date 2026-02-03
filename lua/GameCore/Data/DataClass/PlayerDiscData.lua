@@ -172,17 +172,125 @@ PlayerDiscData.GetDiscSkillByNote = function(self, tbDisc, tbHasNote, nNeedNote)
                   tbNote[nNoteId] = nNoteCount
                 end
               end
-              ;
-              (table.insert)(tbSkill, {nId = nSubSkillId, tbNote = tbNote})
+              local tbMaxLayerActiveNote = decodeJson((tbGroup[nMaxLayer]).NeedSubNoteSkills)
+              local nMaxLayerNoteNeed = 0
+              if tbMaxLayerActiveNote[sNote] then
+                for k,v in pairs(tbMaxLayerActiveNote) do
+                  local nNoteId = tonumber(k)
+                  local nNoteCount = tonumber(v)
+                  if nNoteId == nNeedNote then
+                    nMaxLayerNoteNeed = nNoteCount
+                    break
+                  end
+                end
+              end
+              do
+                do
+                  ;
+                  (table.insert)(tbSkill, {nId = nSubSkillId, tbNote = tbNote, nMaxLayerNoteNeed = nMaxLayerNoteNeed})
+                  -- DECOMPILER ERROR at PC109: LeaveBlock: unexpected jumping out DO_STMT
+
+                  -- DECOMPILER ERROR at PC109: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+                  -- DECOMPILER ERROR at PC109: LeaveBlock: unexpected jumping out IF_STMT
+
+                  -- DECOMPILER ERROR at PC109: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+                  -- DECOMPILER ERROR at PC109: LeaveBlock: unexpected jumping out IF_STMT
+
+                  -- DECOMPILER ERROR at PC109: LeaveBlock: unexpected jumping out DO_STMT
+
+                  -- DECOMPILER ERROR at PC109: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+                  -- DECOMPILER ERROR at PC109: LeaveBlock: unexpected jumping out IF_STMT
+
+                end
+              end
             end
           end
-          do
-            -- DECOMPILER ERROR at PC84: LeaveBlock: unexpected jumping out DO_STMT
+        end
+      end
+    end
+  end
+  return tbSkill
+end
 
-            -- DECOMPILER ERROR at PC84: LeaveBlock: unexpected jumping out IF_THEN_STMT
+PlayerDiscData.GetDiscSkillByNoteCurrentLevel = function(self, tbDisc, tbHasNote, nNeedNote)
+  -- function num : 0_9 , upvalues : _ENV
+  local tbSkill = {}
+  local sNote = tostring(nNeedNote)
+  for _,nDiscId in pairs(tbDisc) do
+    local mapData = self:GetDiscById(nDiscId)
+    if mapData == nil then
+      return {}
+    end
+    for _,nSubSkillGroupId in pairs(mapData.tbSubSkillGroupId) do
+      local tbGroup = (CacheTable.GetData)("_SecondarySkill", nSubSkillGroupId)
+      if tbGroup then
+        local nCurLayer = 0
+        local nMaxLayer = #tbGroup
+        for i = nMaxLayer, 1, -1 do
+          if tbGroup[i] then
+            local bActive = mapData:CheckSubSkillActive(tbHasNote, tbGroup[i])
+            if bActive then
+              nCurLayer = i
+              break
+            end
+          end
+        end
+        do
+          if nCurLayer ~= nMaxLayer or not nMaxLayer then
+            local nNextLayer = nCurLayer + 1
+          end
+          if not tbGroup[nCurLayer] or not (tbGroup[nCurLayer]).Id then
+            local nSubSkillId = (tbGroup[nNextLayer]).Id
+          end
+          if tbGroup[nNextLayer] then
+            local tbActiveNote = decodeJson((tbGroup[nNextLayer]).NeedSubNoteSkills)
+            if tbActiveNote[sNote] then
+              local tbNote = {}
+              for k,v in pairs(tbActiveNote) do
+                local nNoteId = tonumber(k)
+                local nNoteCount = tonumber(v)
+                if nNoteId then
+                  tbNote[nNoteId] = nNoteCount
+                end
+              end
+              local tbMaxLayerActiveNote = decodeJson((tbGroup[nMaxLayer]).NeedSubNoteSkills)
+              local nMaxLayerNoteNeed = 0
+              if tbMaxLayerActiveNote[sNote] then
+                for k,v in pairs(tbMaxLayerActiveNote) do
+                  local nNoteId = tonumber(k)
+                  local nNoteCount = tonumber(v)
+                  if nNoteId == nNeedNote then
+                    nMaxLayerNoteNeed = nNoteCount
+                    break
+                  end
+                end
+              end
+              do
+                do
+                  ;
+                  (table.insert)(tbSkill, {nId = nSubSkillId, tbNote = tbNote, nMaxLayerNoteNeed = nMaxLayerNoteNeed})
+                  -- DECOMPILER ERROR at PC116: LeaveBlock: unexpected jumping out DO_STMT
 
-            -- DECOMPILER ERROR at PC84: LeaveBlock: unexpected jumping out IF_STMT
+                  -- DECOMPILER ERROR at PC116: LeaveBlock: unexpected jumping out IF_THEN_STMT
 
+                  -- DECOMPILER ERROR at PC116: LeaveBlock: unexpected jumping out IF_STMT
+
+                  -- DECOMPILER ERROR at PC116: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+                  -- DECOMPILER ERROR at PC116: LeaveBlock: unexpected jumping out IF_STMT
+
+                  -- DECOMPILER ERROR at PC116: LeaveBlock: unexpected jumping out DO_STMT
+
+                  -- DECOMPILER ERROR at PC116: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+                  -- DECOMPILER ERROR at PC116: LeaveBlock: unexpected jumping out IF_STMT
+
+                end
+              end
+            end
           end
         end
       end
@@ -192,12 +300,12 @@ PlayerDiscData.GetDiscSkillByNote = function(self, tbDisc, tbHasNote, nNeedNote)
 end
 
 PlayerDiscData.GetBGMDisc = function(self)
-  -- function num : 0_9
+  -- function num : 0_10
   return self.nBGMDisc or 0
 end
 
 PlayerDiscData.CheckDiscL2D = function(self, nId)
-  -- function num : 0_10
+  -- function num : 0_11
   local discData = (self._mapDisc)[nId]
   if not discData then
     return false
@@ -206,7 +314,7 @@ PlayerDiscData.CheckDiscL2D = function(self, nId)
 end
 
 PlayerDiscData.CalcDiscEffect = function(self, nId)
-  -- function num : 0_11 , upvalues : _ENV
+  -- function num : 0_12 , upvalues : _ENV
   local discData = (self._mapDisc)[nId]
   local tbEft = {}
   if discData ~= nil then
@@ -220,14 +328,14 @@ PlayerDiscData.CalcDiscEffect = function(self, nId)
 end
 
 PlayerDiscData.CalcDiscEffectInBuild = function(self, nId, tbSecondarySkill)
-  -- function num : 0_12 , upvalues : _ENV
+  -- function num : 0_13 , upvalues : _ENV
   local discData = (self._mapDisc)[nId]
   local tbEffectId = {}
   if discData == nil then
     return tbEffectId
   end
   local add = function(tbEfId)
-    -- function num : 0_12_0 , upvalues : _ENV, tbEffectId
+    -- function num : 0_13_0 , upvalues : _ENV, tbEffectId
     if not tbEfId then
       return 
     end
@@ -252,7 +360,7 @@ PlayerDiscData.CalcDiscEffectInBuild = function(self, nId, tbSecondarySkill)
 end
 
 PlayerDiscData.CalcDiscInfoInBuild = function(self, nId, tbSecondarySkill)
-  -- function num : 0_13 , upvalues : _ENV
+  -- function num : 0_14 , upvalues : _ENV
   local discData = (self._mapDisc)[nId]
   local discInfo = (CS.Lua2CSharpInfo_DiscInfo)()
   if discData == nil then
@@ -287,7 +395,7 @@ PlayerDiscData.CalcDiscInfoInBuild = function(self, nId, tbSecondarySkill)
 end
 
 PlayerDiscData.GenerateLocalDiscData = function(self, configId, nExp, nLevel, nPhase, nStar)
-  -- function num : 0_14 , upvalues : _ENV, DiscData
+  -- function num : 0_15 , upvalues : _ENV, DiscData
   if not configId then
     printError("GenerateLocalDiscData Failed!")
     return 
@@ -304,7 +412,7 @@ PlayerDiscData.GenerateLocalDiscData = function(self, configId, nExp, nLevel, nP
 end
 
 PlayerDiscData.GetAttrBase = function(self, nGroupId, nPhase, nTargetLv, nExtraGroupId, nStar)
-  -- function num : 0_15 , upvalues : _ENV, ConfigData
+  -- function num : 0_16 , upvalues : _ENV, ConfigData
   local mapExtra = nil
   do
     if nStar > 0 and nExtraGroupId > 0 then
@@ -339,12 +447,12 @@ PlayerDiscData.GetAttrBase = function(self, nGroupId, nPhase, nTargetLv, nExtraG
 end
 
 PlayerDiscData.GetDiscMaxStar = function(self, nRarity)
-  -- function num : 0_16
+  -- function num : 0_17
   return (self.tbMaxStar)[nRarity]
 end
 
 PlayerDiscData.GetBreakLimitMat = function(self, nId)
-  -- function num : 0_17 , upvalues : _ENV
+  -- function num : 0_18 , upvalues : _ENV
   local discData = (self._mapDisc)[nId]
   local nMatId = discData.nTransformItemId
   local nCount = (PlayerData.Item):GetItemCountByID(nMatId)
@@ -352,7 +460,7 @@ PlayerDiscData.GetBreakLimitMat = function(self, nId)
 end
 
 PlayerDiscData.GetAllBreakLimitMat = function(self)
-  -- function num : 0_18 , upvalues : _ENV
+  -- function num : 0_19 , upvalues : _ENV
   local tbMat = {}
   for nId,discData in pairs(self._mapDisc) do
     local nMatId, nCount = self:GetBreakLimitMat(nId)
@@ -365,7 +473,7 @@ PlayerDiscData.GetAllBreakLimitMat = function(self)
   end
   ;
   (table.sort)(tbMat, function(a, b)
-    -- function num : 0_18_0 , upvalues : _ENV
+    -- function num : 0_19_0 , upvalues : _ENV
     local rarityA = ((ConfigTable.GetData_Item)(a.nTid)).Rarity
     local rarityB = ((ConfigTable.GetData_Item)(b.nTid)).Rarity
     if rarityA >= rarityB then
@@ -382,7 +490,7 @@ PlayerDiscData.GetAllBreakLimitMat = function(self)
 end
 
 PlayerDiscData.GetIndexOfNewBreakLimitMat = function(self, tbMat)
-  -- function num : 0_19 , upvalues : _ENV
+  -- function num : 0_20 , upvalues : _ENV
   local nCurCount = 0
   for _,_ in pairs(tbMat) do
     nCurCount = nCurCount + 1
@@ -400,10 +508,10 @@ PlayerDiscData.GetIndexOfNewBreakLimitMat = function(self, tbMat)
 end
 
 PlayerDiscData.GetMaxLv = function(self, nRarity, nCurPhase)
-  -- function num : 0_20 , upvalues : _ENV
+  -- function num : 0_21 , upvalues : _ENV
   local nMaxLv = 1
   local foreachDiscPromoteLimit = function(mapData)
-    -- function num : 0_20_0 , upvalues : nRarity, _ENV, nCurPhase, nMaxLv
+    -- function num : 0_21_0 , upvalues : nRarity, _ENV, nCurPhase, nMaxLv
     if mapData.Rarity == nRarity and tonumber(mapData.Phase) == nCurPhase then
       nMaxLv = mapData.MaxLevel
     end
@@ -414,7 +522,7 @@ PlayerDiscData.GetMaxLv = function(self, nRarity, nCurPhase)
 end
 
 PlayerDiscData.GetUpgradeNote = function(self, nId)
-  -- function num : 0_21 , upvalues : _ENV
+  -- function num : 0_22 , upvalues : _ENV
   local tbShowNote = {}
   local mapDisc = (self._mapDisc)[nId]
   local mapGroup = (CacheTable.GetData)("_SubNoteSkillPromoteGroup", mapDisc.nSubNoteSkillGroupId)
@@ -477,7 +585,7 @@ PlayerDiscData.GetUpgradeNote = function(self, nId)
 end
 
 PlayerDiscData.GetUpgradeMatList = function(self)
-  -- function num : 0_22 , upvalues : _ENV
+  -- function num : 0_23 , upvalues : _ENV
   local tbMat = {}
   for _,value in ipairs(self.tbItemExp) do
     (table.insert)(tbMat, {nItemId = value.nItemId, nExpValue = value.nExpValue, nCost = 0})
@@ -486,7 +594,7 @@ PlayerDiscData.GetUpgradeMatList = function(self)
 end
 
 PlayerDiscData.GetCustomizeLevelExp = function(self, nId, nLevel)
-  -- function num : 0_23
+  -- function num : 0_24
   local mapDisc = (self._mapDisc)[nId]
   local nUpgradeGroupId = mapDisc.nStrengthenGroupId
   local nTargetLevel = mapDisc.nMaxLv <= nLevel and mapDisc.nMaxLv or nLevel
@@ -495,7 +603,7 @@ PlayerDiscData.GetCustomizeLevelExp = function(self, nId, nLevel)
 end
 
 PlayerDiscData.GetMaxLevelExp = function(self, nId)
-  -- function num : 0_24
+  -- function num : 0_25
   local mapDisc = (self._mapDisc)[nId]
   local nUpgradeGroupId = mapDisc.nStrengthenGroupId
   local nNextExp = self:CalUpgradeExp(nUpgradeGroupId, mapDisc.nLevel, mapDisc.nMaxLv, mapDisc.nExp)
@@ -503,7 +611,7 @@ PlayerDiscData.GetMaxLevelExp = function(self, nId)
 end
 
 PlayerDiscData.GetCustomizeLevelDataAndCost = function(self, nId, nLevel)
-  -- function num : 0_25
+  -- function num : 0_26
   local nTargetExp = self:GetCustomizeLevelExp(nId, nLevel)
   local tbMat = self:CalUpgradeMat(nTargetExp)
   local mapTargetLevel, nGoldCost = self:GetLevelDataAndCostByMat(nId, tbMat)
@@ -511,7 +619,7 @@ PlayerDiscData.GetCustomizeLevelDataAndCost = function(self, nId, nLevel)
 end
 
 PlayerDiscData.GetMaxLevelDataAndCost = function(self, nId)
-  -- function num : 0_26
+  -- function num : 0_27
   local nTargetExp = self:GetMaxLevelExp(nId)
   local tbMat = self:CalUpgradeMat(nTargetExp)
   local mapTargetLevel, nGoldCost = self:GetLevelDataAndCostByMat(nId, tbMat)
@@ -519,7 +627,7 @@ PlayerDiscData.GetMaxLevelDataAndCost = function(self, nId)
 end
 
 PlayerDiscData.GetMaxMatCost = function(self, nId, tbMat, mapMat)
-  -- function num : 0_27 , upvalues : _ENV
+  -- function num : 0_28 , upvalues : _ENV
   local nMatExp = mapMat.nExpValue
   local nMaxExp = self:GetMaxLevelExp(nId)
   local nHasExp = self:GetMatExp(tbMat)
@@ -528,7 +636,7 @@ PlayerDiscData.GetMaxMatCost = function(self, nId, tbMat, mapMat)
 end
 
 PlayerDiscData.GetMatExp = function(self, tbMat)
-  -- function num : 0_28 , upvalues : _ENV
+  -- function num : 0_29 , upvalues : _ENV
   local nTotalExp = 0
   for _,mapMat in pairs(tbMat) do
     nTotalExp = nTotalExp + mapMat.nExpValue * mapMat.nCost
@@ -537,7 +645,7 @@ PlayerDiscData.GetMatExp = function(self, tbMat)
 end
 
 PlayerDiscData.GetLevelDataAndCostByMat = function(self, nId, tbMat)
-  -- function num : 0_29 , upvalues : _ENV
+  -- function num : 0_30 , upvalues : _ENV
   local mapDisc = (self._mapDisc)[nId]
   local nMatExp = self:GetMatExp(tbMat)
   local nExpPerGold = (self.tbExpPerGold)[mapDisc.nRarity]
@@ -573,7 +681,7 @@ PlayerDiscData.GetLevelDataAndCostByMat = function(self, nId, tbMat)
 end
 
 PlayerDiscData.CalUpgradeExp = function(self, nUpgradeGroupId, nStartLevel, nTargetLevel, nStartExp)
-  -- function num : 0_30 , upvalues : _ENV
+  -- function num : 0_31 , upvalues : _ENV
   local nTotalExp = 0
   for i = nStartLevel, nTargetLevel - 1 do
     local nUpgradeId = nUpgradeGroupId * 1000 + i + 1
@@ -589,7 +697,7 @@ PlayerDiscData.CalUpgradeExp = function(self, nUpgradeGroupId, nStartLevel, nTar
 end
 
 PlayerDiscData.GetMaxExp = function(self, nUpgradeGroupId, nLevel)
-  -- function num : 0_31 , upvalues : _ENV
+  -- function num : 0_32 , upvalues : _ENV
   local nUpgradeId = nUpgradeGroupId * 1000 + nLevel + 1
   local mapUpgrade = (ConfigTable.GetData)("DiscStrengthen", nUpgradeId, true)
   if not mapUpgrade then
@@ -600,10 +708,10 @@ PlayerDiscData.GetMaxExp = function(self, nUpgradeGroupId, nLevel)
 end
 
 PlayerDiscData.CalCostProportion = function(self, nTarget, tbMatType, tbHas)
-  -- function num : 0_32 , upvalues : _ENV
+  -- function num : 0_33 , upvalues : _ENV
   local nTypeCount = #tbMatType
   local GetProportionedSum = function(tbProportioned)
-    -- function num : 0_32_0 , upvalues : nTypeCount, tbMatType
+    -- function num : 0_33_0 , upvalues : nTypeCount, tbMatType
     local nSum = 0
     for i = 1, nTypeCount do
       nSum = nSum + tbMatType[i] * tbProportioned[i]
@@ -623,7 +731,7 @@ PlayerDiscData.CalCostProportion = function(self, nTarget, tbMatType, tbHas)
     tbSumOfTypeFollowing[i] = nCurTypeSum + tbSumOfTypeFollowing[i + 1]
   end
   local GetLargeFaceValue = function(tbCost1, tbCost2)
-    -- function num : 0_32_1
+    -- function num : 0_33_1
     for i = 1, #tbCost1 do
       if tbCost2[i] < tbCost1[i] then
         return tbCost1
@@ -637,7 +745,7 @@ PlayerDiscData.CalCostProportion = function(self, nTarget, tbMatType, tbHas)
   end
 
   local Proportion = function(tbProportioned, nCurMatType, nRemain)
-    -- function num : 0_32_2 , upvalues : nTypeCount, GetProportionedSum, nTarget, nMinTarget, tbCost, GetLargeFaceValue, _ENV, tbMatType, tbHas, Proportion
+    -- function num : 0_33_2 , upvalues : nTypeCount, GetProportionedSum, nTarget, nMinTarget, tbCost, GetLargeFaceValue, _ENV, tbMatType, tbHas, Proportion
     if nTypeCount < nCurMatType or nRemain <= 0 then
       local nSum = GetProportionedSum(tbProportioned)
       if nTarget <= nSum then
@@ -678,7 +786,7 @@ PlayerDiscData.CalCostProportion = function(self, nTarget, tbMatType, tbHas)
 end
 
 PlayerDiscData.CalUpgradeMat = function(self, nTargetExp)
-  -- function num : 0_33 , upvalues : _ENV
+  -- function num : 0_34 , upvalues : _ENV
   local tbMatType, tbHas = {}, {}
   for _,value in ipairs(self.tbItemExp) do
     (table.insert)(tbMatType, value.nExpValue)
@@ -694,7 +802,7 @@ PlayerDiscData.CalUpgradeMat = function(self, nTargetExp)
 end
 
 PlayerDiscData.GetDiscIdList = function(self)
-  -- function num : 0_34 , upvalues : _ENV
+  -- function num : 0_35 , upvalues : _ENV
   local tbDisc = {}
   for nId,_ in pairs(self._mapDisc) do
     (table.insert)(tbDisc, nId)
@@ -703,7 +811,7 @@ PlayerDiscData.GetDiscIdList = function(self)
 end
 
 PlayerDiscData.SendDiscStrengthenReq = function(self, nId, tbMat, callback)
-  -- function num : 0_35 , upvalues : _ENV
+  -- function num : 0_36 , upvalues : _ENV
   if (self._mapDisc)[nId] == nil then
     printError((string.format)("星盘不存在, id为: %d", nId))
     return 
@@ -716,7 +824,7 @@ PlayerDiscData.SendDiscStrengthenReq = function(self, nId, tbMat, callback)
   end
   local msgData = {Id = nId, Items = tbItems}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_35_0 , upvalues : self, nId, callback
+    -- function num : 0_36_0 , upvalues : self, nId, callback
     self:UpdateDiscData(nId, {Level = mapMainData.Level, Exp = mapMainData.Exp})
     callback()
   end
@@ -726,13 +834,13 @@ PlayerDiscData.SendDiscStrengthenReq = function(self, nId, tbMat, callback)
 end
 
 PlayerDiscData.SendDiscPromoteReq = function(self, nId, callback)
-  -- function num : 0_36 , upvalues : _ENV
+  -- function num : 0_37 , upvalues : _ENV
   if (self._mapDisc)[nId] == nil then
     printError((string.format)("星盘不存在, id为: %d", nId))
     return 
   end
   local successCallback = function(_, mapMainData)
-    -- function num : 0_36_0 , upvalues : self, nId, callback
+    -- function num : 0_37_0 , upvalues : self, nId, callback
     self:UpdateDiscData(nId, {Phase = mapMainData.Phase})
     self:UpdateStoryReddot((self._mapDisc)[nId])
     self:UpdateAvgReddot((self._mapDisc)[nId])
@@ -744,13 +852,13 @@ PlayerDiscData.SendDiscPromoteReq = function(self, nId, callback)
 end
 
 PlayerDiscData.SendDiscLimitBreakReq = function(self, nId, nCount, callback)
-  -- function num : 0_37 , upvalues : _ENV
+  -- function num : 0_38 , upvalues : _ENV
   if (self._mapDisc)[nId] == nil then
     printError((string.format)("星盘不存在, id为: %d", nId))
     return 
   end
   local successCallback = function(_, mapMainData)
-    -- function num : 0_37_0 , upvalues : self, nId, callback
+    -- function num : 0_38_0 , upvalues : self, nId, callback
     self:UpdateDiscData(nId, {Star = mapMainData.Star})
     self:UpdateBreakLimitReddot((self._mapDisc)[nId])
     callback()
@@ -761,9 +869,9 @@ PlayerDiscData.SendDiscLimitBreakReq = function(self, nId, nCount, callback)
 end
 
 PlayerDiscData.SendAllDiscLimitBreakReq = function(self, callback)
-  -- function num : 0_38 , upvalues : _ENV
+  -- function num : 0_39 , upvalues : _ENV
   local successCallback = function(_, mapMainData)
-    -- function num : 0_38_0 , upvalues : _ENV, self, callback
+    -- function num : 0_39_0 , upvalues : _ENV, self, callback
     for _,mapData in ipairs(mapMainData.LimitBreaks) do
       self:UpdateDiscData(mapData.Id, {Star = mapData.Star})
       self:UpdateBreakLimitReddot((self._mapDisc)[mapData.Id])
@@ -776,14 +884,14 @@ PlayerDiscData.SendAllDiscLimitBreakReq = function(self, callback)
 end
 
 PlayerDiscData.SendDiscReadRewardReceiveReq = function(self, nId, nType, callback)
-  -- function num : 0_39 , upvalues : _ENV
+  -- function num : 0_40 , upvalues : _ENV
   if (self._mapDisc)[nId] == nil then
     printError((string.format)("星盘不存在, id为: %d", nId))
     return 
   end
   local msgData = {Id = nId, ReadType = nType}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_39_0 , upvalues : nType, _ENV, self, nId, callback
+    -- function num : 0_40_0 , upvalues : nType, _ENV, self, nId, callback
     if nType == (AllEnum.DiscReadType).DiscStory then
       self:UpdateDiscData(nId, {Read = true})
       self:UpdateStoryReddot((self._mapDisc)[nId])
@@ -805,9 +913,9 @@ PlayerDiscData.SendDiscReadRewardReceiveReq = function(self, nId, nType, callbac
 end
 
 PlayerDiscData.SendPlayerMusicSetReq = function(self, nId, callback)
-  -- function num : 0_40 , upvalues : _ENV
+  -- function num : 0_41 , upvalues : _ENV
   local successCallback = function(_, mapMainData)
-    -- function num : 0_40_0 , upvalues : self, nId, callback
+    -- function num : 0_41_0 , upvalues : self, nId, callback
     self:CacheBGMDisc(nId)
     callback()
   end
@@ -817,7 +925,7 @@ PlayerDiscData.SendPlayerMusicSetReq = function(self, nId, callback)
 end
 
 PlayerDiscData.CacheBGMDisc = function(self, nId)
-  -- function num : 0_41 , upvalues : WwiseAudioMgr, _ENV
+  -- function num : 0_42 , upvalues : WwiseAudioMgr, _ENV
   self.nBGMDisc = nId
   if nId == 0 then
     WwiseAudioMgr.DiscUIBgm = ""
@@ -832,7 +940,7 @@ PlayerDiscData.CacheBGMDisc = function(self, nId)
 end
 
 PlayerDiscData.CacheDiscData = function(self, tbData)
-  -- function num : 0_42 , upvalues : _ENV
+  -- function num : 0_43 , upvalues : _ENV
   for nId,_ in pairs(self._mapDisc) do
     -- DECOMPILER ERROR at PC5: Confused about usage of register: R7 in 'UnsetPending'
 
@@ -842,7 +950,7 @@ PlayerDiscData.CacheDiscData = function(self, tbData)
 end
 
 PlayerDiscData.CreateNewDisc = function(self, tbData)
-  -- function num : 0_43 , upvalues : _ENV
+  -- function num : 0_44 , upvalues : _ENV
   if tbData == nil then
     return 
   end
@@ -856,7 +964,7 @@ PlayerDiscData.CreateNewDisc = function(self, tbData)
 end
 
 PlayerDiscData.UpdateDiscData = function(self, nId, mapData)
-  -- function num : 0_44 , upvalues : _ENV
+  -- function num : 0_45 , upvalues : _ENV
   if (self._mapDisc)[nId] == nil then
     printLog((string.format)("该星盘不存在/是新星盘, 唯一Id: %d", nId))
     self:CreateDiscData(mapData)
@@ -867,7 +975,7 @@ PlayerDiscData.UpdateDiscData = function(self, nId, mapData)
 end
 
 PlayerDiscData.CreateDiscData = function(self, mapDisc)
-  -- function num : 0_45 , upvalues : DiscData
+  -- function num : 0_46 , upvalues : DiscData
   local discData = (DiscData.new)(mapDisc)
   local nId = discData.nId
   -- DECOMPILER ERROR at PC5: Confused about usage of register: R4 in 'UnsetPending'
@@ -880,7 +988,7 @@ PlayerDiscData.CreateDiscData = function(self, mapDisc)
 end
 
 PlayerDiscData.UpdateStoryReddot = function(self, mapDisc)
-  -- function num : 0_46 , upvalues : _ENV
+  -- function num : 0_47 , upvalues : _ENV
   local mapCfg = (ConfigTable.GetData)("Disc", mapDisc.nId)
   local nLimit = (ConfigTable.GetConfigNumber)("DiscStoryReadLimit")
   if mapDisc.bRead ~= false or nLimit > mapDisc.nPhase then
@@ -890,7 +998,7 @@ PlayerDiscData.UpdateStoryReddot = function(self, mapDisc)
 end
 
 PlayerDiscData.UpdateAvgReddot = function(self, mapDisc)
-  -- function num : 0_47 , upvalues : _ENV
+  -- function num : 0_48 , upvalues : _ENV
   local mapCfg = (ConfigTable.GetData)("Disc", mapDisc.nId)
   local mapIPCfg = (ConfigTable.GetData)("DiscIP", mapDisc.nId)
   local nLimit = (ConfigTable.GetConfigNumber)("DiscAVGStoryReadLimit")
@@ -901,7 +1009,7 @@ PlayerDiscData.UpdateAvgReddot = function(self, mapDisc)
 end
 
 PlayerDiscData.UpdateBreakLimitReddot = function(self, mapDisc)
-  -- function num : 0_48 , upvalues : _ENV
+  -- function num : 0_49 , upvalues : _ENV
   local mapCfg = (ConfigTable.GetData)("Disc", mapDisc.nId)
   do
     if mapCfg ~= nil and mapCfg.Visible then
@@ -914,7 +1022,7 @@ PlayerDiscData.UpdateBreakLimitReddot = function(self, mapDisc)
 end
 
 PlayerDiscData.UpdateBreakLimitRedDotByItem = function(self, mapChange)
-  -- function num : 0_49 , upvalues : _ENV
+  -- function num : 0_50 , upvalues : _ENV
   for _,v in ipairs(mapChange) do
     local nId = (self.ItemToDisc)[v.Tid]
     if nId and (self._mapDisc)[nId] and v.Qty > 0 then
@@ -924,7 +1032,7 @@ PlayerDiscData.UpdateBreakLimitRedDotByItem = function(self, mapChange)
 end
 
 PlayerDiscData.CreateTrialDisc = function(self, tbTrialId)
-  -- function num : 0_50 , upvalues : _ENV
+  -- function num : 0_51 , upvalues : _ENV
   self._mapTrialDisc = {}
   for _,nTrialId in ipairs(tbTrialId) do
     local mapCfg = (ConfigTable.GetData)("TrialDisc", nTrialId)
@@ -941,7 +1049,7 @@ PlayerDiscData.CreateTrialDisc = function(self, tbTrialId)
 end
 
 PlayerDiscData.GetTrialDiscById = function(self, nId)
-  -- function num : 0_51 , upvalues : _ENV
+  -- function num : 0_52 , upvalues : _ENV
   if not nId then
     return 
   end
@@ -952,19 +1060,19 @@ PlayerDiscData.GetTrialDiscById = function(self, nId)
 end
 
 PlayerDiscData.DeleteTrialDisc = function(self)
-  -- function num : 0_52
+  -- function num : 0_53
   self._mapTrialDisc = {}
 end
 
 PlayerDiscData.CalcTrialEffectInBuild = function(self, nTrialId, tbSecondarySkill)
-  -- function num : 0_53 , upvalues : _ENV
+  -- function num : 0_54 , upvalues : _ENV
   local discData = (self._mapTrialDisc)[nTrialId]
   local tbEffectId = {}
   if discData == nil then
     return tbEffectId
   end
   local add = function(tbEfId)
-    -- function num : 0_53_0 , upvalues : _ENV, tbEffectId
+    -- function num : 0_54_0 , upvalues : _ENV, tbEffectId
     if not tbEfId then
       return 
     end
@@ -989,7 +1097,7 @@ PlayerDiscData.CalcTrialEffectInBuild = function(self, nTrialId, tbSecondarySkil
 end
 
 PlayerDiscData.CalcTrialInfoInBuild = function(self, nTrialId, tbSecondarySkill)
-  -- function num : 0_54 , upvalues : _ENV
+  -- function num : 0_55 , upvalues : _ENV
   local discData = (self._mapTrialDisc)[nTrialId]
   local discInfo = (CS.Lua2CSharpInfo_DiscInfo)()
   if discData == nil then
@@ -1027,17 +1135,17 @@ local tbSortNameTextCfg = {"CharList_Sort_Toggle_Level", "CharList_Sort_Toggle_R
 local tbSortType = {[1] = (AllEnum.SortType).Level, [2] = (AllEnum.SortType).Rarity, [3] = (AllEnum.SortType).Time, [100] = (AllEnum.SortType).ElementType, [101] = (AllEnum.SortType).Id}
 local tbDefaultSortField = {"nLevel", "nRarity", "nEET", "nId"}
 PlayerDiscData.GetDiscSortNameTextCfg = function(self)
-  -- function num : 0_55 , upvalues : tbSortNameTextCfg
+  -- function num : 0_56 , upvalues : tbSortNameTextCfg
   return tbSortNameTextCfg
 end
 
 PlayerDiscData.GetDiscSortType = function(self)
-  -- function num : 0_56 , upvalues : tbSortType
+  -- function num : 0_57 , upvalues : tbSortType
   return tbSortType
 end
 
 PlayerDiscData.GetDiscSortField = function(self)
-  -- function num : 0_57 , upvalues : tbDefaultSortField
+  -- function num : 0_58 , upvalues : tbDefaultSortField
   return tbDefaultSortField
 end
 

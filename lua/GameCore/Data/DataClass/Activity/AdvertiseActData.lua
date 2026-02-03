@@ -16,18 +16,8 @@ AdvertiseActData.RefreshInfinityTowerActData = function(self, msgData)
   -- function num : 0_2
 end
 
-AdvertiseActData.GetActOpenTime = function(self)
-  -- function num : 0_3
-  return self.nOpenTime
-end
-
-AdvertiseActData.GetActCloseTime = function(self)
-  -- function num : 0_4
-  return self.nEndTime
-end
-
 AdvertiseActData.GetActSortId = function(self)
-  -- function num : 0_5
+  -- function num : 0_3
   if self.bIsMove and self:isFinishAllTasks() then
     return 9999
   else
@@ -36,12 +26,7 @@ AdvertiseActData.GetActSortId = function(self)
 end
 
 AdvertiseActData.isFinishAllTasks = function(self)
-  -- function num : 0_6 , upvalues : _ENV
-  local nTotalCount, nReceivedCount = (PlayerData.TutorialData):GetProgress()
-  local bHasReceiveAllGroup = (PlayerData.Quest):CheckTourGroupReward((PlayerData.Quest):GetMaxTourGroupOrderIndex())
-  if bHasReceiveAllGroup and nTotalCount == nReceivedCount then
-    return true
-  end
+  -- function num : 0_4
   return false
 end
 

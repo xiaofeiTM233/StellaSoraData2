@@ -1,7 +1,7 @@
 local JointDrillLevelSelectPanel = class("JointDrillLevelSelectPanel", BasePanel)
 JointDrillLevelSelectPanel._sUIResRootPath = "UI_Activity/"
 JointDrillLevelSelectPanel._tbDefine = {
-{sPrefabPath = "_510001/JointDrillLevelSelect.prefab", sCtrlName = "Game.UI.JointDrill.JointDrillLevelSelectCtrl"}
+{sPrefabPath = "_510001/JointDrillLevelSelect.prefab", sCtrlName = "Game.UI.JointDrill.JointDrill_1.JointDrillLevelSelectCtrl"}
 }
 JointDrillLevelSelectPanel.Awake = function(self)
   -- function num : 0_0

@@ -56,7 +56,7 @@ CookieActData.RefreshCookieGameActData = function(self, actId, msgData)
       self:CacheAllLevelData(msgData.Levels)
     end
     if self.nActId == 0 then
-      printWarn("CookieActDataInit: ActivityId is 0!!!")
+      printError("CookieActDataInit: ActivityId is 0!!!")
     end
   end
 end
@@ -234,18 +234,8 @@ CookieActData.IsLevelUnlocked = function(self, nLevelId)
   end
 end
 
-CookieActData.GetActEndTime = function(self)
-  -- function num : 0_17
-  return self.nEndTime
-end
-
-CookieActData.GetActOpenTime = function(self)
-  -- function num : 0_18
-  return self.nOpenTime
-end
-
 CookieActData.SetLevelReward = function(self, changeInfo)
-  -- function num : 0_19
+  -- function num : 0_17
   if changeInfo ~= nil and #changeInfo.Props > 0 then
     self.tbLevelReward = changeInfo
   else
@@ -254,12 +244,12 @@ CookieActData.SetLevelReward = function(self, changeInfo)
 end
 
 CookieActData.GetLevelReward = function(self)
-  -- function num : 0_20
+  -- function num : 0_18
   return self.tbLevelReward
 end
 
 CookieActData.GetNMHighScoreToday = function(self)
-  -- function num : 0_21 , upvalues : LocalData, _ENV, newDayTime
+  -- function num : 0_19 , upvalues : LocalData, _ENV, newDayTime
   local bToday = false
   local TipsTime = (LocalData.GetPlayerLocalData)("Cookie_Nightmare_HighScoreDay")
   local _tipDay = 0
@@ -279,7 +269,7 @@ CookieActData.GetNMHighScoreToday = function(self)
 end
 
 CookieActData.SetNMHighScoreDay = function(self)
-  -- function num : 0_22 , upvalues : _ENV, newDayTime, LocalData
+  -- function num : 0_20 , upvalues : _ENV, newDayTime, LocalData
   local curTimeStamp = ((CS.ClientManager).Instance).serverTimeStampWithTimeZone
   local fixedTimeStamp = curTimeStamp - newDayTime * 3600
   local nYear = tonumber((os.date)("!%Y", fixedTimeStamp))
@@ -291,9 +281,9 @@ CookieActData.SetNMHighScoreDay = function(self)
 end
 
 CookieActData.RequestLevelResult = function(self, nLevelId, nScore, nBoxCount, nCookieCount, nGoodCount, nPerfectCount, nExcellentCount, nMissCount, callback)
-  -- function num : 0_23 , upvalues : _ENV
+  -- function num : 0_21 , upvalues : _ENV
   local callbackFunc = function(_, msgData)
-    -- function num : 0_23_0 , upvalues : self, nLevelId, nScore, callback
+    -- function num : 0_21_0 , upvalues : self, nLevelId, nScore, callback
     self:SetLevelData(nLevelId, nScore)
     self:SetLevelReward(msgData)
     if callback then
@@ -302,20 +292,19 @@ CookieActData.RequestLevelResult = function(self, nLevelId, nScore, nBoxCount, n
   end
 
   if self.nActId == 0 then
-    printWarn("RequestCookieLevelResult: ActivityId is 0!!!")
+    printError("RequestCookieLevelResult: ActivityId is 0!!!  -  ActivityId = " .. self.nActId .. ", nLevelId = " .. nLevelId .. ", nScore = " .. nScore)
   end
-  printLog("RequestCookieLevelResult - ActivityId = " .. self.nActId .. ", nLevelId = " .. nLevelId .. ", nScore = " .. nScore .. ", nBoxCount = " .. nBoxCount .. ", nCookieCount = " .. nCookieCount .. ", nGoodCount = " .. nGoodCount .. ", nPerfectCount = " .. nPerfectCount .. ", nExcellentCount = " .. nExcellentCount .. ", nMissCount = " .. nMissCount)
   ;
   (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_cookie_settle_req, {ActivityId = self.nActId, LevelId = nLevelId, Score = nScore, PackageNum = nBoxCount, CookieNum = nCookieCount, PerfectNum = nPerfectCount, ExcellentNum = nExcellentCount, MissNum = nMissCount, Good = nGoodCount}, nil, callbackFunc)
 end
 
 CookieActData.OnEvent_GameComplete = function(self, nLevelId, nScore, nBoxCount, nCookieCount, nGoodCount, nPerfectCount, nExcellentCount, nMissCount, callback)
-  -- function num : 0_24
+  -- function num : 0_22
   self:RequestLevelResult(nLevelId, nScore, nBoxCount, nCookieCount, nGoodCount, nPerfectCount, nExcellentCount, nMissCount, callback)
 end
 
 CookieActData.OnEvent_QuestClaim = function(self, nQuestId)
-  -- function num : 0_25
+  -- function num : 0_23
   self:SendQuestReceive(nQuestId)
 end
 

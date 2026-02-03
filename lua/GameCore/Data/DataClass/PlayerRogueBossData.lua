@@ -734,7 +734,7 @@ end
 PlayerRogueBossData.WeeklyCopiesLevelSettleReqSuccess = function(self, msgData)
   -- function num : 0_39 , upvalues : _ENV
   local isFirst = msgData.First
-  if self.weekBossThroughTime == nil or self.weekBossThroughTime == 0 then
+  if self.weekBossThroughTime == nil then
     return 
   end
   local levels = {}

@@ -491,39 +491,49 @@ local SetL2DInsParent = function(trIns, trParent)
 end
 
 local ResetRenderer = function(tbRenderer)
-  -- function num : 0_27 , upvalues : UnSet_RawImg, UnInit_RT, SetL2DInsParent, trL2DInsRoot, SetPanelOffset, _ENV, Actor2DManager
+  -- function num : 0_27 , upvalues : UnSet_RawImg, UnInit_RT, SetL2DInsParent, trL2DInsRoot, _ENV, SetPanelOffset, Actor2DManager
   UnSet_RawImg(tbRenderer)
   UnInit_RT(tbRenderer)
   if tbRenderer.trL2DIns ~= nil then
     SetL2DInsParent(tbRenderer.trL2DIns, trL2DInsRoot)
+    local trBg = (tbRenderer.trL2DIns):Find("root/----bg----")
+    if trBg ~= nil and trBg:IsNull() == false then
+      trBg.localScale = Vector3.one
+    end
+    local trBgEft = (tbRenderer.trL2DIns):Find("root/----bg_effect----")
+    if trBgEft ~= nil and trBgEft:IsNull() == false then
+      trBgEft.localScale = Vector3.one
+    end
     tbRenderer.trL2DIns = nil
   end
-  tbRenderer.sL2D = nil
-  SetPanelOffset(tbRenderer)
-  -- DECOMPILER ERROR at PC21: Confused about usage of register: R1 in 'UnsetPending'
+  do
+    tbRenderer.sL2D = nil
+    SetPanelOffset(tbRenderer)
+    -- DECOMPILER ERROR at PC47: Confused about usage of register: R1 in 'UnsetPending'
 
-  ;
-  (tbRenderer.trOffset).localPosition = Vector3.zero
-  -- DECOMPILER ERROR at PC25: Confused about usage of register: R1 in 'UnsetPending'
+    ;
+    (tbRenderer.trOffset).localPosition = Vector3.zero
+    -- DECOMPILER ERROR at PC51: Confused about usage of register: R1 in 'UnsetPending'
 
-  ;
-  (tbRenderer.trOffset).localScale = Vector3.one
-  ;
-  (NovaAPI.SetSpriteRendererSprite)(tbRenderer.spr_body, nil)
-  ;
-  (NovaAPI.SetSpriteRendererSprite)(tbRenderer.spr_face, nil)
-  ;
-  (NovaAPI.SetSpriteRendererSprite)(tbRenderer.spr_bg, nil)
-  -- DECOMPILER ERROR at PC44: Confused about usage of register: R1 in 'UnsetPending'
+    ;
+    (tbRenderer.trOffset).localScale = Vector3.one
+    ;
+    (NovaAPI.SetSpriteRendererSprite)(tbRenderer.spr_body, nil)
+    ;
+    (NovaAPI.SetSpriteRendererSprite)(tbRenderer.spr_face, nil)
+    ;
+    (NovaAPI.SetSpriteRendererSprite)(tbRenderer.spr_bg, nil)
+    -- DECOMPILER ERROR at PC70: Confused about usage of register: R1 in 'UnsetPending'
 
-  ;
-  (tbRenderer.parent_L2D).localScale = Vector3.zero
-  -- DECOMPILER ERROR at PC48: Confused about usage of register: R1 in 'UnsetPending'
+    ;
+    (tbRenderer.parent_L2D).localScale = Vector3.zero
+    -- DECOMPILER ERROR at PC74: Confused about usage of register: R1 in 'UnsetPending'
 
-  ;
-  (tbRenderer.parent_PNG).localScale = Vector3.zero
-  ;
-  (Actor2DManager.ResetActor2DAnim)(tbRenderer)
+    ;
+    (tbRenderer.parent_PNG).localScale = Vector3.zero
+    ;
+    (Actor2DManager.ResetActor2DAnim)(tbRenderer)
+  end
 end
 
 local GetRenderer = function(sL2D, bForceMatch, nIndex)
@@ -690,30 +700,11 @@ local GetActor2DParams = function(nPanelId, nCharId, nSkinId, param, nSpecifyTyp
 end
 
 local GetFace = function(nSkinId, nPanelId, param)
-  -- function num : 0_31 , upvalues : _ENV
+  -- function num : 0_31
   local sFace, sFieldName = nil, nil
-  if param ~= nil and (nPanelId == PanelId.BattleResult or nPanelId == PanelId.RoguelikeResult or nPanelId == PanelId.RogueBossResult or nPanelId == PanelId.StarTowerResult) then
-    if param == true then
-      sFieldName = "BattelWin"
-    else
-      sFieldName = "BattleLose"
-    end
-  end
-  local mapData = (ConfigTable.GetData)("CharacterSkinPanelFace", nSkinId)
-  if mapData ~= nil then
-    if nPanelId == PanelId.MainView then
-      sFace = mapData.MainView
-    else
-      if nPanelId == PanelId.CharInfo then
-        sFace = mapData.CharInfo
-      else
-        if nPanelId == PanelId.BattleResult or nPanelId == PanelId.RoguelikeResult or nPanelId == PanelId.RogueBossResult or nPanelId == PanelId.StarTowerResult then
-          sFace = mapData[sFieldName]
-        end
-      end
-    end
-  end
-  if sFace == "" or sFace == nil then
+  -- DECOMPILER ERROR at PC7: Unhandled construct in 'MakeBoolean' P1
+
+  if param == nil or sFace == "" or sFace == nil then
     sFace = "002"
   end
   return sFace
@@ -1619,29 +1610,53 @@ Actor2DManager.SetBoardNPC2D = function(nPanelId, rawImg, nCharId, nSkinId, para
   local tbRenderer = GetRenderer(sAssetPath, false, nIndex)
   if bL == true then
     SetL2D(sAssetPath, sOffset, rawImg, nPanelId, nOffsetDataPanelId, nT, bF, sBg, tbRenderer)
+    if tbRenderer.trL2DIns ~= nil and (tbRenderer.trL2DIns):IsNull() == false then
+      local trBg = (tbRenderer.trL2DIns):Find("root/----bg----")
+      if trBg ~= nil and trBg:IsNull() == false then
+        if param == "HideBgIn_ReceivePropsNPC_Panel" then
+          trBg.localScale = Vector3.zero
+        else
+          trBg.localScale = Vector3.one
+        end
+      end
+      local trBgEft = (tbRenderer.trL2DIns):Find("root/----bg_effect----")
+      if trBgEft ~= nil and trBgEft:IsNull() == false then
+        if param == "HideBgIn_ReceivePropsNPC_Panel" then
+          trBgEft.localScale = Vector3.zero
+        else
+          trBgEft.localScale = Vector3.one
+        end
+      end
+    end
   else
-    sFace = GetFace(nSkinId, nPanelId, param)
-    SetPortrait(sAssetPath, sFace, sOffset, rawImg, nPanelId, nOffsetDataPanelId, nT, bF, sBg, tbRenderer)
+    do
+      sFace = GetFace(nSkinId, nPanelId, param)
+      SetPortrait(sAssetPath, sFace, sOffset, rawImg, nPanelId, nOffsetDataPanelId, nT, bF, sBg, tbRenderer)
+      mapCurChar.nCharId = nCharId
+      mapCurChar.nSkinId = nSkinId
+      mapCurChar.sBg = sBg
+      mapCurChar.sAssetPath = sAssetPath
+      mapCurChar.sFace = sFace
+      mapCurChar.sOffset = sOffset
+      mapCurChar.rawImg = rawImg
+      mapCurrent.nPanelId = nPanelId
+      mapCurrent.nOffsetPanelId = nOffsetDataPanelId
+      mapCurrent.nActor2DType = nT
+      mapCurrent.bUseL2D = bL
+      mapCurrent.bUseFull = bF
+      mapCurrent.L2DType = L2DType.Char
+      local tbRenderer = GetRenderer(sAssetPath, true)
+      if tbRenderer == nil then
+        printError("未找到 Renderer")
+      end
+      local sIdleAnim = "idle"
+      if param == "HideBgIn_ReceivePropsNPC_Panel" then
+        sIdleAnim = sIdleAnim .. "_sp"
+      end
+      ;
+      (Actor2DManager.PlayL2DAnim)(tbRenderer.trL2DIns, sIdleAnim, true, true)
+    end
   end
-  mapCurChar.nCharId = nCharId
-  mapCurChar.nSkinId = nSkinId
-  mapCurChar.sBg = sBg
-  mapCurChar.sAssetPath = sAssetPath
-  mapCurChar.sFace = sFace
-  mapCurChar.sOffset = sOffset
-  mapCurChar.rawImg = rawImg
-  mapCurrent.nPanelId = nPanelId
-  mapCurrent.nOffsetPanelId = nOffsetDataPanelId
-  mapCurrent.nActor2DType = nT
-  mapCurrent.bUseL2D = bL
-  mapCurrent.bUseFull = bF
-  mapCurrent.L2DType = L2DType.Char
-  local tbRenderer = GetRenderer(sAssetPath, true)
-  if tbRenderer == nil then
-    printError("未找到 Renderer")
-  end
-  ;
-  (Actor2DManager.PlayL2DAnim)(tbRenderer.trL2DIns, "idle", true, true)
 end
 
 Actor2DManager.UnsetBoardNPC2D = function(nIndex)

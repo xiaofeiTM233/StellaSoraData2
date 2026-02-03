@@ -38,11 +38,14 @@ PlayerBaseData.Init = function(self)
   self._tbHonorTitleList = nil
   self._nSendGiftCnt = 0
   self._nRenameTime = 0
+  self.nRequestEnergyLimitTime = 10
   self._sDestoryUrl = ""
   self._bWorldClassChange = false
   self.bNewDay = false
   self.bNeedHotfix = false
+  self.bShowNewDayWindDelay = false
   self.bShowNewDayWind = false
+  self.bSkipNewDayWind = false
   self.bInLoading = false
   self:ProcessTableData()
   ;
@@ -53,6 +56,8 @@ PlayerBaseData.Init = function(self)
   (EventManager.Add)(EventId.UserEvent_CreateRole, self, self.Event_CreateRole)
   ;
   (EventManager.Add)("Prologue_EventUpload", self, self.PrologueEventUpload)
+  ;
+  (EventManager.Add)("CS2LuaEvent_OnApplicationFocus", self, self.OnCS2LuaEvent_AppFocus)
 end
 
 PlayerBaseData.UnInit = function(self)
@@ -753,11 +758,11 @@ PlayerBaseData.OnNextDayRefresh = function(self)
     local bInAdventure = (ModuleManager.GetIsAdventure)()
     local bInStarTowerSweep = not bInAdventure and (PlayerData.State):GetStarTowerSweepState() or (PanelManager.GetCurPanelId)() == PanelId.StarTowerResult or (PanelManager.GetCurPanelId)() == PanelId.StarTowerBuildSave
     local bInAvg = (AvgManager.CheckInAvg)()
-    if bInAdventure or bInStarTowerSweep or bInAvg then
+    if bInAdventure or bInStarTowerSweep or bInAvg or self.bSkipNewDayWind then
       print("Inlevel")
       self.bNewDay = true
       if bInAvg then
-        self.bShowNewDayWind = true
+        self.bShowNewDayWindDelay = true
       end
       return 
     end
@@ -816,7 +821,7 @@ PlayerBaseData.OnBackToMainMenuModule = function(self)
     self:OnNextDayRefresh()
     self.bNewDay = false
     if self.bInLoading then
-      self.bShowNewDayWind = true
+      self.bShowNewDayWindDelay = true
     else
       self:BackToHome()
     end
@@ -849,18 +854,32 @@ PlayerBaseData.BackToHome = function(self)
   -- function num : 0_48 , upvalues : _ENV
   if (PanelManager.GetCurPanelId)() ~= PanelId.MainView then
     (EventManager.Hit)("NewDay_Clear_Guide")
-    local msg = {nType = (AllEnum.MessageBox).Alert, sContent = (ConfigTable.GetUIText)("Alert_NextDay"), callbackConfirm = function()
-    -- function num : 0_48_0 , upvalues : _ENV
+    if not self.bShowNewDayWind then
+      local msg = {nType = (AllEnum.MessageBox).Alert, sContent = (ConfigTable.GetUIText)("Alert_NextDay"), callbackConfirm = function()
+    -- function num : 0_48_0 , upvalues : self, _ENV
+    self.bShowNewDayWind = false
+    if (PanelManager.GetCurPanelId)() == PanelId.MainView then
+      return 
+    end
+    ;
     (PanelManager.Home)()
   end
 }
-    ;
-    (EventManager.Hit)(EventId.OpenMessageBox, msg)
+      ;
+      (EventManager.Hit)(EventId.OpenMessageBox, msg)
+      self.bShowNewDayWind = true
+      self.bSkipNewDayWind = false
+    end
   end
 end
 
-PlayerBaseData.GetCurEnergy = function(self)
+PlayerBaseData.SetSkipNewDayWindow = function(self, bSkip)
   -- function num : 0_49
+  self.bSkipNewDayWind = bSkip
+end
+
+PlayerBaseData.GetCurEnergy = function(self)
+  -- function num : 0_50
   local mapRet = {}
   mapRet.nEnergy = self._nCurEnergy
   mapRet.nEnergyTime = self._nEnergyTime
@@ -868,7 +887,7 @@ PlayerBaseData.GetCurEnergy = function(self)
 end
 
 PlayerBaseData.GetCurEnergyBattery = function(self)
-  -- function num : 0_50
+  -- function num : 0_51
   local mapRet = {}
   mapRet.nEnergyBattery = self._nCurEnergyBattery
   mapRet.nEnergyBatteryTime = self._nEnergyBatteryTime
@@ -876,7 +895,7 @@ PlayerBaseData.GetCurEnergyBattery = function(self)
 end
 
 PlayerBaseData.GetMaxEnergyTime = function(self)
-  -- function num : 0_51 , upvalues : _ENV
+  -- function num : 0_52 , upvalues : _ENV
   local nMaxEnergy = (ConfigTable.GetConfigNumber)("EnergyMaxLimit") or 0
   local nEmptyEnergy = nMaxEnergy - self._nCurEnergy
   if nEmptyEnergy <= 0 then
@@ -886,17 +905,17 @@ PlayerBaseData.GetMaxEnergyTime = function(self)
 end
 
 PlayerBaseData.GetWorldClass = function(self)
-  -- function num : 0_52
+  -- function num : 0_53
   return self._nWorldClass
 end
 
 PlayerBaseData.GetMaxWorldClass = function(self)
-  -- function num : 0_53
+  -- function num : 0_54
   return self._nMaxWorldClass
 end
 
 PlayerBaseData.GetWorldClassState = function(self, nLv)
-  -- function num : 0_54 , upvalues : _ENV
+  -- function num : 0_55 , upvalues : _ENV
   local tbState = (PlayerData.State):GetWorldClassRewardState()
   local nIndex = (math.ceil)(nLv / 8)
   if 1 << nLv - (nIndex - 1) * 8 - 1 & tbState[nIndex] <= 0 then
@@ -907,7 +926,7 @@ PlayerBaseData.GetWorldClassState = function(self, nLv)
 end
 
 PlayerBaseData.GetEnabledWorldClassLv = function(self)
-  -- function num : 0_55
+  -- function num : 0_56
   local bEnabled = false
   for i = 2, self._nMaxWorldClass do
     bEnabled = self:GetWorldClassState(i)
@@ -919,17 +938,17 @@ PlayerBaseData.GetEnabledWorldClassLv = function(self)
 end
 
 PlayerBaseData.GetWorldExp = function(self)
-  -- function num : 0_56
+  -- function num : 0_57
   return self._nWorldExp
 end
 
 PlayerBaseData.GetCurWorldClassStageIndex = function(self)
-  -- function num : 0_57
+  -- function num : 0_58
   return self._nCurWorldStageIndex
 end
 
 PlayerBaseData.GetCurWorldClassStageId = function(self)
-  -- function num : 0_58 , upvalues : _ENV
+  -- function num : 0_59 , upvalues : _ENV
   local mapCfg = ((CacheTable.Get)("_DemonAdvance"))[self._nCurWorldStageIndex]
   if mapCfg ~= nil then
     return mapCfg.nId
@@ -938,17 +957,17 @@ PlayerBaseData.GetCurWorldClassStageId = function(self)
 end
 
 PlayerBaseData.GetOldWorldClass = function(self)
-  -- function num : 0_59
+  -- function num : 0_60
   return self._nOldWorldClass
 end
 
 PlayerBaseData.GetOldWorldExp = function(self)
-  -- function num : 0_60
+  -- function num : 0_61
   return self._nOldWorldExp
 end
 
 PlayerBaseData.CheckEnergyEnough = function(self, nId)
-  -- function num : 0_61 , upvalues : _ENV
+  -- function num : 0_62 , upvalues : _ENV
   local mapData = (ConfigTable.GetData_Mainline)(nId)
   if mapData.EnergyConsume > self._nCurEnergy then
     do return mapData == nil end
@@ -958,17 +977,17 @@ PlayerBaseData.CheckEnergyEnough = function(self, nId)
 end
 
 PlayerBaseData.GetEnergyBuyCount = function(self)
-  -- function num : 0_62
+  -- function num : 0_63
   return self._nBuyEnergyCount
 end
 
 PlayerBaseData.GetEnergyBuyLimit = function(self)
-  -- function num : 0_63
+  -- function num : 0_64
   return self._nBuyEnergyLimit
 end
 
 PlayerBaseData.GetCurEnergyBuyGroup = function(self, nBuyCount)
-  -- function num : 0_64 , upvalues : _ENV
+  -- function num : 0_65 , upvalues : _ENV
   if not (CacheTable.Get)("_EnergyBuy") then
     local energyBuy = {}
   end
@@ -985,12 +1004,12 @@ PlayerBaseData.GetCurEnergyBuyGroup = function(self, nBuyCount)
 end
 
 PlayerBaseData.GetSendGiftCount = function(self)
-  -- function num : 0_65
+  -- function num : 0_66
   return self._nSendGiftCnt
 end
 
 PlayerBaseData.CheckRenameCD = function(self)
-  -- function num : 0_66 , upvalues : _ENV
+  -- function num : 0_67 , upvalues : _ENV
   if self.bRenameCD then
     local nPastTime = (ConfigTable.GetConfigNumber)("NickNameResetTimeLimit") - (((CS.ClientManager).Instance).serverTimeStamp - self._nRenameTime)
     local day = (math.ceil)(nPastTime / 86400)
@@ -1007,24 +1026,24 @@ PlayerBaseData.CheckRenameCD = function(self)
 end
 
 PlayerBaseData.SetRenameTimer = function(self, nTime)
-  -- function num : 0_67 , upvalues : TimerManager
+  -- function num : 0_68 , upvalues : TimerManager
   if self.timerRename ~= nil then
     (self.timerRename):Cancel(false)
     self.timerRename = nil
   end
   self.bRenameCD = true
   self.timerRename = (TimerManager.Add)(1, nTime, self, function()
-    -- function num : 0_67_0 , upvalues : self
+    -- function num : 0_68_0 , upvalues : self
     self.bRenameCD = false
   end
 , true, true, false)
 end
 
 PlayerBaseData.SendPlayerNameEditReq = function(self, sName, callback)
-  -- function num : 0_68 , upvalues : _ENV
+  -- function num : 0_69 , upvalues : _ENV
   local msgData = {Name = sName}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_68_0 , upvalues : self, sName, _ENV, callback
+    -- function num : 0_69_0 , upvalues : self, sName, _ENV, callback
     self._sPlayerNickName = sName
     self._nHashtag = mapMainData.Hashtag
     self._nRenameTime = mapMainData.ResetTime
@@ -1037,7 +1056,7 @@ PlayerBaseData.SendPlayerNameEditReq = function(self, sName, callback)
 end
 
 PlayerBaseData.SendPlayerWorldClassRewardReceiveReq = function(self, nLv, nStage, callback, nMinLevel)
-  -- function num : 0_69 , upvalues : _ENV
+  -- function num : 0_70 , upvalues : _ENV
   local msgData = {}
   if nLv ~= nil then
     msgData.Class = nLv
@@ -1087,9 +1106,9 @@ PlayerBaseData.SendPlayerWorldClassRewardReceiveReq = function(self, nLv, nStage
       end
       do
         local successCallback = function(_, mapMainData)
-    -- function num : 0_69_0 , upvalues : _ENV, tbReward, self, callback
+    -- function num : 0_70_0 , upvalues : _ENV, tbReward, self, callback
     (UTILS.OpenReceiveByDisplayItem)(tbReward, mapMainData, function()
-      -- function num : 0_69_0_0 , upvalues : _ENV
+      -- function num : 0_70_0_0 , upvalues : _ENV
       if (PlayerData.Guide):GetGuideState() then
         (EventManager.Hit)("Guide_ReceiveWorldClassReward")
       end
@@ -1107,11 +1126,11 @@ PlayerBaseData.SendPlayerWorldClassRewardReceiveReq = function(self, nLv, nStage
 end
 
 PlayerBaseData.SendPlayerWorldClassAdvanceReq = function(self, nStageId, callback)
-  -- function num : 0_70 , upvalues : _ENV
+  -- function num : 0_71 , upvalues : _ENV
   local successCallback = function(_, msgData)
-    -- function num : 0_70_0 , upvalues : self, nStageId, _ENV
+    -- function num : 0_71_0 , upvalues : self, nStageId, _ENV
     local callback = function()
-      -- function num : 0_70_0_0 , upvalues : self, nStageId, _ENV
+      -- function num : 0_71_0_0 , upvalues : self, nStageId, _ENV
       self:ChangeWorldStage(nStageId)
       ;
       (EventManager.Hit)("DemonAdvanceSuccess")
@@ -1129,10 +1148,10 @@ PlayerBaseData.SendPlayerWorldClassAdvanceReq = function(self, nStageId, callbac
 end
 
 PlayerBaseData.SendPlayerCharsShowReq = function(self, tbChar, callback)
-  -- function num : 0_71 , upvalues : _ENV
+  -- function num : 0_72 , upvalues : _ENV
   local msgData = {CharIds = tbChar}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_71_0 , upvalues : self, tbChar, callback
+    -- function num : 0_72_0 , upvalues : self, tbChar, callback
     self._tbCoreTeam = tbChar
     callback(mapMainData)
   end
@@ -1142,10 +1161,10 @@ PlayerBaseData.SendPlayerCharsShowReq = function(self, tbChar, callback)
 end
 
 PlayerBaseData.SendPlayerSignatureEditReq = function(self, sSignature, callback)
-  -- function num : 0_72 , upvalues : _ENV
+  -- function num : 0_73 , upvalues : _ENV
   local msgData = {Signature = sSignature}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_72_0 , upvalues : self, sSignature, callback
+    -- function num : 0_73_0 , upvalues : self, sSignature, callback
     self._sSignature = sSignature
     callback(mapMainData)
   end
@@ -1155,10 +1174,10 @@ PlayerBaseData.SendPlayerSignatureEditReq = function(self, sSignature, callback)
 end
 
 PlayerBaseData.SendPlayerSkinShowReq = function(self, nSkinId, callback)
-  -- function num : 0_73 , upvalues : _ENV
+  -- function num : 0_74 , upvalues : _ENV
   local msgData = {SkinId = nSkinId}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_73_0 , upvalues : self, nSkinId, callback
+    -- function num : 0_74_0 , upvalues : self, nSkinId, callback
     self._nShowSkinId = nSkinId
     callback(mapMainData)
   end
@@ -1168,10 +1187,10 @@ PlayerBaseData.SendPlayerSkinShowReq = function(self, nSkinId, callback)
 end
 
 PlayerBaseData.SendPlayerTitleEditReq = function(self, nTitlePrefix, nTitleSuffix, callback)
-  -- function num : 0_74 , upvalues : _ENV
+  -- function num : 0_75 , upvalues : _ENV
   local msgData = {TitlePrefix = nTitlePrefix, TitleSuffix = nTitleSuffix}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_74_0 , upvalues : self, nTitlePrefix, nTitleSuffix, callback
+    -- function num : 0_75_0 , upvalues : self, nTitlePrefix, nTitleSuffix, callback
     self._nTitlePrefix = nTitlePrefix
     self._nTitleSuffix = nTitleSuffix
     callback(mapMainData)
@@ -1182,21 +1201,21 @@ PlayerBaseData.SendPlayerTitleEditReq = function(self, nTitlePrefix, nTitleSuffi
 end
 
 PlayerBaseData.SendEnergyBuy = function(self, nCount, callback)
-  -- function num : 0_75 , upvalues : _ENV
+  -- function num : 0_76 , upvalues : _ENV
   (HttpNetHandler.SendMsg)((NetMsgId.Id).energy_buy_req, {Value = nCount}, nil, callback)
 end
 
 PlayerBaseData.SendEnergyBatteryExtract = function(self, nAmount, callback)
-  -- function num : 0_76 , upvalues : _ENV
+  -- function num : 0_77 , upvalues : _ENV
   (HttpNetHandler.SendMsg)((NetMsgId.Id).energy_extract_req, {Value = nAmount}, nil, callback)
 end
 
 PlayerBaseData.PlayerWorldClassRewardReceiveSuc = function(self, mapMainData)
-  -- function num : 0_77
+  -- function num : 0_78
 end
 
 PlayerBaseData.PlayerWorldClassAdvanceSuc = function(self, mapMainData)
-  -- function num : 0_78 , upvalues : _ENV
+  -- function num : 0_79 , upvalues : _ENV
   (UTILS.OpenReceiveByChangeInfo)(mapMainData.Change)
   local nCurId = self:GetCurWorldClassStageId()
   local mapCfg = (ConfigTable.GetData)("DemonAdvance", nCurId)
@@ -1211,10 +1230,10 @@ PlayerBaseData.PlayerWorldClassAdvanceSuc = function(self, mapMainData)
 end
 
 PlayerBaseData.SendPlayerHonorTitleEditReq = function(self, tbhonorTitle, callback)
-  -- function num : 0_79 , upvalues : _ENV
+  -- function num : 0_80 , upvalues : _ENV
   local msgData = {List = tbhonorTitle}
   local successCallback = function()
-    -- function num : 0_79_0 , upvalues : callback
+    -- function num : 0_80_0 , upvalues : callback
     if callback ~= nil then
       callback()
     end
@@ -1225,19 +1244,19 @@ PlayerBaseData.SendPlayerHonorTitleEditReq = function(self, tbhonorTitle, callba
 end
 
 PlayerBaseData.GetDestoryUrl = function(self)
-  -- function num : 0_80
+  -- function num : 0_81
   return self._sDestoryUrl
 end
 
 PlayerBaseData.SetDestoryUrl = function(self, sUrl)
-  -- function num : 0_81
+  -- function num : 0_82
   self._sDestoryUrl = sUrl
 end
 
 PlayerBaseData.RequestDestoryUrl = function(self, cb)
-  -- function num : 0_82 , upvalues : _ENV
+  -- function num : 0_83 , upvalues : _ENV
   local callback = function(_, msgData)
-    -- function num : 0_82_0 , upvalues : cb, self
+    -- function num : 0_83_0 , upvalues : cb, self
     if cb ~= nil then
       cb(self._sDestoryUrl)
     end
@@ -1248,13 +1267,13 @@ PlayerBaseData.RequestDestoryUrl = function(self, cb)
 end
 
 PlayerBaseData.OnNewDay = function(self)
-  -- function num : 0_83
+  -- function num : 0_84
   self._nBuyEnergyCount = 0
   self._nSendGiftCnt = 0
 end
 
 PlayerBaseData.RefreshWorldClassRedDot = function(self)
-  -- function num : 0_84 , upvalues : _ENV
+  -- function num : 0_85 , upvalues : _ENV
   local nWorldClass = self:GetWorldClass()
   local nCurStageId = (PlayerData.Base):GetCurWorldClassStageId()
   local tbDemonAdvanceCfg = (CacheTable.Get)("_DemonAdvance")
@@ -1304,7 +1323,7 @@ PlayerBaseData.RefreshWorldClassRedDot = function(self)
 end
 
 PlayerBaseData.RefreshHonorTitleRedDot = function(self)
-  -- function num : 0_85 , upvalues : localdata, _ENV
+  -- function num : 0_86 , upvalues : localdata, _ENV
   local sJson = (localdata.GetPlayerLocalData)("HonorTitle")
   local localHonorTilte = decodeJson(sJson)
   if type(localHonorTilte) ~= "table" then
@@ -1316,10 +1335,10 @@ PlayerBaseData.RefreshHonorTitleRedDot = function(self)
 end
 
 PlayerBaseData.SendPlayerRedeemCodeReq = function(self, sCode, callback)
-  -- function num : 0_86 , upvalues : _ENV
+  -- function num : 0_87 , upvalues : _ENV
   local msgData = {Value = sCode}
   local successCallback = function(_, msgData)
-    -- function num : 0_86_0 , upvalues : callback
+    -- function num : 0_87_0 , upvalues : callback
     if callback ~= nil then
       callback(msgData.Change)
     end
@@ -1329,8 +1348,55 @@ PlayerBaseData.SendPlayerRedeemCodeReq = function(self, sCode, callback)
   (HttpNetHandler.SendMsg)((NetMsgId.Id).redeem_code_req, msgData, nil, successCallback)
 end
 
+PlayerBaseData.SendEnergyInfoReq = function(self)
+  -- function num : 0_88 , upvalues : _ENV, TimerManager
+  local callback = function(_, msgData)
+    -- function num : 0_88_0 , upvalues : self, _ENV, TimerManager
+    if msgData ~= nil then
+      self._nCurEnergy = msgData.Primary
+      self._nCurEnergyBattery = msgData.Secondary
+      local nServerTime = ((CS.ClientManager).Instance).serverTimeStamp
+      self._nEnergyTime = msgData.IsPrimary == true and msgData.NextDuration + nServerTime or 0
+      if msgData.IsPrimary ~= true or not 0 then
+        self._nEnergyBatteryTime = msgData.NextDuration + nServerTime
+        if msgData.NextDuration == 0 then
+          if self._mapEnergyTimer ~= nil then
+            (self._mapEnergyTimer):Cancel()
+            self._mapEnergyTimer = nil
+          end
+          if self._mapEnergyBatteryTimer ~= nil then
+            (self._mapEnergyBatteryTimer):Cancel()
+            self._mapEnergyBatteryTimer = nil
+          end
+        end
+        if msgData.IsPrimary == false then
+          if self._mapEnergyBatteryTimer ~= nil then
+            (self._mapEnergyBatteryTimer):Cancel()
+            self._mapEnergyBatteryTimer = nil
+          end
+          self._mapEnergyBatteryTimer = (TimerManager.Add)(1, msgData.NextDuration, self, self.HandleEnergyBatteryTimer, true, true, false)
+        else
+          if self._mapEnergyTimer ~= nil then
+            (self._mapEnergyTimer):Cancel()
+            self._mapEnergyTimer = nil
+          end
+          self._mapEnergyTimer = (TimerManager.Add)(1, msgData.NextDuration, self, self.HandleEnergyTimer, true, true, false)
+        end
+        ;
+        (EventManager.Hit)(EventId.UpdateEnergyBattery)
+        ;
+        (EventManager.Hit)(EventId.UpdateEnergy)
+        printLog("Lua PlayerBaseData OnCS2LuaEvent_AppFocus, Get APP Focus, curEnergy: " .. tostring(self._nCurEnergy) .. ", curEnergyBattery: " .. tostring(self._nCurEnergyBattery))
+      end
+    end
+  end
+
+  ;
+  (HttpNetHandler.SendMsg)((NetMsgId.Id).energy_info_req, {}, nil, callback)
+end
+
 PlayerBaseData.CheckFunctionBtn = function(self, nFuncId, PassCallback, sSound)
-  -- function num : 0_87 , upvalues : _ENV
+  -- function num : 0_89 , upvalues : _ENV
   if sSound == nil then
     sSound = "ui_common_feedback_error"
   end
@@ -1358,7 +1424,7 @@ PlayerBaseData.CheckFunctionBtn = function(self, nFuncId, PassCallback, sSound)
 end
 
 PlayerBaseData.CheckFunctionUnlock = function(self, nFuncId, bShowTips)
-  -- function num : 0_88 , upvalues : _ENV
+  -- function num : 0_90 , upvalues : _ENV
   local mapFuncCfgData = (ConfigTable.GetData)("OpenFunc", nFuncId)
   if mapFuncCfgData == nil then
     printError("OpenFunc Data Missing:" .. nFuncId)
@@ -1385,9 +1451,9 @@ PlayerBaseData.CheckFunctionUnlock = function(self, nFuncId, bShowTips)
 end
 
 PlayerBaseData.CheckNewFuncUnlockWorldClass = function(self, nBefore, nNew)
-  -- function num : 0_89 , upvalues : _ENV
+  -- function num : 0_91 , upvalues : _ENV
   local ForEachOpenFucn = function(mapData)
-    -- function num : 0_89_0 , upvalues : nBefore, nNew, _ENV, self
+    -- function num : 0_91_0 , upvalues : nBefore, nNew, _ENV, self
     if nBefore < mapData.NeedWorldClass and mapData.NeedWorldClass <= nNew then
       do
         if mapData.NeedConditions > 0 then
@@ -1415,9 +1481,9 @@ PlayerBaseData.CheckNewFuncUnlockWorldClass = function(self, nBefore, nNew)
 end
 
 PlayerBaseData.CheckNewFuncUnlockMainlinePass = function(self, nMainlineId)
-  -- function num : 0_90 , upvalues : _ENV
+  -- function num : 0_92 , upvalues : _ENV
   local ForEachOpenFucn = function(mapData)
-    -- function num : 0_90_0 , upvalues : nMainlineId, self, _ENV
+    -- function num : 0_92_0 , upvalues : nMainlineId, self, _ENV
     if mapData.NeedConditions == nMainlineId then
       if mapData.NeedWorldClass > 0 and self._nWorldClass < mapData.NeedWorldClass then
         return 
@@ -1438,9 +1504,9 @@ PlayerBaseData.CheckNewFuncUnlockMainlinePass = function(self, nMainlineId)
 end
 
 PlayerBaseData.CheckNewFuncUnlockFixedRoguelike = function(self, nFRId)
-  -- function num : 0_91 , upvalues : _ENV
+  -- function num : 0_93 , upvalues : _ENV
   local ForEachOpenFunc = function(mapData)
-    -- function num : 0_91_0 , upvalues : nFRId, self, _ENV
+    -- function num : 0_93_0 , upvalues : nFRId, self, _ENV
     if mapData.NeedRoguelike == nFRId then
       if mapData.NeedWorldClass > 0 and self._nWorldClass < mapData.NeedWorldClass then
         return 
@@ -1470,21 +1536,21 @@ PlayerBaseData.CheckNewFuncUnlockFixedRoguelike = function(self, nFRId)
 end
 
 PlayerBaseData.OnEvent_TransAnimInClear = function(self)
-  -- function num : 0_92
+  -- function num : 0_94
   self.bInLoading = true
 end
 
 PlayerBaseData.OnEvent_TransAnimOutClear = function(self)
-  -- function num : 0_93
-  if self.bShowNewDayWind and self.bInLoading then
-    self.bShowNewDayWind = false
+  -- function num : 0_95
+  if self.bShowNewDayWindDelay and self.bInLoading then
+    self.bShowNewDayWindDelay = false
     self:BackToHome()
   end
   self.bInLoading = false
 end
 
 PlayerBaseData.Event_CreateRole = function(self)
-  -- function num : 0_94 , upvalues : _ENV
+  -- function num : 0_96 , upvalues : _ENV
   local tab = {}
   ;
   (table.insert)(tab, {"role_id", tostring(self._nPlayerId)})
@@ -1500,7 +1566,7 @@ PlayerBaseData.Event_CreateRole = function(self)
 end
 
 PlayerBaseData.PrologueEventUpload = function(self, index)
-  -- function num : 0_95 , upvalues : _ENV
+  -- function num : 0_97 , upvalues : _ENV
   local tab = {}
   ;
   (table.insert)(tab, {"role_id", tostring(self._nPlayerId)})
@@ -1514,7 +1580,7 @@ PlayerBaseData.PrologueEventUpload = function(self, index)
 end
 
 PlayerBaseData.UserEventUpload_PC = function(self, eventName)
-  -- function num : 0_96 , upvalues : _ENV
+  -- function num : 0_98 , upvalues : _ENV
   local clientPublishRegion = (CS.ClientConfig).ClientPublishRegion
   local curPlatform = ((CS.ClientManager).Instance).Platform
   if clientPublishRegion == (CS.ClientPublishRegion).JP then
@@ -1533,6 +1599,38 @@ PlayerBaseData.UserEventUpload_PC = function(self, eventName)
         ;
         (NovaAPI.UserEventUpload)(tmpEventName, tab)
       end
+    end
+  end
+end
+
+PlayerBaseData.OnCS2LuaEvent_AppFocus = function(self, bFocus)
+  -- function num : 0_99 , upvalues : _ENV
+  if self._nPlayerId == nil then
+    return 
+  end
+  if bFocus == true then
+    if self.nCachedTime == nil then
+      return 
+    end
+    local nPassedTime = ((CS.ClientManager).Instance).serverTimeStamp - self.nCachedTime
+    self.nCachedTime = nil
+    if self.nRequestEnergyLimitTime <= nPassedTime then
+      self:SendEnergyInfoReq()
+    end
+  else
+    do
+      self.nCachedTime = ((CS.ClientManager).Instance).serverTimeStamp
+      if self._nEnergyBatteryTime <= 0 or not self._nEnergyBatteryTime then
+        local nNextTime = self._nEnergyTime
+      end
+      nNextTime = nNextTime - self.nCachedTime
+      if nNextTime <= 10 then
+        nNextTime = 10
+      end
+      self.nRequestEnergyLimitTime = nNextTime
+      self.nLastEnergy = self._nCurEnergy
+      self.nLastEnergyBattery = self._nCurEnergyBattery
+      printLog("Lua PlayerBaseData OnCS2LuaEvent_AppFocus, Lose APP Focus, nCachedTime: " .. tostring(self.nCachedTime) .. ", nRequestEnergyLimitTime: " .. tostring(self.nRequestEnergyLimitTime) .. ", nLastEnergy: " .. tostring(self.nLastEnergy) .. ", nLastEnergyBattery: " .. tostring(self.nLastEnergyBattery))
     end
   end
 end

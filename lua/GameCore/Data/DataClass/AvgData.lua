@@ -578,14 +578,28 @@ AvgData.IsStoryReaded = function(self, nStoryId)
   return false
 end
 
+AvgData.IsChapterAllRead = function(self, nChapterId)
+  -- function num : 0_18 , upvalues : _ENV
+  local chapterStoryIds = (self.CFG_ChapterStoryNumIds)[nChapterId]
+  if chapterStoryIds == nil or #chapterStoryIds == 0 then
+    return false
+  end
+  for _,nStoryId in ipairs(chapterStoryIds) do
+    if not self:IsStoryReaded(nStoryId) then
+      return false
+    end
+  end
+  return true
+end
+
 AvgData.MarkSkip = function(self, _bSkip)
-  -- function num : 0_18
+  -- function num : 0_19
   self.bSkip = _bSkip == true
   -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
 AvgData.GetHistoryChoosedPersonality = function(self, sAvgId, nGroupId)
-  -- function num : 0_19 , upvalues : _ENV
+  -- function num : 0_20 , upvalues : _ENV
   if self.IsActivityAvg == true then
     return (PlayerData.ActivityAvg):GetHistoryChoosedPersonality(sAvgId, nGroupId)
   end
@@ -606,7 +620,7 @@ AvgData.GetHistoryChoosedPersonality = function(self, sAvgId, nGroupId)
 end
 
 AvgData.MarkChoosedPersonality = function(self, sAvgId, nGroupId, nIndex, nFactor)
-  -- function num : 0_20 , upvalues : _ENV
+  -- function num : 0_21 , upvalues : _ENV
   if self.IsActivityAvg == true then
     (PlayerData.ActivityAvg):MarkChoosedPersonality(sAvgId, nGroupId, nIndex, nFactor)
     return 
@@ -660,7 +674,7 @@ AvgData.MarkChoosedPersonality = function(self, sAvgId, nGroupId, nIndex, nFacto
 end
 
 AvgData.CalcPersonality = function(self, nId)
-  -- function num : 0_21 , upvalues : _ENV
+  -- function num : 0_22 , upvalues : _ENV
   local cfgData_SRP = (ConfigTable.GetData)("StoryRolePersonality", nId)
   local tbPersonalityBaseNum = cfgData_SRP.BaseValue
   local nTotalCount = tbPersonalityBaseNum[1] + tbPersonalityBaseNum[2] + tbPersonalityBaseNum[3]
@@ -698,7 +712,7 @@ AvgData.CalcPersonality = function(self, nId)
   local sTitle, sFace, sHead = nil, nil, nil
   ;
   (table.sort)(tbPData, function(a, b)
-    -- function num : 0_21_0
+    -- function num : 0_22_0
     do return b.nCount < a.nCount end
     -- DECOMPILER ERROR: 1 unprocessed JMP targets
   end
@@ -761,21 +775,21 @@ tbIdxs = {2, 3}
 end
 
 AvgData.SetSelBuildId = function(self, nBuildId)
-  -- function num : 0_22
+  -- function num : 0_23
   self.selBuildId = nBuildId
 end
 
 AvgData.GetCachedBuildId = function(self)
-  -- function num : 0_23
+  -- function num : 0_24
   return self.selBuildId
 end
 
 AvgData.GetChapterCount = function(self)
-  -- function num : 0_24 , upvalues : _ENV
+  -- function num : 0_25 , upvalues : _ENV
   local count = 0
   local data = {}
   local forEachChapter = function(mapData)
-    -- function num : 0_24_0 , upvalues : self, count, _ENV, data
+    -- function num : 0_25_0 , upvalues : self, count, _ENV, data
     if self:IsStoryChapterShow(mapData.Id) == true then
       count = count + 1
       ;
@@ -788,7 +802,7 @@ AvgData.GetChapterCount = function(self)
 end
 
 AvgData.IsStoryChapterUnlock = function(self, nChapterId)
-  -- function num : 0_25 , upvalues : _ENV
+  -- function num : 0_26 , upvalues : _ENV
   local mapStoryData = (ConfigTable.GetData)("StoryChapter", nChapterId)
   if mapStoryData == nil then
     return false
@@ -810,7 +824,7 @@ AvgData.IsStoryChapterUnlock = function(self, nChapterId)
 end
 
 AvgData.IsStoryChapterShow = function(self, nChapterId)
-  -- function num : 0_26 , upvalues : _ENV
+  -- function num : 0_27 , upvalues : _ENV
   local mapStoryData = (ConfigTable.GetData)("StoryChapter", nChapterId)
   if mapStoryData == nil then
     return false
@@ -825,7 +839,7 @@ AvgData.IsStoryChapterShow = function(self, nChapterId)
 end
 
 AvgData.SendMsg_STORY_ENTER = function(self, nStoryId, nBuildId, bNewestStory)
-  -- function num : 0_27 , upvalues : _ENV, File
+  -- function num : 0_28 , upvalues : _ENV, File
   if type(nStoryId) == "string" then
     nStoryId = (self.CFG_Story)[nStoryId]
     if type(nStoryId) ~= "number" then
@@ -844,10 +858,12 @@ AvgData.SendMsg_STORY_ENTER = function(self, nStoryId, nBuildId, bNewestStory)
         nBuildId = 0
       end
       local func_cb = function()
-    -- function num : 0_27_0 , upvalues : self, bNewestStory, nStoryId, nBuildId, _ENV, File
+    -- function num : 0_28_0 , upvalues : self, bNewestStory, nStoryId, _ENV, nBuildId, File
     self:ClearTempData()
     if bNewestStory == true then
       self:SetRecentStoryId(nStoryId)
+      ;
+      (PlayerData.Story):SetLastMainlineStoryId(nStoryId)
     end
     if nBuildId ~= 0 then
       self.selBuildId = nBuildId
@@ -897,7 +913,7 @@ AvgData.SendMsg_STORY_ENTER = function(self, nStoryId, nBuildId, bNewestStory)
 end
 
 AvgData.SendMsg_STORY_DONE = function(self, callBack, tbBattleEvents)
-  -- function num : 0_28 , upvalues : _ENV, TimerManager
+  -- function num : 0_29 , upvalues : _ENV, TimerManager
   local mapSendMsgData = {
 List = {}
 , 
@@ -1001,7 +1017,7 @@ Personality = {}
           ;
           (PlayerData.Char):StoryPass(tbPassId)
           local func_merge = function(tbSrc, tbTarget)
-    -- function num : 0_28_0 , upvalues : _ENV
+    -- function num : 0_29_0 , upvalues : _ENV
     for i,v in ipairs(tbSrc) do
       if (table.indexof)(tbTarget, v) <= 0 then
         (table.insert)(tbTarget, v)
@@ -1010,7 +1026,7 @@ Personality = {}
   end
 
           local func_overwrite = function(tbSrc, tbTarget)
-    -- function num : 0_28_1 , upvalues : _ENV
+    -- function num : 0_29_1 , upvalues : _ENV
     for sAvgId,v in pairs(tbSrc) do
       if tbTarget[sAvgId] == nil then
         tbTarget[sAvgId] = {}
@@ -1024,7 +1040,7 @@ Personality = {}
   end
 
           local func_succ = function(_, mapChangeInfo)
-    -- function num : 0_28_2 , upvalues : mapStoryCfg, _ENV, self, func_merge, func_overwrite, callBack, bBattle, TimerManager
+    -- function num : 0_29_2 , upvalues : mapStoryCfg, _ENV, self, func_merge, func_overwrite, callBack, bBattle, TimerManager
     if mapStoryCfg.Chapter == 1 and mapStoryCfg.IsLast and mapChangeInfo and mapChangeInfo.Props and #mapChangeInfo.Props > 0 then
       (PlayerData.Base):UserEventUpload_PC("pc_mainstory_1_clear")
     end
@@ -1124,12 +1140,12 @@ Personality = {}
           ;
           (NovaAPI.UserEventUpload)("main_story", tabEvent)
           local AfterRewardDisplay = function()
-      -- function num : 0_28_2_0 , upvalues : _ENV
+      -- function num : 0_29_2_0 , upvalues : _ENV
       (EventManager.Hit)("Story_RewardClosed")
     end
 
           local delayOpen = function()
-      -- function num : 0_28_2_1 , upvalues : _ENV, tbItem, mapChangeInfo, AfterRewardDisplay
+      -- function num : 0_29_2_1 , upvalues : _ENV, tbItem, mapChangeInfo, AfterRewardDisplay
       (UTILS.OpenReceiveByDisplayItem)(tbItem, mapChangeInfo, AfterRewardDisplay)
     end
 
@@ -1158,7 +1174,7 @@ Personality = {}
 end
 
 AvgData.OnEvent_AvgSTEnd = function(self)
-  -- function num : 0_29 , upvalues : _ENV
+  -- function num : 0_30 , upvalues : _ENV
   if AVG_EDITOR == true then
     self.tbTempStoryIds = {}
     self.tbTempEvIds = {}
@@ -1175,7 +1191,7 @@ AvgData.OnEvent_AvgSTEnd = function(self)
 end
 
 AvgData.LevelEnd = function(self)
-  -- function num : 0_30 , upvalues : _ENV
+  -- function num : 0_31 , upvalues : _ENV
   (PlayerData.Build):DeleteTrialBuild()
   if type((self.curLevel).UnBindEvent) == "function" then
     (self.curLevel):UnBindEvent()
@@ -1184,7 +1200,7 @@ AvgData.LevelEnd = function(self)
 end
 
 AvgData.GetLastestStoryId = function(self)
-  -- function num : 0_31 , upvalues : _ENV
+  -- function num : 0_32 , upvalues : _ENV
   local nMax = 101
   for k,v in pairs(self.tbStoryIds) do
     local curIdx = (self.CFG_Story)[v]
@@ -1202,13 +1218,13 @@ AvgData.GetLastestStoryId = function(self)
 end
 
 AvgData.GetRecentStoryId = function(self, nChapterId)
-  -- function num : 0_32 , upvalues : _ENV
+  -- function num : 0_33 , upvalues : _ENV
   local nStoryId = (self.mapRecentStoryId)[tostring(nChapterId)]
   if nStoryId == nil then
     local tbChapterList = (self.CFG_ChapterStoryNumIds)[nChapterId]
     if tbChapterList ~= nil then
       (table.sort)(tbChapterList, function(a, b)
-    -- function num : 0_32_0
+    -- function num : 0_33_0
     do return a < b end
     -- DECOMPILER ERROR: 1 unprocessed JMP targets
   end
@@ -1232,7 +1248,7 @@ AvgData.GetRecentStoryId = function(self, nChapterId)
 end
 
 AvgData.SetRecentStoryId = function(self, nStoryId)
-  -- function num : 0_33 , upvalues : _ENV, RapidJson, LocalData
+  -- function num : 0_34 , upvalues : _ENV, RapidJson, LocalData
   local cfgData = (ConfigTable.GetData_Story)(nStoryId)
   -- DECOMPILER ERROR at PC10: Confused about usage of register: R3 in 'UnsetPending'
 
@@ -1246,7 +1262,7 @@ AvgData.SetRecentStoryId = function(self, nStoryId)
 end
 
 AvgData.GetRecentChapterId = function(self)
-  -- function num : 0_34 , upvalues : _ENV
+  -- function num : 0_35 , upvalues : _ENV
   local nRecentChapterId = 1
   for k,v in pairs(self.mapRecentStoryId) do
     if nRecentChapterId < tonumber(k) then
@@ -1257,7 +1273,7 @@ AvgData.GetRecentChapterId = function(self)
 end
 
 AvgData.CheckNewStoryRedDot = function(self)
-  -- function num : 0_35 , upvalues : _ENV
+  -- function num : 0_36 , upvalues : _ENV
   local _, data = self:GetChapterCount()
   for k,v in ipairs(data) do
     local bHasNew = false
@@ -1282,7 +1298,7 @@ AvgData.CheckNewStoryRedDot = function(self)
 end
 
 AvgData.CheckNewStory = function(self, nChapterId)
-  -- function num : 0_36 , upvalues : _ENV
+  -- function num : 0_37 , upvalues : _ENV
   local tbNewUnlockStorys = {}
   for k,v in ipairs((self.CFG_ChapterStoryNumIds)[nChapterId]) do
     local config = (ConfigTable.GetData)("Story", v)
@@ -1298,12 +1314,12 @@ AvgData.CheckNewStory = function(self, nChapterId)
 end
 
 AvgData.SetNewLockChapterIndex = function(self, chapterIndex)
-  -- function num : 0_37
+  -- function num : 0_38
   self.nNewLockChapterIndex = chapterIndex
 end
 
 AvgData.GetNewLockChapterIndex = function(self)
-  -- function num : 0_38
+  -- function num : 0_39
   if self.nNewLockChapterIndex == nil then
     self.nNewLockChapterIndex = -1
   end
@@ -1313,12 +1329,12 @@ AvgData.GetNewLockChapterIndex = function(self)
 end
 
 AvgData.ChangeActivityAvgState = function(self, IsActivityAvg)
-  -- function num : 0_39
+  -- function num : 0_40
   self.IsActivityAvg = IsActivityAvg
 end
 
 AvgData.AvgEditorTempData = function(self, sConditionIds, bAdd)
-  -- function num : 0_40 , upvalues : _ENV
+  -- function num : 0_41 , upvalues : _ENV
   if self.tbAvgEditorTempData_Unlocked_sConditionIds == nil then
     self.tbAvgEditorTempData_Unlocked_sConditionIds = {}
   end
@@ -1342,7 +1358,7 @@ AvgData.AvgEditorTempData = function(self, sConditionIds, bAdd)
 end
 
 AvgData.AvgEditorTempIfTrueData = function(self, sData, bAdd)
-  -- function num : 0_41 , upvalues : _ENV
+  -- function num : 0_42 , upvalues : _ENV
   if self.mapAvgEditorTempData_IsTrueData == nil then
     self.mapAvgEditorTempData_IsTrueData = {}
   end
@@ -1381,10 +1397,10 @@ AvgData.AvgEditorTempIfTrueData = function(self, sData, bAdd)
 end
 
 AvgData.CacheEvData = function(self)
-  -- function num : 0_42 , upvalues : _ENV
+  -- function num : 0_43 , upvalues : _ENV
   self.tbEvData = {}
   local forEachLine_Story = function(storConfig)
-    -- function num : 0_42_0 , upvalues : self, _ENV
+    -- function num : 0_43_0 , upvalues : self, _ENV
     local sConditionId = storConfig.ConditionId
     if sConditionId == nil then
       return 

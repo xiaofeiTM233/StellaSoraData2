@@ -180,10 +180,14 @@ PlayerData.Init = function()
   PlayerData.AnnouncementData = (GameAnnouncementData.new)()
   ;
   (PlayerData.AnnouncementData):Init()
-  local JointDrillData = require("GameCore.Data.DataClass.PlayerJointDrillData")
-  PlayerData.JointDrill = (JointDrillData.new)()
+  local JointDrillData_1 = require("GameCore.Data.DataClass.PlayerJointDrillData_1")
+  PlayerData.JointDrill_1 = (JointDrillData_1.new)()
   ;
-  (PlayerData.JointDrill):Init()
+  (PlayerData.JointDrill_1):Init()
+  local JointDrillData_2 = require("GameCore.Data.DataClass.PlayerJointDrillData_2")
+  PlayerData.JointDrill_2 = (JointDrillData_2.new)()
+  ;
+  (PlayerData.JointDrill_2):Init()
   local TrialData = require("GameCore.Data.DataClass.PlayerTrialData")
   PlayerData.Trial = (TrialData.new)()
   ;
@@ -208,6 +212,10 @@ PlayerData.Init = function()
   PlayerData.StorySet = (StorySet.new)()
   ;
   (PlayerData.StorySet):Init()
+  local StoryData = require("GameCore.Data.DataClass.PlayerStoryData")
+  PlayerData.Story = (StoryData.new)()
+  ;
+  (PlayerData.Story):Init()
   local foreachEnumDesc = function(mapData)
     -- function num : 0_0_0 , upvalues : _ENV
     (CacheTable.SetField)("_EnumDesc", mapData.EnumName, mapData.Value, mapData.Key)
@@ -290,10 +298,14 @@ PlayerData.UnInit = function()
   PlayerData.ScoreBoss = nil
   PlayerData.AnnouncementData = nil
   ;
-  (PlayerData.JointDrill):UnInit()
-  PlayerData.JointDrill = nil
+  (PlayerData.JointDrill_1):UnInit()
+  PlayerData.JointDrill_1 = nil
+  ;
+  (PlayerData.JointDrill_2):UnInit()
+  PlayerData.JointDrill_2 = nil
   PlayerData.Trial = nil
   PlayerData.StorySet = nil
+  PlayerData.Story = nil
 end
 
 return PlayerData

@@ -528,7 +528,7 @@ PlayerItemData.AutoFillMat = function(self, tbNeedItem)
     -- function num : 0_17_0 , upvalues : _ENV
     local mapItemCfgDataA = (ConfigTable.GetData_Item)(a.nId)
     local mapItemCfgDataB = (ConfigTable.GetData_Item)(b.nId)
-    if mapItemCfgDataA.Rarity >= mapItemCfgDataB.Rarity then
+    if mapItemCfgDataB.Rarity >= mapItemCfgDataA.Rarity then
       do return not mapItemCfgDataA or not mapItemCfgDataB or mapItemCfgDataA.Rarity == mapItemCfgDataB.Rarity end
       do return a.nId < b.nId end
       -- DECOMPILER ERROR: 3 unprocessed JMP targets

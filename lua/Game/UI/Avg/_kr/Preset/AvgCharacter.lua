@@ -101,9 +101,9 @@ return {
 , 
 {id = "avg1_151", name = "윈슈", name_bg_color = "#476370", ver = "1.6.0"}
 , 
-{id = "avg1_152", name = "단윈", name_bg_color = "#fcce7f", ver = "1.6.0"}
+{id = "avg1_152", name = "지웨", name_bg_color = "#fcce7f", ver = "1.6.0"}
 , 
-{id = "avg1_153", name = "지웨", name_bg_color = "#8c322c", ver = "1.6.0"}
+{id = "avg1_153", name = "단윈", name_bg_color = "#8c322c", ver = "1.6.0"}
 , 
 {id = "avg1_155", name = "시아", name_bg_color = "#c4a5e6"}
 , 
@@ -121,7 +121,7 @@ return {
 , 
 {id = "avg2_003", name = "우드모트 척탄병", name_bg_color = "#0ABEC5"}
 , 
-{id = "avg2_952", name = "라이푸", name_bg_color = "#0ABEC5", ver = "1.6.0"}
+{id = "avg2_952", name = "복덩이", name_bg_color = "#0ABEC5", ver = "1.6.0"}
 , 
 {id = "avg2_953", name = "난로의 섬망", name_bg_color = "#0ABEC5"}
 , 
@@ -389,7 +389,9 @@ return {
 , 
 {id = "avg3_206", name = "루나르", name_bg_color = "#394444"}
 , 
-{id = "avg3_210", name = "하사나", name_bg_color = "#0ABEC5"}
+{id = "avg3_207", name = "***", name_bg_color = "#0ABEC5", ver = "1.8.0"}
+, 
+{id = "avg3_210", name = "***", name_bg_color = "#e4a47a", ver = "1.8.0"}
 , 
 {id = "avg3_873", name = "클레어", name_bg_color = "#0ABEC5"}
 , 
@@ -946,6 +948,22 @@ return {
 {id = "avg3_1271", name = "달리시아B", name_bg_color = "#0ABEC5", reuse = "avg2_985"}
 , 
 {id = "avg3_1272", name = "중독된 아그리 유니온 사원C", name_bg_color = "#0ABEC5", reuse = "avg2_962"}
+, 
+{id = "avg3_1273", name = "용족 주민A(남)", name_bg_color = "#0ABEC5", reuse = "avg3_175"}
+, 
+{id = "avg3_1274", name = "평범한 주민A(여)", name_bg_color = "#0ABEC5", reuse = "avg3_143"}
+, 
+{id = "avg3_1275", name = "럭키 루비(물)", name_bg_color = "#0ABEC5", reuse = "avg2_981"}
+, 
+{id = "avg3_1276", name = "럭키 루비(물)", name_bg_color = "#0ABEC5", reuse = "avg2_981"}
+, 
+{id = "avg3_1277", name = "럭키 루비(물)", name_bg_color = "#0ABEC5", reuse = "avg2_981"}
+, 
+{id = "avg3_1278", name = "핫 스틸 해머", name_bg_color = "#0ABEC5", reuse = "avg2_974"}
+, 
+{id = "avg3_1279", name = "핫 스틸 해머", name_bg_color = "#0ABEC5", reuse = "avg2_974"}
+, 
+{id = "avg3_1280", name = "핫 스틸 해머", name_bg_color = "#0ABEC5", reuse = "avg2_974"}
 , 
 {id = "avg4_100", name = "빛나는 라루", name_bg_color = "#0ABEC5"}
 , 

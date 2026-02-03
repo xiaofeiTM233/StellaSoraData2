@@ -170,18 +170,23 @@ ActivityDataBase.GetActivityRedDot = function(self)
   return self.bRedDot
 end
 
-ActivityDataBase.GetActEndTime = function(self)
+ActivityDataBase.GetActOpenTime = function(self)
   -- function num : 0_16
+  return self.nOpenTime
+end
+
+ActivityDataBase.GetActEndTime = function(self)
+  -- function num : 0_17
   return self.nEndTime
 end
 
 ActivityDataBase.GetActSortId = function(self)
-  -- function num : 0_17
+  -- function num : 0_18
   return (self.actCfg).SortId
 end
 
 ActivityDataBase.CheckPopUp = function(self)
-  -- function num : 0_18 , upvalues : LocalData, _ENV
+  -- function num : 0_19 , upvalues : LocalData, _ENV
   local localData = (LocalData.GetPlayerLocalData)("Act_PopUp_DontShow" .. self.nActId)
   if localData then
     return false
@@ -190,28 +195,28 @@ ActivityDataBase.CheckPopUp = function(self)
 end
 
 ActivityDataBase.CheckShowBanner = function(self)
-  -- function num : 0_19
+  -- function num : 0_20
   do return not self:CheckActPlay() or ((self.actCfg).BannerRes ~= "" and self.bBanner == false) end
   -- DECOMPILER ERROR: 2 unprocessed JMP targets
 end
 
 ActivityDataBase.GetBannerPng = function(self)
-  -- function num : 0_20
+  -- function num : 0_21
   return (self.actCfg).BannerRes
 end
 
 ActivityDataBase.RefreshRedDot = function(self)
-  -- function num : 0_21
+  -- function num : 0_22
 end
 
 ActivityDataBase.RefreshStateData = function(self, bRedDot, bBanner)
-  -- function num : 0_22
+  -- function num : 0_23
   self.bRedDot = bRedDot
   self.bBanner = bBanner
 end
 
 ActivityDataBase.UpdateStatus = function(self)
-  -- function num : 0_23
+  -- function num : 0_24
 end
 
 return ActivityDataBase

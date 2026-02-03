@@ -16,6 +16,7 @@ Timer.ctor = function(self, mapParam)
   self._bDestroyWhenComplete = mapParam.bDestroyWhenComplete
   self._nCurCount = 0
   self._nTargetCount = mapParam.nTargetCount
+  self._nDelTime = 0
   self._nElapsed = 0
   self._nInterval = mapParam.nInterval
   self._nScaleType = mapParam.nScaleType
@@ -28,13 +29,18 @@ Timer.ctor = function(self, mapParam)
   self._bDebugWatch = false
 end
 
-Timer._Run = function(self, nCurTS)
+Timer._Run = function(self, nCurTS, nDelTime)
   -- function num : 0_1 , upvalues : _ENV, TimerStatus
-  if type(self._nInterval) ~= "number" or self._nInterval <= 0 or self._callback == nil then
+  if type(self._nInterval) ~= "number" or self._callback == nil then
     self:Cancel(false)
     return 
   end
   if self._status ~= TimerStatus.Running then
+    return 
+  end
+  self._nDelTime = nDelTime
+  if self._nInterval <= 0 then
+    self:_DoCallback()
     return 
   end
   self._nElapsed = self._nElapsed + (nCurTS - self._nTS)
@@ -295,8 +301,13 @@ Timer.IsUnused = function(self)
   -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
+Timer.GetDelTime = function(self)
+  -- function num : 0_16
+  return self._nDelTime
+end
+
 Timer.PrintSelf = function(self)
-  -- function num : 0_16 , upvalues : _ENV
+  -- function num : 0_17 , upvalues : _ENV
   local tb = {["状态"] = self._status, ["创建时间"] = self._nCreateTS, ["时间戳"] = self._nTS, ["暂停时间戳"] = self._nPauseTS, ["完成时销毁"] = self._bDestroyWhenComplete, ["已触发次数"] = self._nCurCount, ["目标触发次数"] = self._nTargetCount, ["已流逝"] = self._nElapsed, ["触发间隔"] = self._nInterval, ["缩放类型"] = self._nScaleType, ["一帧里触发极限次数"] = self._nDelCountLimit, ["速率"] = self._nRate, ["精度"] = self._nRange, ["监视"] = self._bDebugWatch}
   printTable(tb)
 end

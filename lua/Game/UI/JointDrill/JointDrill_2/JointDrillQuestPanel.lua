@@ -2,7 +2,7 @@ local JointDrillQuestPanel = class("JointDrillQuestPanel", BasePanel)
 JointDrillQuestPanel._bIsMainPanel = false
 JointDrillQuestPanel._sUIResRootPath = "UI_Activity/"
 JointDrillQuestPanel._tbDefine = {
-{sPrefabPath = "_510001/JointDrillQuestPanel.prefab", sCtrlName = "Game.UI.JointDrill.JointDrillQuestCtrl"}
+{sPrefabPath = "_510003/JointDrillQuestPanel.prefab", sCtrlName = "Game.UI.JointDrill.JointDrill_2.JointDrillQuestCtrl"}
 }
 JointDrillQuestPanel.Awake = function(self)
   -- function num : 0_0

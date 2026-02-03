@@ -735,30 +735,8 @@ ActivityAvgData.GetCachedBuildId = function(self)
   return self.selBuildId
 end
 
-ActivityAvgData.ParseConfig = function(self)
-  -- function num : 0_25 , upvalues : _ENV
-  self.tbFirstNode = {}
-  local foreachActivityAvgLevel = function(mapData)
-    -- function num : 0_25_0 , upvalues : self, _ENV
-    -- DECOMPILER ERROR at PC8: Confused about usage of register: R1 in 'UnsetPending'
-
-    if (self.tbActivityAvgList)[mapData.ActivityId] == nil then
-      (self.tbActivityAvgList)[mapData.ActivityId] = {}
-    end
-    -- DECOMPILER ERROR at PC15: Confused about usage of register: R1 in 'UnsetPending'
-
-    if mapData.PreLevelId == 0 then
-      (self.tbFirstNode)[mapData.ActivityId] = mapData.Id
-    end
-    ;
-    (table.insert)((self.tbActivityAvgList)[mapData.ActivityId], mapData.Id)
-  end
-
-  ForEachTableLine((ConfigTable.Get)("ActivityAvgLevel"), foreachActivityAvgLevel)
-end
-
 ActivityAvgData.CacheActivityAvgData = function(self, msgData)
-  -- function num : 0_26
+  -- function num : 0_25
   -- DECOMPILER ERROR at PC8: Confused about usage of register: R2 in 'UnsetPending'
 
   if (self.tbActAvgList)[msgData.Id] == nil then
@@ -775,7 +753,7 @@ ActivityAvgData.CacheActivityAvgData = function(self, msgData)
 end
 
 ActivityAvgData.RefreshActivityAvgData = function(self, nActId, msgData)
-  -- function num : 0_27 , upvalues : _ENV
+  -- function num : 0_26 , upvalues : _ENV
   -- DECOMPILER ERROR at PC2: Confused about usage of register: R3 in 'UnsetPending'
 
   (self.tbCachedReadedActAvg)[nActId] = {}
@@ -786,45 +764,110 @@ ActivityAvgData.RefreshActivityAvgData = function(self, nActId, msgData)
 end
 
 ActivityAvgData.GetStoryIdListByActivityId = function(self, activityId)
-  -- function num : 0_28
-  if (self.tbActivityAvgList)[activityId] == nil then
-    return {}
+  -- function num : 0_27 , upvalues : _ENV
+  local chapterId = nil
+  local foreachStoryChapter = function(mapData)
+    -- function num : 0_27_0 , upvalues : activityId, chapterId
+    if mapData.ActivityId == activityId then
+      chapterId = mapData.Id
+    end
   end
-  local list = self:SortStoryList(activityId)
-  return list
+
+  ForEachTableLine((ConfigTable.Get)("ActivityStoryChapter"), foreachStoryChapter)
+  local list = self:SortStoryList(chapterId)
+  return list, chapterId
 end
 
-ActivityAvgData.SortStoryList = function(self, activityId)
-  -- function num : 0_29 , upvalues : _ENV
-  local list = (self.tbActivityAvgList)[activityId]
-  if (self.tbFirstNode)[activityId] == nil then
-    return list
-  end
+ActivityAvgData.SortStoryList = function(self, chapterId)
+  -- function num : 0_28 , upvalues : _ENV
+  local list = (self.CFG_ChapterStoryNumIds)[chapterId]
   local sortedList = {}
-  ;
-  (table.insert)(sortedList, (self.tbFirstNode)[activityId])
-  for i = 2, #list do
-    for _,storyId in ipairs(list) do
-      local cfg = (ConfigTable.GetData)("ActivityAvgLevel", storyId)
-      if cfg.PreLevelId == sortedList[i - 1] then
-        (table.insert)(sortedList, storyId)
-        break
+  if list == nil or #list == 0 then
+    return sortedList
+  end
+  local storyIdToConfig = {}
+  local storyIdToNumId = {}
+  for _,numId in ipairs(list) do
+    local config = (ConfigTable.GetData)("ActivityStory", numId)
+    if config then
+      storyIdToConfig[config.StoryId] = config
+      storyIdToNumId[config.StoryId] = numId
+    end
+  end
+  local currentStoryId = nil
+  for storyId,config in pairs(storyIdToConfig) do
+    -- DECOMPILER ERROR at PC46: Unhandled construct in 'MakeBoolean' P1
+
+    if type(config.ParentStoryId) == "table" and (#config.ParentStoryId == 0 or (config.ParentStoryId)[1] == "") then
+      currentStoryId = storyId
+      ;
+      (table.insert)(sortedList, storyIdToNumId[storyId])
+      break
+    end
+    if config.ParentStoryId == "" then
+      currentStoryId = storyId
+      ;
+      (table.insert)(sortedList, storyIdToNumId[storyId])
+      break
+    end
+  end
+  do
+    if currentStoryId == nil then
+      return sortedList
+    end
+    local visited = {}
+    visited[currentStoryId] = true
+    do
+      while #sortedList < #list do
+        local found = false
+        for storyId,config in pairs(storyIdToConfig) do
+          if not visited[storyId] then
+            local hasParent = false
+            if type(config.ParentStoryId) == "table" then
+              for _,parentId in ipairs(config.ParentStoryId) do
+                if parentId == currentStoryId then
+                  hasParent = true
+                  break
+                end
+              end
+            else
+              do
+                do
+                  if config.ParentStoryId == currentStoryId then
+                    hasParent = true
+                  end
+                  if hasParent then
+                    (table.insert)(sortedList, storyIdToNumId[storyId])
+                    visited[storyId] = true
+                    currentStoryId = storyId
+                    found = true
+                    break
+                  end
+                  -- DECOMPILER ERROR at PC115: LeaveBlock: unexpected jumping out DO_STMT
+
+                  -- DECOMPILER ERROR at PC115: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+
+                  -- DECOMPILER ERROR at PC115: LeaveBlock: unexpected jumping out IF_STMT
+
+                  -- DECOMPILER ERROR at PC115: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+                  -- DECOMPILER ERROR at PC115: LeaveBlock: unexpected jumping out IF_STMT
+
+                end
+              end
+            end
+          end
+        end
+      end
+      if found then
+        return sortedList
       end
     end
   end
-  -- DECOMPILER ERROR at PC42: Confused about usage of register: R4 in 'UnsetPending'
-
-  ;
-  (self.tbActivityAvgList)[activityId] = sortedList
-  -- DECOMPILER ERROR at PC44: Confused about usage of register: R4 in 'UnsetPending'
-
-  ;
-  (self.tbFirstNode)[activityId] = nil
-  return sortedList
 end
 
 ActivityAvgData.IsActivityAvgReaded = function(self, activityId, storyId)
-  -- function num : 0_30 , upvalues : _ENV
+  -- function num : 0_29 , upvalues : _ENV
   if (self.tbCachedReadedActAvg)[activityId] == nil then
     return false
   end
@@ -837,13 +880,13 @@ ActivityAvgData.IsActivityAvgReaded = function(self, activityId, storyId)
 end
 
 ActivityAvgData.HasActivityData = function(self, activityId)
-  -- function num : 0_31
+  -- function num : 0_30
   do return (self.tbActAvgList)[activityId] ~= nil end
   -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
 ActivityAvgData.IsActivityAvgUnlock = function(self, activityId, storyId)
-  -- function num : 0_32 , upvalues : _ENV
+  -- function num : 0_31 , upvalues : _ENV
   if (self.tbActAvgList)[activityId] == nil then
     return false
   end
@@ -858,7 +901,7 @@ ActivityAvgData.IsActivityAvgUnlock = function(self, activityId, storyId)
 end
 
 ActivityAvgData.GetActivityOpenTime = function(self, activityId)
-  -- function num : 0_33
+  -- function num : 0_32
   if (self.tbActAvgList)[activityId] == nil then
     return 0
   end
@@ -866,7 +909,7 @@ ActivityAvgData.GetActivityOpenTime = function(self, activityId)
 end
 
 ActivityAvgData.IsNew = function(self, activityId, storyId)
-  -- function num : 0_34
+  -- function num : 0_33
   local isTimeUnlock, isPreReaded, nOpenTime = self:IsActivityAvgUnlock(activityId, storyId)
   if not isTimeUnlock or not isPreReaded then
     return false
@@ -878,7 +921,7 @@ ActivityAvgData.IsNew = function(self, activityId, storyId)
 end
 
 ActivityAvgData.GetRecentAcvitityIndex = function(self, activityId)
-  -- function num : 0_35
+  -- function num : 0_34
   local list = self:GetStoryIdListByActivityId(activityId)
   if list == nil then
     return 0
@@ -892,7 +935,7 @@ ActivityAvgData.GetRecentAcvitityIndex = function(self, activityId)
 end
 
 ActivityAvgData.RefreshAvgRedDot = function(self)
-  -- function num : 0_36 , upvalues : _ENV, LocalData
+  -- function num : 0_35 , upvalues : _ENV, LocalData
   local tbActGroupRedDot = {}
   for k,v in pairs(self.CFG_ChapterStoryNumIds) do
     local chapterCfg = (ConfigTable.GetData)("ActivityStoryChapter", k)
@@ -924,16 +967,13 @@ ActivityAvgData.RefreshAvgRedDot = function(self)
       end
     end
   end
-  for nActGroupId,bRedDot in pairs(tbActGroupRedDot) do
-    (RedDotManager.SetValid)(RedDotDefine.Activity_GroupNew, {nActGroupId}, bRedDot)
-  end
   ;
   (EventManager.Hit)("RefreshActivityGroupRedDot")
-  -- DECOMPILER ERROR: 9 unprocessed JMP targets
+  -- DECOMPILER ERROR: 8 unprocessed JMP targets
 end
 
 ActivityAvgData.EnterAvg = function(self, avgId, actId)
-  -- function num : 0_37 , upvalues : _ENV, File
+  -- function num : 0_36 , upvalues : _ENV, File
   self.CURRENT_STORY_ID = avgId
   self.CURRENT_ACTIVITY_ID = actId
   local mapCfgData_Story = (ConfigTable.GetData)("ActivityAvgLevel", avgId)
@@ -957,10 +997,10 @@ ActivityAvgData.EnterAvg = function(self, avgId, actId)
 end
 
 ActivityAvgData.CacheEvData = function(self)
-  -- function num : 0_38 , upvalues : _ENV
+  -- function num : 0_37 , upvalues : _ENV
   self.tbEvData = {}
   local forEachLine_Story = function(storConfig)
-    -- function num : 0_38_0 , upvalues : _ENV, self
+    -- function num : 0_37_0 , upvalues : _ENV, self
     local nConditionId = storConfig.ConditionId
     local mapConditionData = (ConfigTable.GetData)("ActivityStoryCondition", nConditionId)
     local tbEvIds = {}
@@ -996,7 +1036,7 @@ ActivityAvgData.CacheEvData = function(self)
 end
 
 ActivityAvgData.SendMsg_STORY_ENTER = function(self, nActivityId, nStoryId, nBuildId, bNewestStory)
-  -- function num : 0_39 , upvalues : _ENV, File
+  -- function num : 0_38 , upvalues : _ENV, File
   if type(nStoryId) == "string" then
     nStoryId = (self.CFG_Story)[nStoryId]
     if type(nStoryId) ~= "number" then
@@ -1015,7 +1055,7 @@ ActivityAvgData.SendMsg_STORY_ENTER = function(self, nActivityId, nStoryId, nBui
         nBuildId = 0
       end
       local func_cb = function()
-    -- function num : 0_39_0 , upvalues : self, bNewestStory, nStoryId, nBuildId, _ENV, File
+    -- function num : 0_38_0 , upvalues : self, bNewestStory, nStoryId, nBuildId, _ENV, File
     self:ClearTempData()
     if bNewestStory == true then
       self:SetRecentStoryId(nStoryId)
@@ -1071,7 +1111,7 @@ ActivityAvgData.SendMsg_STORY_ENTER = function(self, nActivityId, nStoryId, nBui
 end
 
 ActivityAvgData.SendMsg_STORY_DONE = function(self, callBack, tbBattleEvents)
-  -- function num : 0_40 , upvalues : _ENV, TimerManager
+  -- function num : 0_39 , upvalues : _ENV, TimerManager
   local mapSendMsgData = {ActivityId = self.CURRENT_ACTIVITY_ID, 
 List = {}
 , 
@@ -1174,7 +1214,7 @@ Personality = {}
           ;
           (PlayerData.Char):StoryPass(tbPassId)
           local func_merge = function(tbSrc, tbTarget)
-    -- function num : 0_40_0 , upvalues : _ENV
+    -- function num : 0_39_0 , upvalues : _ENV
     for i,v in ipairs(tbSrc) do
       if (table.indexof)(tbTarget, v) <= 0 then
         (table.insert)(tbTarget, v)
@@ -1183,7 +1223,7 @@ Personality = {}
   end
 
           local func_overwrite = function(tbSrc, tbTarget)
-    -- function num : 0_40_1 , upvalues : _ENV
+    -- function num : 0_39_1 , upvalues : _ENV
     for sAvgId,v in pairs(tbSrc) do
       if tbTarget[sAvgId] == nil then
         tbTarget[sAvgId] = {}
@@ -1198,7 +1238,7 @@ Personality = {}
 
           local eventStoryId = self.CURRENT_STORY_ID
           local func_succ = function(_, mapChangeInfo)
-    -- function num : 0_40_2 , upvalues : self, func_merge, _ENV, func_overwrite, callBack, bBattle, eventStoryId, TimerManager
+    -- function num : 0_39_2 , upvalues : self, func_merge, _ENV, func_overwrite, callBack, bBattle, eventStoryId, TimerManager
     do
       if #self.tbTempStoryIds > 1 then
         local nRecentChapterId = (self.CFG_Story)[(self.tbTempStoryIds)[#self.tbTempStoryIds]]
@@ -1285,12 +1325,12 @@ Personality = {}
         ;
         (NovaAPI.UserEventUpload)("activity_story", tabEvent)
         local AfterRewardDisplay = function()
-      -- function num : 0_40_2_0 , upvalues : _ENV
+      -- function num : 0_39_2_0 , upvalues : _ENV
       (EventManager.Hit)("Story_RewardClosed")
     end
 
         local delayOpen = function()
-      -- function num : 0_40_2_1 , upvalues : _ENV, tbItem, mapChangeInfo, AfterRewardDisplay
+      -- function num : 0_39_2_1 , upvalues : _ENV, tbItem, mapChangeInfo, AfterRewardDisplay
       (UTILS.OpenReceiveByDisplayItem)(tbItem, mapChangeInfo, AfterRewardDisplay)
     end
 
@@ -1320,14 +1360,14 @@ Personality = {}
 end
 
 ActivityAvgData.OnEvent_AvgSTEnd = function(self)
-  -- function num : 0_41 , upvalues : _ENV
+  -- function num : 0_40 , upvalues : _ENV
   (EventManager.Remove)("AvgSTEnd", self, self.OnEvent_AvgSTEnd)
   self:SendMsg_STORY_DONE()
   self:RefreshAvgRedDot()
 end
 
 ActivityAvgData.LevelEnd = function(self)
-  -- function num : 0_42 , upvalues : _ENV
+  -- function num : 0_41 , upvalues : _ENV
   (PlayerData.Build):DeleteTrialBuild()
   if type((self.curLevel).UnBindEvent) == "function" then
     (self.curLevel):UnBindEvent()
@@ -1336,7 +1376,7 @@ ActivityAvgData.LevelEnd = function(self)
 end
 
 ActivityAvgData.GetLastestStoryId = function(self)
-  -- function num : 0_43 , upvalues : _ENV
+  -- function num : 0_42 , upvalues : _ENV
   local nMax = 101
   for k,v in pairs(self.tbStoryIds) do
     local curIdx = (self.CFG_Story)[v]
@@ -1354,13 +1394,13 @@ ActivityAvgData.GetLastestStoryId = function(self)
 end
 
 ActivityAvgData.GetRecentStoryId = function(self, nChapterId)
-  -- function num : 0_44 , upvalues : _ENV
+  -- function num : 0_43 , upvalues : _ENV
   local nStoryId = (self.mapRecentStoryId)[tostring(nChapterId)]
   if nStoryId == nil then
     local tbChapterList = (self.CFG_ChapterStoryNumIds)[nChapterId]
     if tbChapterList ~= nil then
       (table.sort)(tbChapterList, function(a, b)
-    -- function num : 0_44_0
+    -- function num : 0_43_0
     do return a < b end
     -- DECOMPILER ERROR: 1 unprocessed JMP targets
   end
@@ -1384,7 +1424,7 @@ ActivityAvgData.GetRecentStoryId = function(self, nChapterId)
 end
 
 ActivityAvgData.SetRecentStoryId = function(self, nStoryId)
-  -- function num : 0_45 , upvalues : _ENV, RapidJson, LocalData
+  -- function num : 0_44 , upvalues : _ENV, RapidJson, LocalData
   local cfgData = (ConfigTable.GetData)("ActivityStory", nStoryId)
   -- DECOMPILER ERROR at PC11: Confused about usage of register: R3 in 'UnsetPending'
 
@@ -1398,7 +1438,7 @@ ActivityAvgData.SetRecentStoryId = function(self, nStoryId)
 end
 
 ActivityAvgData.IsActivityStory = function(self, nStoryId)
-  -- function num : 0_46 , upvalues : _ENV
+  -- function num : 0_45 , upvalues : _ENV
   for k,v in pairs(self.CFG_Story) do
     if v == nStoryId then
       return true
@@ -1408,7 +1448,7 @@ ActivityAvgData.IsActivityStory = function(self, nStoryId)
 end
 
 ActivityAvgData.OnEvent_UpdateWorldClass = function(self)
-  -- function num : 0_47
+  -- function num : 0_46
   self:RefreshAvgRedDot()
 end
 

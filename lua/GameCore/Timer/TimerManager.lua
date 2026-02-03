@@ -51,13 +51,13 @@ local ProcUpdateTimer = function()
   for i,timer in ipairs(tbTimer) do
     if bForceFrameUpdate == true or ((timer._nRange == 1 and bCheckRange1 == true) or timer._nRange ~= 2 or bCheckRange2 == true) then
       if timer._nScaleType == TimerScaleType.None then
-        timer:_Run(Time.time)
+        timer:_Run(Time.time, Time.deltaTime)
       else
         if timer._nScaleType == TimerScaleType.Unscaled then
-          timer:_Run(nUnscaledTime)
+          timer:_Run(nUnscaledTime, Time.unscaledDeltaTime)
         else
           if timer._nScaleType == TimerScaleType.RealTime then
-            timer:_Run(Time.realtimeSinceStartup)
+            timer:_Run(Time.realtimeSinceStartup, Time.unscaledDeltaTime)
           else
             ;
             (timer._Stop)()

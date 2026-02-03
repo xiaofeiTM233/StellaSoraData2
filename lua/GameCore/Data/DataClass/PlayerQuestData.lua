@@ -422,8 +422,24 @@ PlayerQuestData.CheckTeamFormationAttributeUnlocked = function(self, nAttrId)
   return bCompleted
 end
 
+PlayerQuestData.GetTeamFormationAttributeProgress = function(self, nAttrId)
+  -- function num : 0_22 , upvalues : _ENV
+  local nTotalCount = 0
+  local nReceivedCount = 0
+  for nGroupIndex,mapGroup in pairs(self.tbTeamFormationGroup) do
+    if mapGroup.AttributeId == nAttrId then
+      nTotalCount = nTotalCount + 1
+      local bGroupCompleted = self:CheckTeamFormationGroupReward(nAttrId, nGroupIndex)
+      if bGroupCompleted then
+        nReceivedCount = nReceivedCount + 1
+      end
+    end
+  end
+  return nReceivedCount, nTotalCount
+end
+
 PlayerQuestData.GetCurTourGroup = function(self)
-  -- function num : 0_22 , upvalues : QuestType, _ENV
+  -- function num : 0_23 , upvalues : QuestType, _ENV
   if (self._mapQuest)[QuestType.TourGuide] == nil then
     return 0
   end
@@ -433,7 +449,7 @@ PlayerQuestData.GetCurTourGroup = function(self)
 end
 
 PlayerQuestData.GetCurTourGroupOrder = function(self)
-  -- function num : 0_23 , upvalues : QuestType, _ENV
+  -- function num : 0_24 , upvalues : QuestType, _ENV
   if (self._mapQuest)[QuestType.TourGuide] == nil then
     return 0
   end
@@ -443,12 +459,12 @@ PlayerQuestData.GetCurTourGroupOrder = function(self)
 end
 
 PlayerQuestData.GetMaxTourGroup = function(self)
-  -- function num : 0_24
+  -- function num : 0_25
   return ((self.tbTourGuideGroup)[self.nMaxTourGroupOrderIndex]).Id
 end
 
 PlayerQuestData.GetAffinityQuestData = function(self, questId)
-  -- function num : 0_25 , upvalues : QuestType
+  -- function num : 0_26 , upvalues : QuestType
   if (self._mapQuest)[QuestType.Affinity] ~= nil and ((self._mapQuest)[QuestType.Affinity])[questId] ~= nil then
     return ((self._mapQuest)[QuestType.Affinity])[questId]
   end
@@ -456,7 +472,7 @@ PlayerQuestData.GetAffinityQuestData = function(self, questId)
 end
 
 PlayerQuestData.GetStarTowerQuestData = function(self)
-  -- function num : 0_26 , upvalues : QuestType, _ENV, statusOrder
+  -- function num : 0_27 , upvalues : QuestType, _ENV, statusOrder
   local tbCore, tbNormal = {}, {}
   if not (self._mapQuest)[QuestType.Tower] then
     return tbCore, tbNormal
@@ -474,7 +490,7 @@ PlayerQuestData.GetStarTowerQuestData = function(self)
     end
   end
   local sort = function(a, b)
-    -- function num : 0_26_0 , upvalues : statusOrder
+    -- function num : 0_27_0 , upvalues : statusOrder
     if statusOrder[b.nStatus] >= statusOrder[a.nStatus] then
       do return a.nStatus == b.nStatus end
       if a.nTid >= b.nTid then
@@ -491,7 +507,7 @@ PlayerQuestData.GetStarTowerQuestData = function(self)
 end
 
 PlayerQuestData.ReceiveDemonQuest = function(self, nGroupId)
-  -- function num : 0_27 , upvalues : QuestType, _ENV
+  -- function num : 0_28 , upvalues : QuestType, _ENV
   if (self._mapQuest)[QuestType.Demon] ~= nil then
     for nId,v in pairs((self._mapQuest)[QuestType.Demon]) do
       local mapCfg = (ConfigTable.GetData)("DemonQuest", nId)
@@ -503,7 +519,7 @@ PlayerQuestData.ReceiveDemonQuest = function(self, nGroupId)
 end
 
 PlayerQuestData.GetDemonQuestData = function(self, nGroupId, nStageId)
-  -- function num : 0_28 , upvalues : QuestType, _ENV
+  -- function num : 0_29 , upvalues : QuestType, _ENV
   local tbQuest = {}
   -- DECOMPILER ERROR at PC9: Confused about usage of register: R4 in 'UnsetPending'
 
@@ -529,7 +545,7 @@ PlayerQuestData.GetDemonQuestData = function(self, nGroupId, nStageId)
   do
     ;
     (table.sort)(tbQuest, function(a, b)
-    -- function num : 0_28_0
+    -- function num : 0_29_0
     if a.nTid >= b.nTid then
       do return a.nStatus ~= b.nStatus end
       do return a.nStatus < b.nStatus end
@@ -542,7 +558,7 @@ PlayerQuestData.GetDemonQuestData = function(self, nGroupId, nStageId)
 end
 
 PlayerQuestData.OnQuestProgressChanged = function(self, mapData)
-  -- function num : 0_29 , upvalues : _ENV, QuestType
+  -- function num : 0_30 , upvalues : _ENV, QuestType
   if (mapData.Progress)[1] ~= nil or not 0 then
     local nCur = ((mapData.Progress)[1]).Cur
   end
@@ -569,7 +585,7 @@ PlayerQuestData.OnQuestProgressChanged = function(self, mapData)
 end
 
 PlayerQuestData.ReceiveTourReward = function(self, nTid, callback)
-  -- function num : 0_30 , upvalues : _ENV, QuestType
+  -- function num : 0_31 , upvalues : _ENV, QuestType
   local msg = {Value = nTid}
   local tbReceivedId = {}
   if nTid == 0 then
@@ -581,7 +597,7 @@ PlayerQuestData.ReceiveTourReward = function(self, nTid, callback)
   end
   do
     local Callback = function(_, mapMsgData)
-    -- function num : 0_30_0 , upvalues : nTid, _ENV, tbReceivedId, self, QuestType, callback
+    -- function num : 0_31_0 , upvalues : nTid, _ENV, tbReceivedId, self, QuestType, callback
     if nTid == 0 then
       for _,nQuestId in ipairs(tbReceivedId) do
         -- DECOMPILER ERROR at PC11: Confused about usage of register: R7 in 'UnsetPending'
@@ -631,9 +647,9 @@ PlayerQuestData.ReceiveTourReward = function(self, nTid, callback)
 end
 
 PlayerQuestData.ReceiveTourGroupReward = function(self, callback)
-  -- function num : 0_31 , upvalues : _ENV
+  -- function num : 0_32 , upvalues : _ENV
   local Callback = function(_, mapMsgData)
-    -- function num : 0_31_0 , upvalues : self, _ENV, callback
+    -- function num : 0_32_0 , upvalues : self, _ENV, callback
     self.nCurTourGroupOrderIndex = self.nCurTourGroupOrderIndex + 1
     local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData.Change)
     ;
@@ -653,7 +669,7 @@ PlayerQuestData.ReceiveTourGroupReward = function(self, callback)
 end
 
 PlayerQuestData.ReceiveTeamFormationReward = function(self, nTid, nGroupId, callback)
-  -- function num : 0_32 , upvalues : _ENV, QuestType
+  -- function num : 0_33 , upvalues : _ENV, QuestType
   local msg = {Group = nGroupId, Quest = nTid}
   local tbReceivedId = {}
   if nTid == 0 and nGroupId ~= 0 then
@@ -668,7 +684,7 @@ PlayerQuestData.ReceiveTeamFormationReward = function(self, nTid, nGroupId, call
   end
   do
     local Callback = function(_, mapMsgData)
-    -- function num : 0_32_0 , upvalues : nTid, nGroupId, _ENV, tbReceivedId, self, QuestType, callback
+    -- function num : 0_33_0 , upvalues : nTid, nGroupId, _ENV, tbReceivedId, self, QuestType, callback
     if nTid == 0 and nGroupId ~= 0 then
       for _,nQuestId in ipairs(tbReceivedId) do
         -- DECOMPILER ERROR at PC14: Confused about usage of register: R7 in 'UnsetPending'
@@ -766,7 +782,7 @@ PlayerQuestData.ReceiveTeamFormationReward = function(self, nTid, nGroupId, call
                 end
               end
               local cb = function()
-      -- function num : 0_32_0_0 , upvalues : _ENV
+      -- function num : 0_33_0_0 , upvalues : _ENV
       (EventManager.Hit)("UpdateTeamFormationGroup")
     end
 
@@ -791,17 +807,17 @@ PlayerQuestData.ReceiveTeamFormationReward = function(self, nTid, nGroupId, call
 end
 
 PlayerQuestData.ReceiveTeamFormationGroupReward = function(self, nGroupId, nAttributeIdx, callback)
-  -- function num : 0_33 , upvalues : _ENV
+  -- function num : 0_34 , upvalues : _ENV
   local msg = {Value = nGroupId}
   local Callback = function(_, mapMsgData)
-    -- function num : 0_33_0 , upvalues : _ENV, self, nGroupId, nAttributeIdx, callback
+    -- function num : 0_34_0 , upvalues : _ENV, self, nGroupId, nAttributeIdx, callback
     if mapMsgData.BuildInfo ~= nil then
       if (mapMsgData.BuildInfo).Brief ~= nil then
         (PlayerData.Build):CacheRogueBuild(mapMsgData.BuildInfo)
       else
         if (mapMsgData.BuildInfo).BuildCoin ~= nil and (mapMsgData.BuildInfo).BuildCoin > 0 then
           local checkLimitCb = function()
-      -- function num : 0_33_0_0 , upvalues : _ENV, mapMsgData
+      -- function num : 0_34_0_0 , upvalues : _ENV, mapMsgData
       local nLimit = (PlayerData.StarTower):GetStarTowerRewardLimit()
       local nCur = (PlayerData.StarTower):GetStarTowerTicket()
       do
@@ -876,7 +892,7 @@ PlayerQuestData.ReceiveTeamFormationGroupReward = function(self, nGroupId, nAttr
           end
         end
         local cb = function()
-      -- function num : 0_33_0_1 , upvalues : _ENV, bAttributeComplete, nNextGroupId
+      -- function num : 0_34_0_1 , upvalues : _ENV, bAttributeComplete, nNextGroupId
       (EventManager.Hit)("UpdateTeamFormationGroup", bAttributeComplete, nNextGroupId)
     end
 
@@ -897,7 +913,7 @@ PlayerQuestData.ReceiveTeamFormationGroupReward = function(self, nGroupId, nAttr
 end
 
 PlayerQuestData.ReceiveDailyReward = function(self, nTid, callback)
-  -- function num : 0_34 , upvalues : _ENV, QuestType
+  -- function num : 0_35 , upvalues : _ENV, QuestType
   local msg = {Value = nTid}
   local tbReceivedId = {}
   for nId,mapQuestData in pairs((self._mapQuest)[QuestType.Daily]) do
@@ -907,7 +923,7 @@ PlayerQuestData.ReceiveDailyReward = function(self, nTid, callback)
     end
   end
   local Callback = function(_, mapMsgData)
-    -- function num : 0_34_0 , upvalues : nTid, _ENV, tbReceivedId, self, QuestType, callback
+    -- function num : 0_35_0 , upvalues : nTid, _ENV, tbReceivedId, self, QuestType, callback
     if nTid == 0 then
       for _,nId in ipairs(tbReceivedId) do
         -- DECOMPILER ERROR at PC18: Confused about usage of register: R7 in 'UnsetPending'
@@ -960,9 +976,9 @@ PlayerQuestData.ReceiveDailyReward = function(self, nTid, callback)
 end
 
 PlayerQuestData.ReceiveDailyActiveReward = function(self, callBack)
-  -- function num : 0_35 , upvalues : _ENV
+  -- function num : 0_36 , upvalues : _ENV
   local callback = function(_, mapMsgData)
-    -- function num : 0_35_0 , upvalues : _ENV, self, callBack
+    -- function num : 0_36_0 , upvalues : _ENV, self, callBack
     local tbReward = {}
     for _,v in ipairs(mapMsgData.ActiveIds) do
       -- DECOMPILER ERROR at PC7: Confused about usage of register: R8 in 'UnsetPending'
@@ -1000,7 +1016,7 @@ PlayerQuestData.ReceiveDailyActiveReward = function(self, callBack)
 end
 
 PlayerQuestData.ReceiveWeeklyReward = function(self, nTid, callback)
-  -- function num : 0_36 , upvalues : _ENV, QuestType
+  -- function num : 0_37 , upvalues : _ENV, QuestType
   local msg = {Value = nTid}
   local tbReceivedId = {}
   for nId,mapQuestData in pairs((self._mapQuest)[QuestType.Weekly]) do
@@ -1010,7 +1026,7 @@ PlayerQuestData.ReceiveWeeklyReward = function(self, nTid, callback)
     end
   end
   local Callback = function(_, mapMsgData)
-    -- function num : 0_36_0 , upvalues : nTid, _ENV, tbReceivedId, self, QuestType, callback
+    -- function num : 0_37_0 , upvalues : nTid, _ENV, tbReceivedId, self, QuestType, callback
     if nTid == 0 then
       for _,nId in ipairs(tbReceivedId) do
         -- DECOMPILER ERROR at PC18: Confused about usage of register: R7 in 'UnsetPending'
@@ -1063,9 +1079,9 @@ PlayerQuestData.ReceiveWeeklyReward = function(self, nTid, callback)
 end
 
 PlayerQuestData.ReceiveWeeklyActiveReward = function(self, callBack)
-  -- function num : 0_37 , upvalues : _ENV
+  -- function num : 0_38 , upvalues : _ENV
   local callback = function(_, mapMsgData)
-    -- function num : 0_37_0 , upvalues : _ENV, self, callBack
+    -- function num : 0_38_0 , upvalues : _ENV, self, callBack
     local tbReward = {}
     for _,v in ipairs(mapMsgData.ActiveIds) do
       -- DECOMPILER ERROR at PC7: Confused about usage of register: R8 in 'UnsetPending'
@@ -1103,7 +1119,7 @@ PlayerQuestData.ReceiveWeeklyActiveReward = function(self, callBack)
 end
 
 PlayerQuestData.ReceiveTravelerDuelReward = function(self, nTid, callback)
-  -- function num : 0_38 , upvalues : _ENV, QuestType
+  -- function num : 0_39 , upvalues : _ENV, QuestType
   local msg = {Id = nTid, Type = 3}
   local tbReceivedId = {}
   if nTid == 0 then
@@ -1115,7 +1131,7 @@ PlayerQuestData.ReceiveTravelerDuelReward = function(self, nTid, callback)
   end
   do
     local Callback = function(_, mapMsgData)
-    -- function num : 0_38_0 , upvalues : nTid, _ENV, tbReceivedId, self, QuestType, callback
+    -- function num : 0_39_0 , upvalues : nTid, _ENV, tbReceivedId, self, QuestType, callback
     if nTid == 0 then
       for _,nId in ipairs(tbReceivedId) do
         -- DECOMPILER ERROR at PC18: Confused about usage of register: R7 in 'UnsetPending'
@@ -1167,7 +1183,7 @@ PlayerQuestData.ReceiveTravelerDuelReward = function(self, nTid, callback)
 end
 
 PlayerQuestData.ReceiveTravelerDuelChallengeReward = function(self, nTid, callback)
-  -- function num : 0_39 , upvalues : _ENV, QuestType
+  -- function num : 0_40 , upvalues : _ENV, QuestType
   local msg = {Id = nTid, Type = 4}
   local tbReceivedId = {}
   if nTid == 0 then
@@ -1179,7 +1195,7 @@ PlayerQuestData.ReceiveTravelerDuelChallengeReward = function(self, nTid, callba
   end
   do
     local Callback = function(_, mapMsgData)
-    -- function num : 0_39_0 , upvalues : nTid, _ENV, tbReceivedId, self, QuestType, callback
+    -- function num : 0_40_0 , upvalues : nTid, _ENV, tbReceivedId, self, QuestType, callback
     if nTid == 0 then
       for _,nId in ipairs(tbReceivedId) do
         -- DECOMPILER ERROR at PC18: Confused about usage of register: R7 in 'UnsetPending'
@@ -1231,9 +1247,9 @@ PlayerQuestData.ReceiveTravelerDuelChallengeReward = function(self, nTid, callba
 end
 
 PlayerQuestData.ReceiveBattlePassQuestData = function(self, nTid, callback)
-  -- function num : 0_40 , upvalues : _ENV
+  -- function num : 0_41 , upvalues : _ENV
   local msgCallback = function(_, msgData)
-    -- function num : 0_40_0 , upvalues : nTid, _ENV, self, callback
+    -- function num : 0_41_0 , upvalues : nTid, _ENV, self, callback
     if nTid == 0 then
       for _,mapQuest in pairs((self._mapQuest)[6]) do
         if mapQuest.nStatus == 1 then
@@ -1280,10 +1296,10 @@ PlayerQuestData.ReceiveBattlePassQuestData = function(self, nTid, callback)
 end
 
 PlayerQuestData.ReceiveAffinityReward = function(self, questIds, curCharId, callback)
-  -- function num : 0_41 , upvalues : QuestType, _ENV
+  -- function num : 0_42 , upvalues : QuestType, _ENV
   local msg = {CharId = curCharId, QuestId = 0}
   local Callback = function(_, mapMsgData)
-    -- function num : 0_41_0 , upvalues : self, QuestType, _ENV, questIds, callback
+    -- function num : 0_42_0 , upvalues : self, QuestType, _ENV, questIds, callback
     -- DECOMPILER ERROR at PC8: Confused about usage of register: R2 in 'UnsetPending'
 
     if (self._mapQuest)[QuestType.Affinity] == nil then
@@ -1315,7 +1331,7 @@ PlayerQuestData.ReceiveAffinityReward = function(self, questIds, curCharId, call
 end
 
 PlayerQuestData.ReceiveStarTowerReward = function(self, nTid, callback)
-  -- function num : 0_42 , upvalues : _ENV, QuestType
+  -- function num : 0_43 , upvalues : _ENV, QuestType
   local msg = {Value = nTid}
   local tbReceivedId = {}
   if nTid == 0 then
@@ -1327,7 +1343,7 @@ PlayerQuestData.ReceiveStarTowerReward = function(self, nTid, callback)
   end
   do
     local Callback = function(_, mapMsgData)
-    -- function num : 0_42_0 , upvalues : nTid, _ENV, tbReceivedId, self, QuestType, callback
+    -- function num : 0_43_0 , upvalues : nTid, _ENV, tbReceivedId, self, QuestType, callback
     if nTid == 0 then
       for _,nId in ipairs(tbReceivedId) do
         -- DECOMPILER ERROR at PC18: Confused about usage of register: R7 in 'UnsetPending'
@@ -1362,7 +1378,7 @@ PlayerQuestData.ReceiveStarTowerReward = function(self, nTid, callback)
         (table.insert)(tbReceivedId, nTid)
         ;
         (UTILS.OpenReceiveByChangeInfo)(mapMsgData, function()
-      -- function num : 0_42_0_0 , upvalues : callback, _ENV
+      -- function num : 0_43_0_0 , upvalues : callback, _ENV
       if callback ~= nil then
         callback()
       end
@@ -1383,9 +1399,9 @@ PlayerQuestData.ReceiveStarTowerReward = function(self, nTid, callback)
 end
 
 PlayerQuestData.ReceiveStarTowerEventReward = function(self, nTid, callback)
-  -- function num : 0_43 , upvalues : _ENV
+  -- function num : 0_44 , upvalues : _ENV
   local sucCall = function(_, mapMsgData)
-    -- function num : 0_43_0 , upvalues : _ENV, self, callback
+    -- function num : 0_44_0 , upvalues : _ENV, self, callback
     for _,v in ipairs(mapMsgData.ReceivedIds) do
       -- DECOMPILER ERROR at PC16: Confused about usage of register: R7 in 'UnsetPending'
 
@@ -1412,7 +1428,7 @@ PlayerQuestData.ReceiveStarTowerEventReward = function(self, nTid, callback)
 end
 
 PlayerQuestData.CacheAllQuest = function(self, tbQuests)
-  -- function num : 0_44 , upvalues : _ENV
+  -- function num : 0_45 , upvalues : _ENV
   local tbQuestType = {}
   for _,mapQuest in pairs(tbQuests) do
     self:OnQuestProgressChanged(mapQuest)
@@ -1426,7 +1442,7 @@ PlayerQuestData.CacheAllQuest = function(self, tbQuests)
 end
 
 PlayerQuestData.CacheDailyActiveIds = function(self, tbIds)
-  -- function num : 0_45 , upvalues : _ENV
+  -- function num : 0_46 , upvalues : _ENV
   for _,v in ipairs(tbIds) do
     -- DECOMPILER ERROR at PC6: Confused about usage of register: R7 in 'UnsetPending'
 
@@ -1436,7 +1452,7 @@ PlayerQuestData.CacheDailyActiveIds = function(self, tbIds)
 end
 
 PlayerQuestData.CacheWeeklyActiveIds = function(self, tbIds)
-  -- function num : 0_46 , upvalues : _ENV
+  -- function num : 0_47 , upvalues : _ENV
   self.nextWeekRefreshTime = GetNextWeekRefreshTime()
   for _,v in ipairs(tbIds) do
     -- DECOMPILER ERROR at PC9: Confused about usage of register: R7 in 'UnsetPending'
@@ -1447,12 +1463,12 @@ PlayerQuestData.CacheWeeklyActiveIds = function(self, tbIds)
 end
 
 PlayerQuestData.CacheTourGroupOrder = function(self, nIndex)
-  -- function num : 0_47
+  -- function num : 0_48
   self.nCurTourGroupOrderIndex = nIndex
 end
 
 PlayerQuestData.CacheTeamFormation = function(self, mapData)
-  -- function num : 0_48 , upvalues : _ENV
+  -- function num : 0_49 , upvalues : _ENV
   self.tbCurTeamFormationGroupIndex = {}
   for k,v in pairs(mapData) do
     local nIdxInGroup = 0
@@ -1480,7 +1496,7 @@ PlayerQuestData.CacheTeamFormation = function(self, mapData)
 end
 
 PlayerQuestData.CheckClientType = function(self, nEventType)
-  -- function num : 0_49 , upvalues : _ENV, QuestType
+  -- function num : 0_50 , upvalues : _ENV, QuestType
   local tbQuestId = {}
   for nQuestType,tbQuestList in pairs(self._mapQuest) do
     for _,mapQuest in pairs(tbQuestList) do
@@ -1506,7 +1522,7 @@ PlayerQuestData.CheckClientType = function(self, nEventType)
 end
 
 PlayerQuestData.HandleExpire = function(self)
-  -- function num : 0_50 , upvalues : _ENV
+  -- function num : 0_51 , upvalues : _ENV
   local curTime = ((CS.ClientManager).Instance).serverTimeStamp
   local tbExpire = {}
   if (self._mapQuest)[2] ~= nil then
@@ -1559,7 +1575,6 @@ PlayerQuestData.HandleExpire = function(self)
           end
           self.nextWeekRefreshTime = GetNextWeekRefreshTime()
         end
-        self.curTime = curTime
         self:UpdateDailyQuestRedDot()
         self:UpdateWeeklyQuestRedDot()
         self:UpdateBattlePassRedDot()
@@ -1571,7 +1586,7 @@ PlayerQuestData.HandleExpire = function(self)
 end
 
 PlayerQuestData.IsQuestHasReceived = function(self, nType, nQuestId)
-  -- function num : 0_51 , upvalues : _ENV
+  -- function num : 0_52 , upvalues : _ENV
   if (self._mapQuest)[nType] == nil then
     printError("没有记录的任务类型数据：" .. nQuestId)
     return false
@@ -1585,7 +1600,7 @@ PlayerQuestData.IsQuestHasReceived = function(self, nType, nQuestId)
 end
 
 PlayerQuestData.SendClientEvent = function(self, nEventType, nCount)
-  -- function num : 0_52 , upvalues : _ENV
+  -- function num : 0_53 , upvalues : _ENV
   if nCount == nil then
     nCount = 1
   end
@@ -1604,7 +1619,7 @@ Data = {nCount, v}
 end
 
 PlayerQuestData.UpdateServerQuestRedDot = function(self, mapMsgData)
-  -- function num : 0_53 , upvalues : QuestRedDotType, _ENV
+  -- function num : 0_54 , upvalues : QuestRedDotType, _ENV
   if mapMsgData == nil then
     return 
   end
@@ -1615,7 +1630,7 @@ PlayerQuestData.UpdateServerQuestRedDot = function(self, mapMsgData)
 end
 
 PlayerQuestData.UpdateQuestRedDot = function(self, questType)
-  -- function num : 0_54 , upvalues : _ENV
+  -- function num : 0_55 , upvalues : _ENV
   if questType == nil then
     return 
   end
@@ -1665,7 +1680,7 @@ PlayerQuestData.UpdateQuestRedDot = function(self, questType)
 end
 
 PlayerQuestData.UpdateDailyQuestRedDot = function(self)
-  -- function num : 0_55 , upvalues : QuestType, _ENV
+  -- function num : 0_56 , upvalues : QuestType, _ENV
   local bCanReceive = false
   local bActiveReward = false
   local nTotalActiveCount = 0
@@ -1696,7 +1711,7 @@ PlayerQuestData.UpdateDailyQuestRedDot = function(self)
 end
 
 PlayerQuestData.UpdateWeeklyQuestRedDot = function(self)
-  -- function num : 0_56 , upvalues : QuestType, _ENV
+  -- function num : 0_57 , upvalues : QuestType, _ENV
   local bCanReceive = false
   local bActiveReward = false
   local nTotalActiveCount = 0
@@ -1727,7 +1742,7 @@ PlayerQuestData.UpdateWeeklyQuestRedDot = function(self)
 end
 
 PlayerQuestData.UpdateTeamFormationRedDot = function(self)
-  -- function num : 0_57 , upvalues : _ENV, QuestType, LocalData
+  -- function num : 0_58 , upvalues : _ENV, QuestType, LocalData
   local bCanReceive = false
   local bAllReceive = true
   local nAttr = 0
@@ -1775,7 +1790,7 @@ PlayerQuestData.UpdateTeamFormationRedDot = function(self)
 end
 
 PlayerQuestData.UpdateTourGuideQuestRedDot = function(self)
-  -- function num : 0_58 , upvalues : QuestType, _ENV
+  -- function num : 0_59 , upvalues : QuestType, _ENV
   local bCanReceive = false
   local bAllReceive = true
   local nCurGroupId = self:GetCurTourGroup()
@@ -1809,7 +1824,7 @@ PlayerQuestData.UpdateTourGuideQuestRedDot = function(self)
 end
 
 PlayerQuestData.UpdateDuelQuestRedDot = function(self, questType)
-  -- function num : 0_59 , upvalues : QuestType, _ENV, QuestRedDotType
+  -- function num : 0_60 , upvalues : QuestType, _ENV, QuestRedDotType
   local bCanReceive = false
   local questList = (self._mapQuest)[QuestType[questType]]
   if questList ~= nil then
@@ -1827,7 +1842,7 @@ PlayerQuestData.UpdateDuelQuestRedDot = function(self, questType)
 end
 
 PlayerQuestData.UpdateCharAffinityRedDot = function(self)
-  -- function num : 0_60 , upvalues : QuestType, _ENV
+  -- function num : 0_61 , upvalues : QuestType, _ENV
   if self.tbCharQuest == nil then
     self.tbCharQuest = {}
   end
@@ -1864,7 +1879,7 @@ PlayerQuestData.UpdateCharAffinityRedDot = function(self)
 end
 
 PlayerQuestData.UpdateBattlePassRedDot = function(self)
-  -- function num : 0_61 , upvalues : _ENV
+  -- function num : 0_62 , upvalues : _ENV
   local bCanDailyReceive = false
   local bCanWeekReceive = false
   local questList = (self._mapQuest)[6]
@@ -1894,7 +1909,7 @@ PlayerQuestData.UpdateBattlePassRedDot = function(self)
 end
 
 PlayerQuestData.UpdateStarTowerQuestRedDot = function(self)
-  -- function num : 0_62 , upvalues : QuestType, _ENV, QuestRedDotType
+  -- function num : 0_63 , upvalues : QuestType, _ENV, QuestRedDotType
   local bCanReceive = false
   local questList = (self._mapQuest)[QuestType.Tower]
   if questList ~= nil then
@@ -1912,7 +1927,7 @@ PlayerQuestData.UpdateStarTowerQuestRedDot = function(self)
 end
 
 PlayerQuestData.UpdateStarTowerBookQuestRedDot = function(self)
-  -- function num : 0_63 , upvalues : QuestType, _ENV
+  -- function num : 0_64 , upvalues : QuestType, _ENV
   local questList = (self._mapQuest)[QuestType.TowerEvent]
   if questList ~= nil then
     for _,v in pairs(questList) do
@@ -1927,7 +1942,7 @@ PlayerQuestData.UpdateStarTowerBookQuestRedDot = function(self)
 end
 
 PlayerQuestData.GetVampireQuestData = function(self)
-  -- function num : 0_64 , upvalues : QuestType, _ENV
+  -- function num : 0_65 , upvalues : QuestType, _ENV
   local tbScore, tbPass = {}, {}
   if (self._mapQuest)[QuestType.VampireSurvivorSeason] ~= nil then
     for nId,v in pairs((self._mapQuest)[QuestType.VampireSurvivorSeason]) do
@@ -1947,7 +1962,7 @@ PlayerQuestData.GetVampireQuestData = function(self)
 end
 
 PlayerQuestData.GetVampireQuestStatusById = function(self, nId)
-  -- function num : 0_65 , upvalues : QuestType
+  -- function num : 0_66 , upvalues : QuestType
   if nId == nil then
     return 0
   end
@@ -1961,10 +1976,10 @@ PlayerQuestData.GetVampireQuestStatusById = function(self, nId)
 end
 
 PlayerQuestData.ReceiveVampireQuest = function(self, nType, tbList, callback)
-  -- function num : 0_66 , upvalues : _ENV
+  -- function num : 0_67 , upvalues : _ENV
   local msg = {QuestType = nType - 7, QuestIds = tbList}
   local Callback = function(_, mapMsgData)
-    -- function num : 0_66_0 , upvalues : _ENV, tbList, self, callback
+    -- function num : 0_67_0 , upvalues : _ENV, tbList, self, callback
     for _,nTid in ipairs(tbList) do
       -- DECOMPILER ERROR at PC12: Confused about usage of register: R7 in 'UnsetPending'
 
@@ -1990,7 +2005,7 @@ PlayerQuestData.ReceiveVampireQuest = function(self, nType, tbList, callback)
 end
 
 PlayerQuestData.UpdateVampireQuestRedDot = function(self)
-  -- function num : 0_67 , upvalues : _ENV
+  -- function num : 0_68 , upvalues : _ENV
   local bCanNormalReceive = false
   local bCanHardReceive = false
   local bCanSeasonReceive = false
@@ -2049,7 +2064,7 @@ PlayerQuestData.UpdateVampireQuestRedDot = function(self)
 end
 
 PlayerQuestData.ClearVampireSeasonQuest = function(self, nCurSeason)
-  -- function num : 0_68 , upvalues : _ENV
+  -- function num : 0_69 , upvalues : _ENV
   local mapSeasonData = (ConfigTable.GetData)("VampireRankSeason", nCurSeason)
   local tbRemove = {}
   if mapSeasonData ~= nil then
