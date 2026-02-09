@@ -1643,6 +1643,7 @@ end
 
 PlayerStarTowerData.UpdateNpcAffinityRedDot = function(self)
   -- function num : 0_64 , upvalues : _ENV
+  (RedDotManager.SetValid)(RedDotDefine.StarTowerBook_Affinity_Reward, "server", false)
   local forEachNpc = function(mapData)
     -- function num : 0_64_0 , upvalues : _ENV
     (RedDotManager.SetValid)(RedDotDefine.StarTowerBook_Affinity_Reward, mapData.Id, false)

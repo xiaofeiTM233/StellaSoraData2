@@ -2,6 +2,7 @@ local PlayerMallData = class("PlayerMallData")
 local TimerManager = require("GameCore.Timer.TimerManager")
 local MessageBoxManager = require("GameCore.Module.MessageBoxManager")
 local LocalData = require("GameCore.Data.LocalData")
+local ModuleManager = require("GameCore.Module.ModuleManager")
 local ClientManager = (CS.ClientManager).Instance
 local WwiseAudioMgr = (CS.WwiseAudioManager).Instance
 local SDKManager = (CS.SDKManager).Instance
@@ -834,7 +835,7 @@ PlayerMallData.CollectOrder = function(self, mapOrder, mapData, tbSpReward)
 end
 
 PlayerMallData.CollectEnd = function(self, bError)
-  -- function num : 0_36 , upvalues : _ENV
+  -- function num : 0_36 , upvalues : _ENV, ModuleManager
   local funcClear = function()
     -- function num : 0_36_0 , upvalues : self, _ENV
     self._bProcessingOrder = false
@@ -868,7 +869,8 @@ PlayerMallData.CollectEnd = function(self, bError)
   if not bError then
     self:CloseOrderWait()
   end
-  if (PanelManager.CheckPanelOpen)(PanelId.ReceiveAutoTrans) == true or (PanelManager.CheckPanelOpen)(PanelId.ReceivePropsTips) == true or (PanelManager.CheckPanelOpen)(PanelId.ReceivePropsNPC) == true or (PanelManager.CheckPanelOpen)(PanelId.ReceiveSpecialReward) == true or (PanelManager.CheckNextPanelOpening)() then
+  local bInAdventure = (ModuleManager.GetIsAdventure)()
+  if (PanelManager.CheckPanelOpen)(PanelId.ReceiveAutoTrans) == true or (PanelManager.CheckPanelOpen)(PanelId.ReceivePropsTips) == true or (PanelManager.CheckPanelOpen)(PanelId.ReceivePropsNPC) == true or (PanelManager.CheckPanelOpen)(PanelId.ReceiveSpecialReward) == true or (PanelManager.CheckNextPanelOpening)() or bInAdventure == true then
     funcClear()
   else
     local sTip = nil

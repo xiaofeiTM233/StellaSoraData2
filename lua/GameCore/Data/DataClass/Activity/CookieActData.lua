@@ -280,7 +280,7 @@ CookieActData.SetNMHighScoreDay = function(self)
   (LocalData.SetPlayerLocalData)("Cookie_Nightmare_HighScoreDay", nDayCount)
 end
 
-CookieActData.RequestLevelResult = function(self, nLevelId, nScore, nBoxCount, nCookieCount, nGoodCount, nPerfectCount, nExcellentCount, nMissCount, callback)
+CookieActData.RequestLevelResult = function(self, nLevelId, nScore, nBoxCount, nCookieCount, nGoodCount, nPerfectCount, nExcellentCount, nMissCount, nActId, callback)
   -- function num : 0_21 , upvalues : _ENV
   local callbackFunc = function(_, msgData)
     -- function num : 0_21_0 , upvalues : self, nLevelId, nScore, callback
@@ -292,15 +292,16 @@ CookieActData.RequestLevelResult = function(self, nLevelId, nScore, nBoxCount, n
   end
 
   if self.nActId == 0 then
+    self.nActId = nActId
     printError("RequestCookieLevelResult: ActivityId is 0!!!  -  ActivityId = " .. self.nActId .. ", nLevelId = " .. nLevelId .. ", nScore = " .. nScore)
   end
   ;
   (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_cookie_settle_req, {ActivityId = self.nActId, LevelId = nLevelId, Score = nScore, PackageNum = nBoxCount, CookieNum = nCookieCount, PerfectNum = nPerfectCount, ExcellentNum = nExcellentCount, MissNum = nMissCount, Good = nGoodCount}, nil, callbackFunc)
 end
 
-CookieActData.OnEvent_GameComplete = function(self, nLevelId, nScore, nBoxCount, nCookieCount, nGoodCount, nPerfectCount, nExcellentCount, nMissCount, callback)
+CookieActData.OnEvent_GameComplete = function(self, nLevelId, nScore, nBoxCount, nCookieCount, nGoodCount, nPerfectCount, nExcellentCount, nMissCount, nActId, callback)
   -- function num : 0_22
-  self:RequestLevelResult(nLevelId, nScore, nBoxCount, nCookieCount, nGoodCount, nPerfectCount, nExcellentCount, nMissCount, callback)
+  self:RequestLevelResult(nLevelId, nScore, nBoxCount, nCookieCount, nGoodCount, nPerfectCount, nExcellentCount, nMissCount, nActId, callback)
 end
 
 CookieActData.OnEvent_QuestClaim = function(self, nQuestId)

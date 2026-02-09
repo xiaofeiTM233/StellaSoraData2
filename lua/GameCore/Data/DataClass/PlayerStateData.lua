@@ -32,7 +32,7 @@ PlayerStateData.CacheStateData = function(self, mapMsgData)
     ;
     (RedDotManager.SetValid)(RedDotDefine.Friend_Energy, nil, (mapMsgData.FriendEnergy).State)
     ;
-    (RedDotManager.SetValid)(RedDotDefine.StarTowerBook_Affinity, nil, mapMsgData.NpcAffinityReward)
+    (RedDotManager.SetValid)(RedDotDefine.StarTowerBook_Affinity_Reward, "server", mapMsgData.NpcAffinityReward)
     ;
     (PlayerData.Quest):UpdateServerQuestRedDot(mapMsgData.TravelerDuelQuest)
     ;

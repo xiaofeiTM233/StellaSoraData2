@@ -285,9 +285,9 @@ PlayerEquipmentData.SetRollWarning = function(self, bAble)
   self.bRollWarning = bAble
 end
 
-PlayerEquipmentData.CacheEquipmentSelect = function(self, nSlotId, nGemIndex)
+PlayerEquipmentData.CacheEquipmentSelect = function(self, nSlotId, nGemIndex, nCharId)
   -- function num : 0_19
-  self.mapSelect = {nSlotId = nSlotId, nGemIndex = nGemIndex}
+  self.mapSelect = {nSlotId = nSlotId, nGemIndex = nGemIndex, nCharId = nCharId}
 end
 
 PlayerEquipmentData.GetEquipmentSelect = function(self)
