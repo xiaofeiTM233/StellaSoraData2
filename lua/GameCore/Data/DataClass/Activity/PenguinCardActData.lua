@@ -327,7 +327,7 @@ end
 
 PenguinCardActData.SendActivityPenguinCardSettleReq = function(self, nLevelId, nStar, nScore, callback)
   -- function num : 0_24 , upvalues : _ENV
-  local msgData = {LevelId = nLevelId, Star = nStar, Score = nScore}
+  local msgData = {LevelId = nLevelId, Star = nStar, Score = (math.floor)(nScore)}
   local successCallback = function(_, mapMainData)
     -- function num : 0_24_0 , upvalues : self, nLevelId, nScore, nStar, _ENV, callback
     -- DECOMPILER ERROR at PC24: Confused about usage of register: R2 in 'UnsetPending'
@@ -380,10 +380,7 @@ PenguinCardActData.SendActivityPenguinCardQuestReceiveReq = function(self, nQues
     end
     do
       ;
-      (UTILS.OpenReceiveByChangeInfo)(mapMainData)
-      if callback then
-        callback(mapMainData)
-      end
+      (UTILS.OpenReceiveByChangeInfo)(mapMainData, callback)
     end
   end
 

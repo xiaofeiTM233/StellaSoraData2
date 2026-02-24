@@ -51,7 +51,7 @@ return {
 , 
 {id = 142, icon = "Icon/Head/head_14201_S", name = "코제트", landmark = "아모르 지리협회", signature = "개인 정보 설정으로 인해 서명을 볼 수 없습니다"}
 , 
-{id = 143, icon = "Icon/Head/head_14301_S", name = "레이스", landmark = "게임룸", signature = "쿨함, 채팅 안 함"}
+{id = 143, icon = "Icon/Head/head_14301_S", name = "레이스", landmark = "밝힐 수 없음", signature = "더~ 워~", ver = "1.7.0"}
 , 
 {id = 144, icon = "Icon/Head/head_14401_S", name = "치토세", landmark = "「빗소리」 쉼터", signature = "칼은 망설이지 않는다"}
 , 

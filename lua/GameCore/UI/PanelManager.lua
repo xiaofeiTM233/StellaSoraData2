@@ -271,15 +271,17 @@ local OnClosePanel = function(listener, nPanelId)
   if type(nPanelId) == "number" then
     local bIsMainPanel = true
     if type(tbDisposablePanel) == "table" then
-      for i,v in ipairs(tbDisposablePanel) do
-        if v._nPanelId == nPanelId then
+      local nCount = #tbDisposablePanel
+      for i = nCount, 1, -1 do
+        local objPanel = tbDisposablePanel[i]
+        if objPanel._nPanelId == nPanelId then
           (EventManager.Hit)("Guide_CloseDisposablePanel", nPanelId)
-          v:_PreExit()
-          v:_Exit()
-          v:_Destroy()
+          objPanel:_PreExit()
+          objPanel:_Exit()
+          objPanel:_Destroy()
           ;
           (table.remove)(tbDisposablePanel, i)
-          RemoveTbSnapShot(v)
+          RemoveTbSnapShot(objPanel)
           bIsMainPanel = false
           printLog("[界面切换] 关闭了非主 Panel 界面：" .. GetPanelName(nPanelId))
           break
@@ -388,13 +390,13 @@ local OnOpenPanel = function(listener, nPanelId, ...)
       if _bHasOpenTips == false then
         _bHasOpenTips = (UTILS.CheckIsTipsPanel)(v._nPanelId)
       end
-      if v._nPanelId == nPanelId then
+      if v._nPanelId == nPanelId and nPanelId ~= PanelId.ReceivePropsTips then
         MoveSnapShot(v)
         objTempPanel:_PreExit()
         objTempPanel:_Exit()
         objTempPanel:_Destroy()
         objTempPanel = nil
-        printLog("[界面切换] 打开非主 Panel：" .. GetPanelName(nPanelId) .. " 失败，不能重复打开。")
+        printError("[界面切换] 打开非主 Panel：" .. GetPanelName(nPanelId) .. " 失败，不能重复打开。")
         return 
       end
     end
@@ -704,18 +706,8 @@ PanelManager.GetCurPanelId = function()
   return 0
 end
 
-PanelManager.GetDisposablePanelState = function(nPanelId)
-  -- function num : 0_36 , upvalues : _ENV, tbDisposablePanel
-  for i,v in ipairs(tbDisposablePanel) do
-    if v._nPanelId == nPanelId then
-      return true
-    end
-  end
-  return false
-end
-
 PanelManager.CheckPanelOpen = function(nPanelId)
-  -- function num : 0_37 , upvalues : _ENV, tbBackHistory, tbDisposablePanel
+  -- function num : 0_36 , upvalues : _ENV, tbBackHistory, tbDisposablePanel
   if type(tbBackHistory) == "table" then
     for i,objPanel in ipairs(tbBackHistory) do
       if objPanel._nPanelId == nPanelId then
@@ -738,28 +730,28 @@ PanelManager.CheckPanelOpen = function(nPanelId)
 end
 
 PanelManager.CheckNextPanelOpening = function()
-  -- function num : 0_38 , upvalues : objNextPanel
+  -- function num : 0_37 , upvalues : objNextPanel
   do return objNextPanel ~= nil end
   -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
 PanelManager.SetMainViewSkipAnimIn = function(bIn)
-  -- function num : 0_39 , upvalues : bMainViewSkipAnimIn
+  -- function num : 0_38 , upvalues : bMainViewSkipAnimIn
   bMainViewSkipAnimIn = bIn
 end
 
 PanelManager.GetMainViewSkipAnimIn = function()
-  -- function num : 0_40 , upvalues : bMainViewSkipAnimIn
+  -- function num : 0_39 , upvalues : bMainViewSkipAnimIn
   return bMainViewSkipAnimIn
 end
 
 PanelManager.InputEnable = function(bAudioStop, bDisActiveUICombat)
-  -- function num : 0_41 , upvalues : _ENV, AdventureModuleHelper, WwiseAudioMgr, nInputRC
+  -- function num : 0_40 , upvalues : _ENV, AdventureModuleHelper, WwiseAudioMgr, nInputRC
   print("PanelManager.InputEnable")
   local resume = function()
-    -- function num : 0_41_0 , upvalues : _ENV, AdventureModuleHelper, bAudioStop, WwiseAudioMgr, bDisActiveUICombat
+    -- function num : 0_40_0 , upvalues : _ENV, AdventureModuleHelper, bAudioStop, WwiseAudioMgr, bDisActiveUICombat
     local wait = function()
-      -- function num : 0_41_0_0 , upvalues : _ENV, AdventureModuleHelper, bAudioStop, WwiseAudioMgr, bDisActiveUICombat
+      -- function num : 0_40_0_0 , upvalues : _ENV, AdventureModuleHelper, bAudioStop, WwiseAudioMgr, bDisActiveUICombat
       (coroutine.yield)(((CS.UnityEngine).WaitForEndOfFrame)())
       ;
       (NovaAPI.InputEnable)()
@@ -793,7 +785,7 @@ PanelManager.InputEnable = function(bAudioStop, bDisActiveUICombat)
 end
 
 PanelManager.InputDisable = function()
-  -- function num : 0_42 , upvalues : _ENV, nInputRC, AdventureModuleHelper, WwiseAudioMgr
+  -- function num : 0_41 , upvalues : _ENV, nInputRC, AdventureModuleHelper, WwiseAudioMgr
   print("PanelManager.InputDisable")
   if nInputRC == 0 then
     (NovaAPI.InputDisable)()
@@ -807,13 +799,13 @@ PanelManager.InputDisable = function()
 end
 
 PanelManager.ClearInputState = function()
-  -- function num : 0_43 , upvalues : nInputRC
+  -- function num : 0_42 , upvalues : nInputRC
   nInputRC = 0
 end
 
 local goDiscSkillActive, goSelect1, goSelect2, goSelect3, goDashboard, trSupportRole, trMainRole, trSkillHint, trJoystick, goTransition, goPlayerInfo = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
 PanelManager.SwitchUI = function()
-  -- function num : 0_44 , upvalues : mapUIRootTransform, _ENV, goDiscSkillActive, goSelect1, goSelect2, goSelect3, goDashboard, trSupportRole, trMainRole, trSkillHint, trJoystick, goTransition, goPlayerInfo
+  -- function num : 0_43 , upvalues : mapUIRootTransform, _ENV, goDiscSkillActive, goSelect1, goSelect2, goSelect3, goDashboard, trSupportRole, trMainRole, trSkillHint, trJoystick, goTransition, goPlayerInfo
   if mapUIRootTransform == nil then
     return 
   end
@@ -890,7 +882,7 @@ PanelManager.SwitchUI = function()
 end
 
 PanelManager.SwitchSkillBtn = function()
-  -- function num : 0_45 , upvalues : mapUIRootTransform, goDashboard, _ENV, trSupportRole, trMainRole, trSkillHint, trJoystick
+  -- function num : 0_44 , upvalues : mapUIRootTransform, goDashboard, _ENV, trSupportRole, trMainRole, trSkillHint, trJoystick
   if mapUIRootTransform == nil then
     return 
   end
@@ -920,14 +912,14 @@ end
 
 local bAllUIVisible = true
 PanelManager.SwitchAllUI = function()
-  -- function num : 0_46 , upvalues : bAllUIVisible, mapUIRootTransform, _ENV
+  -- function num : 0_45 , upvalues : bAllUIVisible, mapUIRootTransform, _ENV
   if bAllUIVisible == true then
     bAllUIVisible = false
   else
     bAllUIVisible = true
   end
   local SetVisible = function(trRoot)
-    -- function num : 0_46_0 , upvalues : bAllUIVisible
+    -- function num : 0_45_0 , upvalues : bAllUIVisible
     local n = trRoot.childCount - 1
     for i = 0, n do
       local canvas = (trRoot:GetChild(i)):GetComponent("Canvas")
@@ -944,7 +936,7 @@ PanelManager.SwitchAllUI = function()
 end
 
 PanelManager.CloseAllDisposablePanel = function()
-  -- function num : 0_47 , upvalues : _ENV, tbDisposablePanel
+  -- function num : 0_46 , upvalues : _ENV, tbDisposablePanel
   if type(tbDisposablePanel) == "table" then
     local n = #tbDisposablePanel
     for i = n, 1, -1 do
@@ -963,7 +955,7 @@ PanelManager.CloseAllDisposablePanel = function()
 end
 
 PanelManager.CheckInTransition = function()
-  -- function num : 0_48 , upvalues : objTransitionPanel, _ENV
+  -- function num : 0_47 , upvalues : objTransitionPanel, _ENV
   do
     if objTransitionPanel ~= nil then
       local nStatus = objTransitionPanel:GetTransitionStatus()

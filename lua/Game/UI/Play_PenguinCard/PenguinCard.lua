@@ -230,7 +230,9 @@ PenguinCard.Trigger = function(self, nTriggerPhase, mapTriggerSource, callback)
     self.nTriggerCount = self.nTriggerCount + 1
   end
   if callback then
-    printLog("企鹅牌触发：" .. "  " .. self.sName .. "  " .. self.sDesc)
+    if (NovaAPI.IsEditorPlatform)() then
+      printLog("企鹅牌触发：" .. "  " .. self.sName .. "  " .. self.sDesc)
+    end
     callback(self.nEffectType, self.tbEffectParam)
   end
   ;

@@ -121,6 +121,8 @@ return {
 , 
 {id = "avg2_003", name = "우드모트 척탄병", name_bg_color = "#0ABEC5"}
 , 
+{id = "avg2_951", name = "번영의 실체 - 불", name_bg_color = "#0ABEC5", ver = "1.7.0"}
+, 
 {id = "avg2_952", name = "복덩이", name_bg_color = "#0ABEC5", ver = "1.6.0"}
 , 
 {id = "avg2_953", name = "난로의 섬망", name_bg_color = "#0ABEC5"}
@@ -390,6 +392,10 @@ return {
 {id = "avg3_206", name = "루나르", name_bg_color = "#394444"}
 , 
 {id = "avg3_207", name = "***", name_bg_color = "#0ABEC5", ver = "1.8.0"}
+, 
+{id = "avg3_208", name = "***", name_bg_color = "#0ABEC5", ver = "1.8.0"}
+, 
+{id = "avg3_209", name = "***", name_bg_color = "#0ABEC5", ver = "1.8.0"}
 , 
 {id = "avg3_210", name = "***", name_bg_color = "#e4a47a", ver = "1.8.0"}
 , 
@@ -959,11 +965,19 @@ return {
 , 
 {id = "avg3_1277", name = "럭키 루비(물)", name_bg_color = "#0ABEC5", reuse = "avg2_981"}
 , 
-{id = "avg3_1278", name = "핫 스틸 해머", name_bg_color = "#0ABEC5", reuse = "avg2_974"}
+{id = "avg3_1278", name = "핫 스틸 해머A", name_bg_color = "#0ABEC5", reuse = "avg2_974"}
 , 
-{id = "avg3_1279", name = "핫 스틸 해머", name_bg_color = "#0ABEC5", reuse = "avg2_974"}
+{id = "avg3_1279", name = "핫 스틸 해머B", name_bg_color = "#0ABEC5", reuse = "avg2_974"}
 , 
-{id = "avg3_1280", name = "핫 스틸 해머", name_bg_color = "#0ABEC5", reuse = "avg2_974"}
+{id = "avg3_1280", name = "핫 스틸 해머C", name_bg_color = "#0ABEC5", reuse = "avg2_974"}
+, 
+{id = "avg3_1281", name = "크리스피 미트A", name_bg_color = "#0ABEC5", reuse = "avg2_954"}
+, 
+{id = "avg3_1282", name = "크리스피 미트B", name_bg_color = "#0ABEC5", reuse = "avg2_954"}
+, 
+{id = "avg3_1283", name = "레이스B", name_bg_color = "#5e6cb5", reuse = "avg1_143"}
+, 
+{id = "avg3_1284", name = "레이스C", name_bg_color = "#5e6cb5", reuse = "avg1_143"}
 , 
 {id = "avg4_100", name = "빛나는 라루", name_bg_color = "#0ABEC5"}
 , 

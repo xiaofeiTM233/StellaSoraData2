@@ -387,6 +387,15 @@ JointDrillLevelData_2.OnEvent_BossDeath = function(self, nBattleLv, nTotalTime, 
     local syncCallback = function()
       -- function num : 0_17_0_0 , upvalues : _ENV
       (PanelManager.InputEnable)()
+      local wait = function()
+        -- function num : 0_17_0_0_0 , upvalues : _ENV
+        (coroutine.yield)(((CS.UnityEngine).WaitForEndOfFrame)())
+        ;
+        (EventManager.Hit)(EventId.BattleDashboardVisible, false)
+      end
+
+      ;
+      (cs_coroutine.start)(wait)
     end
 
     ;
