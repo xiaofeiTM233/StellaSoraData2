@@ -341,6 +341,7 @@ bin/TestCharacterAtt.bytes
 bin/TestCharacterList.bytes
 bin/TestTeamData.bytes
 bin/ThrowGiftFloor.bytes
+bin/ThrowGiftGuideLine.bytes
 bin/ThrowGiftItem.bytes
 bin/ThrowGiftItemPool.bytes
 bin/ThrowGiftLevel.bytes

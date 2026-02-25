@@ -558,6 +558,11 @@ language/zh_TW/PenguinCardControl.json
 language/ja_JP/PenguinCardControl.json
 language/en_US/PenguinCardControl.json
 language/ko_KR/PenguinCardControl.json
+language/zh_CN/PenguinCardFloor.json
+language/zh_TW/PenguinCardFloor.json
+language/ja_JP/PenguinCardFloor.json
+language/en_US/PenguinCardFloor.json
+language/ko_KR/PenguinCardFloor.json
 language/zh_CN/PenguinCardHandRank.json
 language/zh_TW/PenguinCardHandRank.json
 language/ja_JP/PenguinCardHandRank.json
