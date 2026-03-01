@@ -18,6 +18,7 @@ JointDrillLevelData_2.Init = function(self, parent, nLevelId, nBuildId, nCurLeve
   self.mapFloor = nil
   self.nGameTime = (self.parent):GetGameTime()
   self.bInResult = false
+  self.bAllBossDead = false
   self.bChangeLevel = self.nLevelType == (AllEnum.JointDrillLevelStartType).ChangeLevel
   self.bRestart = self.nLevelType == (AllEnum.JointDrillLevelStartType).Restart
   if not self.bChangeLevel then
@@ -371,6 +372,10 @@ JointDrillLevelData_2.OnEvent_BossDeath = function(self, nBattleLv, nTotalTime, 
   if nBattleLv < self.nCurLevel then
     return 
   end
+  if nBattleLv == nParam then
+    self.bAllBossDead = true
+    return 
+  end
   local nLastLevel = self.nCurLevel
   nTotalTime = (math.min)((self.mapLevel).BattleTime * 1000, self:GetSyncGameTime(nTotalTime))
   self.nCurLevel = nParam
@@ -408,6 +413,9 @@ end
 
 JointDrillLevelData_2.OnEvent_BattleLvsToggle = function(self)
   -- function num : 0_18 , upvalues : AdventureModuleHelper, _ENV
+  if self.bInResult or self.bAllBossDead or self.bChangeLevel then
+    return 
+  end
   self.bChangeLevel = true
   self.bRestart = false
   ;

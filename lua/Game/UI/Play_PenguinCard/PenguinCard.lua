@@ -165,7 +165,12 @@ PenguinCard.SetDesc = function(self, mapCfg)
   end
 
   local result = (string.gsub)(mapCfg.Desc, "%b{}", function(token)
-    -- function num : 0_6_2 , upvalues : mapCfg, _ENV, ParseTriggerParam, ParseEffectParam
+    -- function num : 0_6_2 , upvalues : _ENV, mapCfg, ParseTriggerParam, ParseEffectParam
+    local content = (string.match)(token, "^{(.-)}$")
+    local sParameterKey, lang, langIdx = ParseLanguageParam(content)
+    if lang ~= nil then
+      token = (string.format)("{%s}", sParameterKey)
+    end
     if token == "{TriggerProbability}" then
       return mapCfg.TriggerProbability
     else
@@ -174,17 +179,21 @@ PenguinCard.SetDesc = function(self, mapCfg)
       end
     end
     local trigIdx = (string.match)(token, "^{TriggerParam_(%d+)}$")
+    if trigIdx then
+      local idx = tonumber(trigIdx)
+      local str = ParseTriggerParam(decodeJson(mapCfg.TriggerParam), idx)
+      str = LanguagePost(lang, langIdx, str)
+      return str
+    end
     do
-      if trigIdx then
-        local idx = tonumber(trigIdx)
-        return ParseTriggerParam(decodeJson(mapCfg.TriggerParam), idx)
-      end
       local effectIdx = (string.match)(token, "^{EffectParam_(%d+)}$")
+      if effectIdx then
+        local idx = tonumber(effectIdx)
+        local str = ParseEffectParam(decodeJson(mapCfg.EffectParam), idx)
+        str = LanguagePost(lang, langIdx, str)
+        return str
+      end
       do
-        if effectIdx then
-          local idx = tonumber(effectIdx)
-          return ParseEffectParam(decodeJson(mapCfg.EffectParam), idx)
-        end
         return token
       end
     end

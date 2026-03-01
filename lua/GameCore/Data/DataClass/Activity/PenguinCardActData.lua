@@ -121,6 +121,9 @@ PenguinCardActData.CreateQuest = function(self, mapQuestData)
       end
     end
   end
+  if tbQuestData.nStatus == (AllEnum.ActQuestStatus).Received then
+    tbQuestData.nCur = tbQuestData.nMax
+  end
   return tbQuestData
 end
 
@@ -128,19 +131,10 @@ PenguinCardActData.GetQuestMaxProgress = function(self, nId)
   -- function num : 0_6 , upvalues : _ENV
   local nMax = 0
   local mapCfg = (ConfigTable.GetData)("ActivityPenguinCardQuest", nId)
-  if mapCfg then
-    if mapCfg.FinishType == (GameEnum.activityQuestCompleteCond).ActivityPenguinCardLevelPassedScore then
-      nMax = 1
-    else
-      if mapCfg.FinishType == (GameEnum.activityQuestCompleteCond).ActivityPenguinCardLevelPassedWithStar then
-        local tbParam = decodeJson(mapCfg.FinishParams)
-        nMax = tbParam[2]
-      end
-    end
+  if mapCfg and (mapCfg.FinishType == (GameEnum.activityQuestCompleteCond).ActivityPenguinCardLevelPassedScore or mapCfg.FinishType == (GameEnum.activityQuestCompleteCond).ActivityPenguinCardLevelPassedWithStar) then
+    nMax = 1
   end
-  do
-    return nMax
-  end
+  return nMax
 end
 
 PenguinCardActData.GetQuestGroup = function(self)

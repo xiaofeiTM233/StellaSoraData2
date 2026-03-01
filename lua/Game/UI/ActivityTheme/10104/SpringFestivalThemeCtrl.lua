@@ -249,9 +249,9 @@ SpringFestivalThemeCtrl.OnDisable = function(self)
     (TimerManager.Remove)(self.taskRemainTimer)
     self.taskRemainTimer = nil
   end
-  if self.eatingAnimationTimer ~= nil then
-    (TimerManager.Remove)(self.eatingAnimationTimer)
-    self.eatingAnimationTimer = nil
+  if self.updateTimer ~= nil then
+    (self.updateTimer):Cancel()
+    self.updateTimer = nil
   end
 end
 
@@ -824,12 +824,15 @@ SpringFestivalThemeCtrl.StartEatingAnimation = function(self)
   ((self._mapNode).Eat_02):SetActive(false)
   ;
   ((self._mapNode).Eat_03):SetActive(false)
-  self:PlayRandomEatingAnimation()
-  self.eatingAnimationTimer = self:AddTimer(0, 4, function()
-    -- function num : 0_18_0 , upvalues : self
-    self:PlayRandomEatingAnimation()
+  self.nEatingElapsed = 0
+  self.nEatingDelay = 0
+  self.nEatShowElapsed = nil
+  self.selectedEat = nil
+  if self.updateTimer ~= nil then
+    (self.updateTimer):Cancel()
+    self.updateTimer = nil
   end
-, true, true, false)
+  self.updateTimer = self:AddTimer(0, 0, "OnUpdate", true, true, true)
 end
 
 SpringFestivalThemeCtrl.PlayRandomEatingAnimation = function(self)
@@ -839,31 +842,45 @@ SpringFestivalThemeCtrl.PlayRandomEatingAnimation = function(self)
   ((self._mapNode).Eat_02):SetActive(false)
   ;
   ((self._mapNode).Eat_03):SetActive(false)
-  ;
-  ((math.random)(1, 100))
-  local randomValue = nil
-  local selectedEat = nil
+  local randomValue = (math.random)(1, 100)
   if randomValue <= 50 then
-    selectedEat = (self._mapNode).Eat_03
+    self.selectedEat = (self._mapNode).Eat_03
   else
     if randomValue <= 85 then
-      selectedEat = (self._mapNode).Eat_02
+      self.selectedEat = (self._mapNode).Eat_02
     else
-      selectedEat = (self._mapNode).Eat_01
+      self.selectedEat = (self._mapNode).Eat_01
     end
   end
   ;
-  ((self._mapNode).Chensha_Expression_02):SetActive(selectedEat ~= (self._mapNode).Eat_01)
+  ((self._mapNode).Chensha_Expression_02):SetActive(self.selectedEat ~= (self._mapNode).Eat_01)
   ;
-  ((self._mapNode).Chensha_Expression_01):SetActive(selectedEat == (self._mapNode).Eat_01)
-  if selectedEat then
-    self:AddTimer(1, 0.13, function()
-    -- function num : 0_19_0 , upvalues : selectedEat
-    selectedEat:SetActive(true)
+  ((self._mapNode).Chensha_Expression_01):SetActive(self.selectedEat == (self._mapNode).Eat_01)
+  self.nEatShowElapsed = 0
+  -- DECOMPILER ERROR: 2 unprocessed JMP targets
+end
+
+SpringFestivalThemeCtrl.OnUpdate = function(self)
+  -- function num : 0_20
+  if self.updateTimer == nil then
+    return 
   end
-, true, true, true)
+  local nDeltaTime = (self.updateTimer):GetDelTime()
+  if self.nEatShowElapsed ~= nil then
+    self.nEatShowElapsed = self.nEatShowElapsed + nDeltaTime
+    if self.nEatShowElapsed >= 0.13 then
+      if self.selectedEat ~= nil then
+        (self.selectedEat):SetActive(true)
+      end
+      self.nEatShowElapsed = nil
+    end
   end
-  -- DECOMPILER ERROR: 3 unprocessed JMP targets
+  self.nEatingElapsed = self.nEatingElapsed + nDeltaTime
+  if self.nEatingDelay <= self.nEatingElapsed then
+    self.nEatingElapsed = 0
+    self.nEatingDelay = 4
+    self:PlayRandomEatingAnimation()
+  end
 end
 
 return SpringFestivalThemeCtrl
