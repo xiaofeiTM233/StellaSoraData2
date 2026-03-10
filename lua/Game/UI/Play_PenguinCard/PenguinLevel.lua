@@ -806,27 +806,27 @@ PenguinLevel.ChangeRoundScore = function(self, nAddValue, nAddRatio, nAddMultiRa
   self.nRoundValue = self.nRoundValue + nAddValue
   self.nRoundMultiRatio = self.nRoundMultiRatio + nAddMultiRatio
   self.nRoundRatio = self.nRoundRatio + nAddRatio
-  if self.nRoundMultiRatio <= 0 or not self.nRoundValue * self.nRoundRatio * self.nRoundMultiRatio then
-    self.nRoundScore = self.nRoundValue * self.nRoundRatio
-    local nAddScore = self.nRoundScore - nBeforeScore
-    self.nTurnScore = self.nTurnScore + nAddScore
-    if self.nBestTurnScore < self.nTurnScore then
-      self.nBestTurnScore = self.nTurnScore
-    end
-    if self.nBestRoundScore < self.nRoundScore then
-      self.nBestRoundScore = self.nRoundScore
-    end
-    local nBeforeAllRatio = nBeforeMultiRatio > 0 and nBeforeMultiRatio * nBeforeRatio or nBeforeRatio
-    if self.nRoundMultiRatio <= 0 or not self.nRoundRatio * self.nRoundMultiRatio then
-      local nAfterAllRatio = self.nRoundRatio
-    end
-    ;
-    (EventManager.Hit)("PenguinCard_ChangeRoundScore", nBeforeBase, nBeforeAllRatio, nBeforeScore, bFromHandRank)
-    if (NovaAPI.IsEditorPlatform)() then
-      printLog("轮积分变化：" .. nAddScore .. "  (" .. nBeforeScore .. " -> " .. self.nRoundScore .. ")")
-      printLog("基础变化：" .. nAddValue .. "  (" .. nBeforeBase .. " -> " .. self.nRoundValue .. ")")
-      printLog("倍率变化：" .. nAfterAllRatio - nBeforeAllRatio .. "  (" .. nBeforeAllRatio .. " -> " .. nAfterAllRatio .. ")")
-    end
+  local nBeforeAllRatio = nBeforeMultiRatio > 0 and nBeforeMultiRatio * nBeforeRatio or nBeforeRatio
+  if self.nRoundMultiRatio <= 0 or not self.nRoundRatio * self.nRoundMultiRatio then
+    local nAfterAllRatio = self.nRoundRatio
+  end
+  nBeforeAllRatio = (math.floor)(nBeforeAllRatio * 10 + 0.5 + 1e-09) / 10
+  nAfterAllRatio = (math.floor)(nAfterAllRatio * 10 + 0.5 + 1e-09) / 10
+  self.nRoundScore = self.nRoundValue * (nAfterAllRatio)
+  local nAddScore = self.nRoundScore - nBeforeScore
+  self.nTurnScore = self.nTurnScore + nAddScore
+  if self.nBestTurnScore < self.nTurnScore then
+    self.nBestTurnScore = self.nTurnScore
+  end
+  if self.nBestRoundScore < self.nRoundScore then
+    self.nBestRoundScore = self.nRoundScore
+  end
+  ;
+  (EventManager.Hit)("PenguinCard_ChangeRoundScore", nBeforeBase, nBeforeAllRatio, nBeforeScore, bFromHandRank)
+  if (NovaAPI.IsEditorPlatform)() then
+    printLog("轮积分变化：" .. nAddScore .. "  (" .. nBeforeScore .. " -> " .. self.nRoundScore .. ")")
+    printLog("基础变化：" .. nAddValue .. "  (" .. nBeforeBase .. " -> " .. self.nRoundValue .. ")")
+    printLog("倍率变化：" .. nAfterAllRatio - nBeforeAllRatio .. "  (" .. nBeforeAllRatio .. " -> " .. nAfterAllRatio .. ")")
   end
 end
 

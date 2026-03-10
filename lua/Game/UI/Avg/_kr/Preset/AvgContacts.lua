@@ -57,7 +57,7 @@ return {
 , 
 {id = 147, icon = "Icon/Head/head_14701_S", name = "캐러멜", landmark = "플라비오 근처, 어쩌면", signature = "공연 니즈는 간식 들고 연락 바람 감사!"}
 , 
-{id = 149, icon = "Icon/Head/head_14901_S", name = "그레이", landmark = "아모르 실버 에리어 은혜 대성전", signature = "주공께 문자 드렸는데, 서비스 지역이 아니라고 합니다"}
+{id = 149, icon = "Icon/Head/head_14901_S", name = "그레이", landmark = "아모르 실버 에리어 은혜 대성전", signature = "주님께 문자 드렸는데, 서비스 지역이 아니라고 합니다"}
 , 
 {id = 150, icon = "Icon/Head/head_15001_S", name = "라루", landmark = "아모르 성밖 숲속 깊은 못 근처", signature = "별의 탑 감자튀김 짱맛, 사람도 물고기도 좋아하는 맛!"}
 , 

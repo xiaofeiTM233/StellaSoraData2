@@ -1,9 +1,7 @@
 local JointDrillLevelData_2 = class("JointDrillLevelData_2")
-local FP = (CS.TrueSync).FP
-local PB = require("pb")
 local AdventureModuleHelper = CS.AdventureModuleHelper
-local TimerManager = require("GameCore.Timer.TimerManager")
 local LocalData = require("GameCore.Data.LocalData")
+local ModuleManager = require("GameCore.Module.ModuleManager")
 local mapEventConfig = {LoadLevelRefresh = "OnEvent_LoadLevelRefresh", AdventureModuleEnter = "OnEvent_AdventureModuleEnter", BattlePause = "OnEvent_Pause", JointDrill_StartTiming = "OnEvent_BattleStart", JointDrill_MonsterSpawn_Type2 = "OnEvent_MonsterSpawn", JointDrill_BossDeath_Type2 = "OnEvent_BossDeath", JointDrill_BattleLvsToggle_Type2 = "OnEvent_BattleLvsToggle", ADVENTURE_LEVEL_UNLOAD_COMPLETE = "OnEvent_UnloadComplete", JointDrill_Gameplay_Time = "OnEvent_JointDrill_Gameplay_Time", JointDrill_DamageValue = "OnEvent_DamageValue", JointDrill_CharDamageValue = "OnEvent_CharDamageValue", GiveUpJointDrill = "OnEvent_GiveUpBattle", RestartJointDrill = "OnEvent_RestartJointDrill", RetreatJointDrill = "OnEvent_RetreatJointDrill", JointDrill_Result = "OnEvent_JointDrill_Result", InputEnable = "OnEvent_InputEnable", JointDrill_StopTime = "OnEvent_JointDrill_StopTime", JointDrillChallengeFinishError = "OnEvent_JointDrillChallengeFinishError", Upload_Dodge_Event = "OnEvent_UploadDodgeEvent", JointDrill_CacheTempData_Suc = "OnEvent_CacheTempData"}
 JointDrillLevelData_2.Init = function(self, parent, nLevelId, nBuildId, nCurLevel, nLevelType)
   -- function num : 0_0 , upvalues : _ENV, AdventureModuleHelper, LocalData
@@ -210,31 +208,37 @@ JointDrillLevelData_2.CheckJointDrillGameOver = function(self)
   -- function num : 0_8 , upvalues : _ENV
   local nChallengeCount = (self.parent):GetJointDrillBattleCount()
   local nAllChallengeCount = (self.parent):GetMaxChallengeCount(self.nLevelId)
-  if nAllChallengeCount <= nChallengeCount then
-    local callback = function(netMsg)
-    -- function num : 0_8_0 , upvalues : self, _ENV
-    self:JointDrillFail((AllEnum.JointDrillResultType).ChallengeEnd, netMsg, self.nCurLevel)
-  end
+  self.recordCallback = function(sRecord)
+    -- function num : 0_8_0 , upvalues : nChallengeCount, nAllChallengeCount, self, _ENV
+    if nAllChallengeCount <= nChallengeCount then
+      local syncCallback = function()
+      -- function num : 0_8_0_0 , upvalues : self, _ENV
+      local callback = function(netMsg)
+        -- function num : 0_8_0_0_0 , upvalues : self, _ENV
+        self:JointDrillFail((AllEnum.JointDrillResultType).ChallengeEnd, netMsg, self.nCurLevel)
+      end
 
-    ;
-    (self.parent):JointDrillGameOver(callback)
-  else
-    do
-      self.recordCallback = function(sRecord)
-    -- function num : 0_8_1 , upvalues : self, _ENV
-    local callback = function(netMsg)
-      -- function num : 0_8_1_0 , upvalues : self, _ENV
+      ;
+      (self.parent):JointDrillGameOver(callback)
+    end
+
+      ;
+      (self.parent):JointDrillSync(self.nCurLevel, self.nGameTime, self.nDamageValue, "", syncCallback)
+    else
+      do
+        local callback = function(netMsg)
+      -- function num : 0_8_0_1 , upvalues : self, _ENV
       self:JointDrillFail((AllEnum.JointDrillResultType).BattleEnd, netMsg, self.nCurLevel)
     end
 
-    ;
-    (self.parent):JointDrillGiveUp(self.nCurLevel, self.nGameTime, self.nDamageValue, sRecord, callback)
-  end
-
-      ;
-      (NovaAPI.DispatchEventWithData)("JointDrill_CacheTempData_Start", nil, {false, true, true, false, 0, 0})
+        ;
+        (self.parent):JointDrillGiveUp(self.nCurLevel, self.nGameTime, self.nDamageValue, sRecord, callback)
+      end
     end
   end
+
+  ;
+  (NovaAPI.DispatchEventWithData)("JointDrill_CacheTempData_Start", nil, {false, true, true, false, 0, 0})
 end
 
 JointDrillLevelData_2.JointDrillFail = function(self, nResultType, netMsg, nLevel)
@@ -425,7 +429,12 @@ JointDrillLevelData_2.OnEvent_BattleLvsToggle = function(self)
 end
 
 JointDrillLevelData_2.OnEvent_UnloadComplete = function(self)
-  -- function num : 0_19
+  -- function num : 0_19 , upvalues : _ENV
+  if self.bInErrorResult then
+    (NovaAPI.EnterModule)("MainMenuModuleScene", true, 17)
+    self.bInErrorResult = false
+    return 
+  end
   if self.bInResult == true then
     return 
   end
@@ -535,13 +544,18 @@ JointDrillLevelData_2.OnEvent_JointDrill_StopTime = function(self)
 end
 
 JointDrillLevelData_2.OnEvent_JointDrillChallengeFinishError = function(self)
-  -- function num : 0_30 , upvalues : _ENV
+  -- function num : 0_30 , upvalues : ModuleManager, AdventureModuleHelper, _ENV
   local callback = function()
-    -- function num : 0_30_0 , upvalues : self, _ENV
+    -- function num : 0_30_0 , upvalues : self, ModuleManager, AdventureModuleHelper, _ENV
     if (self.parent):CheckJointDrillInBattle() then
       (self.parent):JointDrillGameOver(nil, true)
     else
-      self:JointDrillFail((AllEnum.JointDrillResultType).ChallengeEnd, nil, self.nCurLevel)
+      local bInAdventure = (ModuleManager.GetIsAdventure)()
+      if bInAdventure then
+        self.bInErrorResult = true
+        ;
+        (AdventureModuleHelper.LevelStateChanged)(true, 0, true)
+      end
       local wait = function()
       -- function num : 0_30_0_0 , upvalues : _ENV, self
       (coroutine.yield)(((CS.UnityEngine).WaitForEndOfFrame)())

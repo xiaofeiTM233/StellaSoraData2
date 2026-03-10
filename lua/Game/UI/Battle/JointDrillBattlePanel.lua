@@ -48,7 +48,7 @@ JointDrillBattlePanel.OnEnable = function(self)
     -- function num : 0_1_0 , upvalues : _ENV, self
     (coroutine.yield)(((CS.UnityEngine).WaitForEndOfFrame)())
     ;
-    (EventManager.Hit)(EventId.OpenPanel, PanelId.Hud, self.nType)
+    (EventManager.Hit)(EventId.OpenPanel, PanelId.Hud, false, false, self.nType)
     ;
     (EventManager.Hit)(EventId.ClosePanel, PanelId.MainlineFormation)
     ;
