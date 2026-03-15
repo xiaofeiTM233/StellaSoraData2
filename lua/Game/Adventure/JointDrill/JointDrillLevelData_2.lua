@@ -368,7 +368,7 @@ JointDrillLevelData_2.OnEvent_MonsterSpawn = function(self, nBossId, nCfgId, nIn
   end
 
   ;
-  (NovaAPI.DispatchEventWithData)("JointDrill_CacheTempData_Start", nil, {true, true, true, false, 0, 0})
+  (NovaAPI.DispatchEventWithData)("JointDrill_CacheTempData_Start", nil, {false, true, true, false, 0, 0})
 end
 
 JointDrillLevelData_2.OnEvent_BossDeath = function(self, nBattleLv, nTotalTime, nDamageValue, nParam)
