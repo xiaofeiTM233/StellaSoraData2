@@ -24,6 +24,7 @@ local Christmas_20101Data = require("GameCore.Data.DataClass.Activity.Christmas_
 local Miracle_10103Data = require("GameCore.Data.DataClass.Activity.Miracle_10103Data")
 local SpringFestival_10104Data = require("GameCore.Data.DataClass.Activity.SpringFestival_10104Data")
 local WinterNight_10105Data = require("GameCore.Data.DataClass.Activity.WinterNight_10105Data")
+local Postal_10106Data = require("GameCore.Data.DataClass.Activity.Postal_10106Data")
 local PenguinCardActData = require("GameCore.Data.DataClass.Activity.PenguinCardActData")
 PlayerActivityData.Init = function(self)
   -- function num : 0_0 , upvalues : _ENV
@@ -485,7 +486,7 @@ PlayerActivityData.CacheActivityGroupData = function(self)
 end
 
 PlayerActivityData.CreateActivityGroupIns = function(self, actData)
-  -- function num : 0_15 , upvalues : _ENV, SwimThemeData, OurRegiment_10101Data, Dream_10102Data, BreakOut_30101Data, Christmas_20101Data, Miracle_10103Data, SpringFestival_10104Data, WinterNight_10105Data, TimerManager
+  -- function num : 0_15 , upvalues : _ENV, SwimThemeData, OurRegiment_10101Data, Dream_10102Data, BreakOut_30101Data, Christmas_20101Data, Miracle_10103Data, SpringFestival_10104Data, WinterNight_10105Data, Postal_10106Data, TimerManager
   local actIns = nil
   local actCfg = actData
   if actCfg == nil then
@@ -518,6 +519,10 @@ PlayerActivityData.CreateActivityGroupIns = function(self, actData)
                 else
                   if actCfg.ActivityThemeType == (GameEnum.activityThemeType).WinterNight_10105 then
                     actIns = (WinterNight_10105Data.new)(actData)
+                  else
+                    if actCfg.ActivityThemeType == (GameEnum.activityThemeType).Postal_10106 then
+                      actIns = (Postal_10106Data.new)(actData)
+                    end
                   end
                 end
               end
@@ -526,7 +531,7 @@ PlayerActivityData.CreateActivityGroupIns = function(self, actData)
         end
       end
     end
-    -- DECOMPILER ERROR at PC114: Confused about usage of register: R7 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC125: Confused about usage of register: R7 in 'UnsetPending'
 
     ;
     (self.tbAllActivityGroup)[actData.Id] = actIns

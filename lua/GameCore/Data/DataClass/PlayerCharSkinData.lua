@@ -15,7 +15,7 @@ PlayerCharSkinData.Init = function(self)
 end
 
 PlayerCharSkinData.UpdateSkinData = function(self, skinId, handbookId, unlock)
-  -- function num : 0_1 , upvalues : SkinData
+  -- function num : 0_1 , upvalues : SkinData, _ENV
   if (self.tbSkinDataList)[skinId] == nil then
     local skinData = (SkinData.new)(skinId, handbookId, unlock)
     -- DECOMPILER ERROR at PC10: Confused about usage of register: R5 in 'UnsetPending'
@@ -24,8 +24,19 @@ PlayerCharSkinData.UpdateSkinData = function(self, skinId, handbookId, unlock)
     (self.tbSkinDataList)[skinId] = skinData
   else
     do
+      local nLastState = ((self.tbSkinDataList)[skinId]).nUnlock
       ;
       ((self.tbSkinDataList)[skinId]):UpdateUnlockState(unlock)
+      if nLastState ~= unlock then
+        local mapSkinCfg = (ConfigTable.GetData)("CharacterSkin", skinId)
+        if mapSkinCfg == nil then
+          return 
+        end
+        ;
+        (PlayerData.Char):UpdateCharSkinVoiceReddot(false, mapSkinCfg.CharId, skinId)
+        ;
+        (PlayerData.Char):UpdateCharPlotReddot(mapSkinCfg.CharId)
+      end
     end
   end
 end

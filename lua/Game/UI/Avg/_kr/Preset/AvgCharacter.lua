@@ -121,6 +121,10 @@ return {
 , 
 {id = "avg2_003", name = "우드모트 척탄병", name_bg_color = "#0ABEC5"}
 , 
+{id = "avg2_949", name = "미풍 올빼미", name_bg_color = "#0ABEC5", ver = "1.8.0"}
+, 
+{id = "avg2_950", name = "광풍의 푸른 올빼미", name_bg_color = "#0ABEC5", ver = "1.8.0"}
+, 
 {id = "avg2_951", name = "번영의 실체 - 불", name_bg_color = "#0ABEC5", ver = "1.7.0"}
 , 
 {id = "avg2_952", name = "복덩이", name_bg_color = "#0ABEC5", ver = "1.6.0"}
@@ -391,13 +395,15 @@ return {
 , 
 {id = "avg3_206", name = "루나르", name_bg_color = "#394444"}
 , 
-{id = "avg3_207", name = "***", name_bg_color = "#0ABEC5", ver = "1.8.0"}
+{id = "avg3_207", name = "미알사", name_bg_color = "#0ABEC5", ver = "1.8.0"}
 , 
-{id = "avg3_208", name = "***", name_bg_color = "#0ABEC5", ver = "1.8.0"}
+{id = "avg3_208", name = "모래전갈 졸개(여)", name_bg_color = "#0ABEC5", ver = "1.8.0"}
 , 
-{id = "avg3_209", name = "***", name_bg_color = "#0ABEC5", ver = "1.8.0"}
+{id = "avg3_209", name = "모래전갈 졸개(남)", name_bg_color = "#0ABEC5", ver = "1.8.0"}
 , 
-{id = "avg3_210", name = "***", name_bg_color = "#e4a47a", ver = "1.8.0"}
+{id = "avg3_210", name = "하사나", name_bg_color = "#e4a47a", ver = "1.8.0"}
+, 
+{id = "avg3_211", name = "보물찾기 여행단 두목", name_bg_color = "#0ABEC5", ver = "1.8.0"}
 , 
 {id = "avg3_873", name = "클레어", name_bg_color = "#0ABEC5"}
 , 

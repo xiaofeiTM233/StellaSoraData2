@@ -93,37 +93,47 @@ StarTowerBookData.InitConfig = function(self)
     (((self.mapPotentialQuest)[line.CharId])[line.Id]).Status = (AllEnum.BookQuestStatus).UnComplete
     local nAllProgress = 0
     local nParam = 0
-    do
-      if line.Cond == (GameEnum.towerBookPotentialCond).TowerBookCharPotentialQuantity then
-        local params = decodeJson(line.Params)
-        nParam = tonumber(params[1])
-        nAllProgress = tonumber(params[2])
+    local sDesc = ""
+    if line.Cond == (GameEnum.towerBookPotentialCond).TowerBookCharPotentialQuantity then
+      local params = decodeJson(line.Params)
+      nParam = tonumber(params[1])
+      nAllProgress = tonumber(params[2])
+      local mapCharCfg = (ConfigTable.GetData_Character)(nParam)
+      if mapCharCfg ~= nil and (self.mapPotentialBookBrief)[nParam] ~= nil then
+        local nAllCount = ((self.mapPotentialBookBrief)[nParam]).AllCount
+        if nAllProgress == nAllCount then
+          sDesc = orderedFormat((ConfigTable.GetUIText)("StarTower_Book_Potential_Quest_Desc_2"), mapCharCfg.Name)
+        else
+          sDesc = orderedFormat((ConfigTable.GetUIText)("StarTower_Book_Potential_Quest_Desc_1"), mapCharCfg.Name, nAllProgress)
+        end
       end
-      -- DECOMPILER ERROR at PC49: Confused about usage of register: R3 in 'UnsetPending'
+    end
+    do
+      -- DECOMPILER ERROR at PC83: Confused about usage of register: R4 in 'UnsetPending'
 
       ;
       (((self.mapPotentialQuest)[line.CharId])[line.Id]).Cond = line.Cond
-      -- DECOMPILER ERROR at PC55: Confused about usage of register: R3 in 'UnsetPending'
+      -- DECOMPILER ERROR at PC89: Confused about usage of register: R4 in 'UnsetPending'
 
       ;
       (((self.mapPotentialQuest)[line.CharId])[line.Id]).Param = nParam
-      -- DECOMPILER ERROR at PC61: Confused about usage of register: R3 in 'UnsetPending'
+      -- DECOMPILER ERROR at PC95: Confused about usage of register: R4 in 'UnsetPending'
 
       ;
       (((self.mapPotentialQuest)[line.CharId])[line.Id]).AllProgress = nAllProgress
-      -- DECOMPILER ERROR at PC67: Confused about usage of register: R3 in 'UnsetPending'
+      -- DECOMPILER ERROR at PC101: Confused about usage of register: R4 in 'UnsetPending'
 
       ;
       (((self.mapPotentialQuest)[line.CharId])[line.Id]).CurProgress = 0
       local tbReward = {RewardId = line.ItemId, RewardCount = line.ItemQty}
-      -- DECOMPILER ERROR at PC78: Confused about usage of register: R4 in 'UnsetPending'
+      -- DECOMPILER ERROR at PC112: Confused about usage of register: R5 in 'UnsetPending'
 
       ;
       (((self.mapPotentialQuest)[line.CharId])[line.Id]).Reward = tbReward
-      -- DECOMPILER ERROR at PC89: Confused about usage of register: R4 in 'UnsetPending'
+      -- DECOMPILER ERROR at PC118: Confused about usage of register: R5 in 'UnsetPending'
 
       ;
-      (((self.mapPotentialQuest)[line.CharId])[line.Id]).Desc = (UTILS.ParseParamDesc)(line.Desc, line)
+      (((self.mapPotentialQuest)[line.CharId])[line.Id]).Desc = sDesc
     end
   end
 

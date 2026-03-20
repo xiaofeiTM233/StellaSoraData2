@@ -794,76 +794,84 @@ ActivityAvgData.SortStoryList = function(self, chapterId)
       storyIdToNumId[config.StoryId] = numId
     end
   end
-  local currentStoryId = nil
+  local parentToChildren = {}
+  local rootChildren = {}
   for storyId,config in pairs(storyIdToConfig) do
-    -- DECOMPILER ERROR at PC46: Unhandled construct in 'MakeBoolean' P1
-
-    if type(config.ParentStoryId) == "table" and (#config.ParentStoryId == 0 or (config.ParentStoryId)[1] == "") then
-      currentStoryId = storyId
-      ;
-      (table.insert)(sortedList, storyIdToNumId[storyId])
-      break
-    end
-    if config.ParentStoryId == "" then
-      currentStoryId = storyId
-      ;
-      (table.insert)(sortedList, storyIdToNumId[storyId])
-      break
-    end
-  end
-  do
-    if currentStoryId == nil then
-      return sortedList
-    end
-    local visited = {}
-    visited[currentStoryId] = true
-    do
-      while #sortedList < #list do
-        local found = false
-        for storyId,config in pairs(storyIdToConfig) do
-          if not visited[storyId] then
-            local hasParent = false
-            if type(config.ParentStoryId) == "table" then
-              for _,parentId in ipairs(config.ParentStoryId) do
-                if parentId == currentStoryId then
-                  hasParent = true
-                  break
-                end
+    local parentIds = config.ParentStoryId
+    local bIsRoot = false
+    if #parentIds ~= 0 and parentIds[1] ~= "" then
+      bIsRoot = type(parentIds) ~= "table"
+      if parentIds ~= "" then
+        bIsRoot = type(parentIds) ~= "string"
+        if bIsRoot then
+          (table.insert)(rootChildren, storyId)
+        else
+          if type(parentIds) ~= "table" or not parentIds then
+            local tbParents = {parentIds}
+          end
+          for _,parentId in ipairs(tbParents) do
+            if parentId ~= "" then
+              if parentToChildren[parentId] == nil then
+                parentToChildren[parentId] = {}
               end
-            else
-              do
-                do
-                  if config.ParentStoryId == currentStoryId then
-                    hasParent = true
-                  end
-                  if hasParent then
-                    (table.insert)(sortedList, storyIdToNumId[storyId])
-                    visited[storyId] = true
-                    currentStoryId = storyId
-                    found = true
-                    break
-                  end
-                  -- DECOMPILER ERROR at PC115: LeaveBlock: unexpected jumping out DO_STMT
-
-                  -- DECOMPILER ERROR at PC115: LeaveBlock: unexpected jumping out IF_ELSE_STMT
-
-                  -- DECOMPILER ERROR at PC115: LeaveBlock: unexpected jumping out IF_STMT
-
-                  -- DECOMPILER ERROR at PC115: LeaveBlock: unexpected jumping out IF_THEN_STMT
-
-                  -- DECOMPILER ERROR at PC115: LeaveBlock: unexpected jumping out IF_STMT
-
-                end
-              end
+              ;
+              (table.insert)(parentToChildren[parentId], storyId)
             end
           end
         end
-      end
-      if found then
-        return sortedList
+        -- DECOMPILER ERROR at PC95: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+        -- DECOMPILER ERROR at PC95: LeaveBlock: unexpected jumping out IF_STMT
+
+        -- DECOMPILER ERROR at PC95: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+        -- DECOMPILER ERROR at PC95: LeaveBlock: unexpected jumping out IF_STMT
+
       end
     end
   end
+  local sortByNumId = function(children)
+    -- function num : 0_28_0 , upvalues : _ENV, storyIdToNumId
+    (table.sort)(children, function(a, b)
+      -- function num : 0_28_0_0 , upvalues : storyIdToNumId
+      do return storyIdToNumId[a] < storyIdToNumId[b] end
+      -- DECOMPILER ERROR: 1 unprocessed JMP targets
+    end
+)
+  end
+
+  sortByNumId(rootChildren)
+  for _,children in pairs(parentToChildren) do
+    sortByNumId(children)
+  end
+  local visited = {}
+  local queue = {}
+  for _,storyId in ipairs(rootChildren) do
+    if not visited[storyId] then
+      visited[storyId] = true
+      ;
+      (table.insert)(queue, storyId)
+    end
+  end
+  local head = 1
+  while head <= #queue do
+    local storyId = queue[head]
+    head = head + 1
+    ;
+    (table.insert)(sortedList, storyIdToNumId[storyId])
+    local children = parentToChildren[storyId]
+    if children ~= nil then
+      for _,childId in ipairs(children) do
+        if not visited[childId] then
+          visited[childId] = true
+          ;
+          (table.insert)(queue, childId)
+        end
+      end
+    end
+  end
+  do return sortedList end
+  -- DECOMPILER ERROR: 15 unprocessed JMP targets
 end
 
 ActivityAvgData.IsActivityAvgReaded = function(self, activityId, storyId)

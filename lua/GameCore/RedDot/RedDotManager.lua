@@ -167,23 +167,8 @@ RedDotManager.RefreshRedDotShow = function(sKey, param)
   end
 end
 
-RedDotManager.PrintRedDot = function(sKey, param, bParent, bLeaf)
-  -- function num : 0_8 , upvalues : DEBUG_OPEN, RedDotManager
-  if not DEBUG_OPEN then
-    return 
-  end
-  local bCheck, sNodeKey = (RedDotManager.GetNodeKey)(sKey, param)
-  if not bCheck then
-    return 
-  end
-  local node = (RedDotManager.GetNode)(sNodeKey)
-  if node ~= nil then
-    node:PrintRedDot(bParent, bLeaf)
-  end
-end
-
 RedDotManager.GetNodeKey = function(sKey, param)
-  -- function num : 0_9 , upvalues : _ENV, stringSplit
+  -- function num : 0_8 , upvalues : _ENV, stringSplit
   local sNodeKey = ""
   local bCheck = true
   if sKey == nil then
@@ -227,7 +212,7 @@ RedDotManager.GetNodeKey = function(sKey, param)
 end
 
 RedDotManager.GetNode = function(sNodeKey)
-  -- function num : 0_10 , upvalues : rootNode, RedDotNode, _ENV, RedDotManager
+  -- function num : 0_9 , upvalues : rootNode, RedDotNode, _ENV, RedDotManager
   if rootNode == nil then
     rootNode = (RedDotNode.new)(RedDotDefine.Root)
   end
@@ -244,24 +229,65 @@ RedDotManager.GetNode = function(sNodeKey)
 end
 
 RedDotManager.CheckNodeExist = function(sNodeKey)
-  -- function num : 0_11 , upvalues : RedDotManager
+  -- function num : 0_10 , upvalues : RedDotManager
   do return (RedDotManager.GetKeyList)(sNodeKey) ~= nil end
   -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
 RedDotManager.GetKeyList = function(sNodeKey)
-  -- function num : 0_12 , upvalues : mapKeyList
+  -- function num : 0_11 , upvalues : mapKeyList
   return mapKeyList[sNodeKey]
 end
 
 RedDotManager.ParseKey = function(sNodeKey)
-  -- function num : 0_13 , upvalues : RedDotManager, stringSplit, mapKeyList
+  -- function num : 0_12 , upvalues : RedDotManager, stringSplit, mapKeyList
   local tbKeyList = (RedDotManager.GetKeyList)(sNodeKey)
   if tbKeyList == nil and not stringSplit(sNodeKey, ".") then
     tbKeyList = {}
   end
   mapKeyList[sNodeKey] = tbKeyList
   return tbKeyList
+end
+
+RedDotManager.OpenGMDebug = function(bOpen)
+  -- function num : 0_13 , upvalues : DEBUG_OPEN
+  DEBUG_OPEN = bOpen
+end
+
+RedDotManager.PrintRedDot = function(sKey, param, bLeaf)
+  -- function num : 0_14 , upvalues : DEBUG_OPEN, RedDotManager, _ENV
+  if not DEBUG_OPEN then
+    return 
+  end
+  local tbNode = {}
+  local bCheck, sNodeKey = (RedDotManager.GetNodeKey)(sKey, param)
+  if not bCheck then
+    return 
+  end
+  local node = (RedDotManager.GetNode)(sNodeKey)
+  if node ~= nil then
+    node:PrintRedDot(bLeaf, tbNode)
+  end
+  if tbNode ~= nil and #tbNode ~= 0 then
+    for k,v in ipairs(tbNode) do
+      local tbKey = {}
+      ;
+      (table.insert)(tbKey, v.sNodeKey)
+      if bLeaf then
+        v:GetParentKey(tbKey)
+      end
+      local sKey = ""
+      for i = #tbKey, 1, -1 do
+        if i == #tbKey then
+          sKey = tbKey[i]
+        else
+          sKey = sKey .. "->" .. tbKey[i]
+        end
+      end
+      local bindObjCount = v:GetBindObjCount()
+      printError((string.format)("[RedDot] key = %s, redDotCount = %s, bindObjCount = %s", sKey, v.nRedDotCount, bindObjCount))
+    end
+  end
 end
 
 return RedDotManager

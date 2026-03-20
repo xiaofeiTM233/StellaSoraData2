@@ -35,7 +35,6 @@ local charFavorLevelUnlockVoice = {
 , 
 {nLevel = 30, sUnlockVoiceKey = "afflv4"}
 }
-local voiceRandomSkinLimit = {"posterchat"}
 PlayerVoiceData.Init = function(self)
   -- function num : 0_0 , upvalues : board_free_trigger_none, _ENV
   self.bFirstEnterGame = true
@@ -121,7 +120,7 @@ PlayerVoiceData.PlayCharVoice = function(self, voiceKey, nCharId, nSkinId, bNpc)
         do
           nSkinId = (PlayerData.Char):GetCharSkinId(nCharId)
           nSkinId = 0
-          local nVoiceId = WwiseAudioMgr:WwiseVoice_Play(nCharId, tbVoiceKey, nil, nSkinId)
+          local nVoiceId = WwiseAudioMgr:WwiseVoice_Play(nCharId, tbVoiceKey, nil, nSkinId, tbVoiceKey)
           if nVoiceId ~= nil and nVoiceId ~= 0 then
             self.nCurVoiceId = nVoiceId
           end
@@ -206,8 +205,32 @@ local getBoardClickFreeTime = function(bNpc)
   return bNpc and npc_board_click_free_time or board_click_free_time
 end
 
+PlayerVoiceData.GetCurBoardCharIdAndSkinId = function(self)
+  -- function num : 0_10 , upvalues : _ENV, Actor2DManager, TF
+  local curBoardCharId, curSkinId = 0, 0
+  local curBoardData = (PlayerData.Board):GetCurBoardData()
+  if curBoardData ~= nil and curBoardData:GetType() == (GameEnum.handbookType).SKIN then
+    curBoardCharId = curBoardData:GetCharId()
+    curSkinId = curBoardData:GetSkinId()
+    local curActor2DType = (Actor2DManager.GetCurrentActor2DType)()
+    local mapCharCfg = (ConfigTable.GetData_Character)(curBoardCharId)
+    if mapCharCfg ~= nil and mapCharCfg.DefaultSkinId ~= curSkinId and curActor2DType == TF then
+      local mapSkinCfg1 = (ConfigTable.GetData)("CharacterSkin", mapCharCfg.DefaultSkinId)
+      if mapSkinCfg1 ~= nil then
+        local mapSkinCfg2 = (ConfigTable.GetData)("CharacterSkin", curSkinId)
+        if mapSkinCfg2 ~= nil and mapSkinCfg2.CharacterCG == mapSkinCfg1.CharacterCG then
+          curSkinId = mapCharCfg.DefaultSkinId
+        end
+      end
+    end
+  end
+  do
+    return curBoardCharId, curSkinId
+  end
+end
+
 PlayerVoiceData.StartBoardFreeTimer = function(self, nNpcId, nSkinId)
-  -- function num : 0_10 , upvalues : board_free_trigger_ex_hang, TimerManager
+  -- function num : 0_11 , upvalues : board_free_trigger_ex_hang, TimerManager
   if nNpcId ~= nil or self.bNpc then
     self.bNpc = true
     if nNpcId ~= nil then
@@ -228,7 +251,7 @@ PlayerVoiceData.StartBoardFreeTimer = function(self, nNpcId, nSkinId)
 end
 
 PlayerVoiceData.CheckBoardFree = function(self)
-  -- function num : 0_11 , upvalues : getBoardClickFreeTime, board_free_trigger_none, board_free_trigger_hang, board_free_trigger_ex_hang
+  -- function num : 0_12 , upvalues : getBoardClickFreeTime, board_free_trigger_none, board_free_trigger_hang, board_free_trigger_ex_hang
   self.nBoardFreeTime = self.nBoardFreeTime + 0.1
   if getBoardClickFreeTime(self.bNpc) <= self.nBoardFreeTime then
     self:ResetBoardFreeTimer()
@@ -245,7 +268,7 @@ PlayerVoiceData.CheckBoardFree = function(self)
 end
 
 PlayerVoiceData.ResetBoardFreeTimer = function(self)
-  -- function num : 0_12 , upvalues : TimerManager
+  -- function num : 0_13 , upvalues : TimerManager
   if self.boardFreeTimer ~= nil then
     (TimerManager.Remove)(self.boardFreeTimer, false)
   end
@@ -254,10 +277,10 @@ PlayerVoiceData.ResetBoardFreeTimer = function(self)
 end
 
 PlayerVoiceData.StartBoardPlayTimer = function(self)
-  -- function num : 0_13 , upvalues : TimerManager
+  -- function num : 0_14 , upvalues : TimerManager
   if self.boardPlayTimer == nil then
     self.boardPlayTimer = (TimerManager.Add)(1, self.nVoiceDuration, nil, function()
-    -- function num : 0_13_0 , upvalues : self
+    -- function num : 0_14_0 , upvalues : self
     self:StartBoardFreeTimer()
   end
 , true, true, false)
@@ -265,7 +288,7 @@ PlayerVoiceData.StartBoardPlayTimer = function(self)
 end
 
 PlayerVoiceData.ResetBoardPlayTimer = function(self)
-  -- function num : 0_14 , upvalues : TimerManager
+  -- function num : 0_15 , upvalues : TimerManager
   if self.boardPlayTimer ~= nil then
     (TimerManager.Remove)(self.boardPlayTimer, false)
   end
@@ -273,15 +296,15 @@ PlayerVoiceData.ResetBoardPlayTimer = function(self)
   self.nVoiceDuration = 0
 end
 
-PlayerVoiceData.PlayBoardSelectVoice = function(self, nCharId)
-  -- function num : 0_15
+PlayerVoiceData.PlayBoardSelectVoice = function(self, nCharId, nSkinId)
+  -- function num : 0_16
   local sVoiceKey = "greet"
-  self:PlayCharVoice(sVoiceKey, nCharId)
+  self:PlayCharVoice(sVoiceKey, nCharId, nSkinId)
 end
 
 PlayerVoiceData.PlayMainViewOpenVoice = function(self)
-  -- function num : 0_16 , upvalues : _ENV, ClientManager
-  local curBoardCharId = (PlayerData.Board):GetCurBoardCharID()
+  -- function num : 0_17 , upvalues : ClientManager, _ENV
+  local curBoardCharId, curSkinId = self:GetCurBoardCharIdAndSkinId()
   self:CheckHoliday()
   local bPlayFirst = false
   local tbVoiceKey = {}
@@ -289,7 +312,7 @@ PlayerVoiceData.PlayMainViewOpenVoice = function(self)
     local nServerTimeStamp = ClientManager.serverTimeStamp
     local nHour = tonumber((os.date)("%H", nServerTimeStamp))
     local getIndex = function(nHour)
-    -- function num : 0_16_0
+    -- function num : 0_17_0
     if nHour >= 6 and nHour < 12 then
       return 1, "greetmorn"
     else
@@ -317,13 +340,13 @@ PlayerVoiceData.PlayMainViewOpenVoice = function(self)
       if self:CheckBirthday() then
         (table.insert)(tbVoiceKey, "birth")
       end
-      self:PlayCharVoice(tbVoiceKey, curBoardCharId)
+      self:PlayCharVoice(tbVoiceKey, curBoardCharId, curSkinId)
     end
   end
 end
 
 PlayerVoiceData.CheckContinuousClick = function(self)
-  -- function num : 0_17 , upvalues : getBoardClickTime
+  -- function num : 0_18 , upvalues : getBoardClickTime
   self.nBoardClickTime = self.nBoardClickTime + 0.1
   local nTime = getBoardClickTime(self.bNpc)
   if nTime < self.nBoardClickTime then
@@ -332,7 +355,7 @@ PlayerVoiceData.CheckContinuousClick = function(self)
 end
 
 PlayerVoiceData.ResetBoardClickTimer = function(self)
-  -- function num : 0_18 , upvalues : TimerManager
+  -- function num : 0_19 , upvalues : TimerManager
   if self.boardClickTimer ~= nil then
     (TimerManager.Remove)(self.boardClickTimer, false)
   end
@@ -342,7 +365,7 @@ PlayerVoiceData.ResetBoardClickTimer = function(self)
 end
 
 PlayerVoiceData.PlayBoardClickVoice = function(self)
-  -- function num : 0_19 , upvalues : TimerManager, _ENV, getBoardClickMaxCount, Actor2DManager, TN, TF, charFavorLevelClickVoice
+  -- function num : 0_20 , upvalues : TimerManager, getBoardClickMaxCount, _ENV, Actor2DManager, TN, TF, charFavorLevelClickVoice
   self.bNpc = false
   self.nNpcId = 0
   self.nNPCSkinId = 0
@@ -350,7 +373,7 @@ PlayerVoiceData.PlayBoardClickVoice = function(self)
     self.boardClickTimer = (TimerManager.Add)(0, 0.1, self, self.CheckContinuousClick, true, true, false)
   end
   self.nContinuousClickCount = self.nContinuousClickCount + 1
-  local curBoardCharId = (PlayerData.Board):GetCurBoardCharID()
+  local curBoardCharId, curSkinId = self:GetCurBoardCharIdAndSkinId()
   if curBoardCharId ~= nil then
     local tbVoiceKey = {}
     if getBoardClickMaxCount(self.bNpc) < self.nContinuousClickCount then
@@ -380,14 +403,14 @@ PlayerVoiceData.PlayBoardClickVoice = function(self)
     do
       if #self.tbHolidayVoiceKey > 0 then
         for _,v in ipairs(self.tbHolidayVoiceKey) do
-          (table.insert)(tbVoiceKey, R10_PC101)
+          (table.insert)(tbVoiceKey, R11_PC99)
         end
       end
       do
         if self:CheckBirthday() then
           (table.insert)(tbVoiceKey, "birth")
         end
-        local nVoiceId = self:PlayCharVoice(tbVoiceKey, curBoardCharId)
+        local nVoiceId = self:PlayCharVoice(tbVoiceKey, curBoardCharId, curSkinId)
         if nVoiceId ~= nil and nVoiceId ~= 0 then
           (PlayerData.Quest):SendClientEvent((GameEnum.questCompleteCondClient).InteractL2D)
         end
@@ -397,7 +420,7 @@ PlayerVoiceData.PlayBoardClickVoice = function(self)
 end
 
 PlayerVoiceData.PlayBoardNPCClickVoice = function(self, nNpcId, nSkinId)
-  -- function num : 0_20 , upvalues : TimerManager, getBoardClickMaxCount, _ENV
+  -- function num : 0_21 , upvalues : TimerManager, getBoardClickMaxCount, _ENV
   self.bNpc = true
   self.nNpcId = nNpcId
   self.nNPCSkinId = nSkinId or 0
@@ -420,37 +443,41 @@ PlayerVoiceData.PlayBoardNPCClickVoice = function(self, nNpcId, nSkinId)
 end
 
 PlayerVoiceData.PlayBoardFreeVoice = function(self)
-  -- function num : 0_21 , upvalues : _ENV
-  local curBoardCharId, sVoiceKey = nil, nil
+  -- function num : 0_22
+  local curBoardCharId, curSkinId, sVoiceKey = nil, nil, nil
   if not self.bNpc then
-    curBoardCharId = (PlayerData.Board):GetCurBoardCharID()
+    curBoardCharId = self:GetCurBoardCharIdAndSkinId()
     sVoiceKey = "hang"
   else
     curBoardCharId = self.nNpcId
+    -- DECOMPILER ERROR at PC11: Overwrote pending register: R2 in 'AssignReg'
+
     sVoiceKey = "hang_npc"
   end
   if curBoardCharId ~= nil then
-    self:PlayCharVoice(sVoiceKey, curBoardCharId, self.nNPCSkinId, self.bNpc)
+    self:PlayCharVoice(sVoiceKey, curBoardCharId, curSkinId, self.bNpc)
   end
 end
 
 PlayerVoiceData.PlayBoardFreeLongTimeVoice = function(self)
-  -- function num : 0_22 , upvalues : _ENV
-  local curBoardCharId, sVoiceKey = nil, nil
+  -- function num : 0_23
+  local curBoardCharId, curSkinId, sVoiceKey = nil, nil, nil
   if not self.bNpc then
-    curBoardCharId = (PlayerData.Board):GetCurBoardCharID()
+    curBoardCharId = self:GetCurBoardCharIdAndSkinId()
     sVoiceKey = "exhang"
   else
     curBoardCharId = self.nNpcId
+    -- DECOMPILER ERROR at PC11: Overwrote pending register: R2 in 'AssignReg'
+
     sVoiceKey = "exhang_npc"
   end
   if curBoardCharId ~= nil then
-    self:PlayCharVoice(sVoiceKey, curBoardCharId, self.nNPCSkinId, self.bNpc)
+    self:PlayCharVoice(sVoiceKey, curBoardCharId, curSkinId, self.bNpc)
   end
 end
 
 PlayerVoiceData.GetNPCGreetTimeVoiceKey = function(self)
-  -- function num : 0_23 , upvalues : ClientManager, _ENV
+  -- function num : 0_24 , upvalues : ClientManager, _ENV
   local sTimeVoice = ""
   local nServerTimeStamp = ClientManager.serverTimeStamp
   local nHour = tonumber((os.date)("%H", nServerTimeStamp))
@@ -467,7 +494,7 @@ PlayerVoiceData.GetNPCGreetTimeVoiceKey = function(self)
 end
 
 PlayerVoiceData.PlayBattleResultVoice = function(self, tbChar, bWin)
-  -- function num : 0_24 , upvalues : _ENV
+  -- function num : 0_25 , upvalues : _ENV
   local nIndex = (math.random)(1, #tbChar)
   local nCharId = tbChar[nIndex]
   local sVoiceKey = bWin and "win" or "lose"
@@ -475,7 +502,7 @@ PlayerVoiceData.PlayBattleResultVoice = function(self, tbChar, bWin)
 end
 
 PlayerVoiceData.CheckPlayGiftVoice = function(self, nLevel, nLastLevel)
-  -- function num : 0_25 , upvalues : charFavorLevelUnlockVoice
+  -- function num : 0_26 , upvalues : charFavorLevelUnlockVoice
   local bPlay = true
   if nLastLevel ~= nLevel then
     for i = 1, #charFavorLevelUnlockVoice do
@@ -491,7 +518,7 @@ PlayerVoiceData.CheckPlayGiftVoice = function(self, nLevel, nLastLevel)
 end
 
 PlayerVoiceData.PlayCharFavourUpVoice = function(self, nCharId, nLastFavourLevel)
-  -- function num : 0_26 , upvalues : _ENV, charFavorLevelUnlockVoice
+  -- function num : 0_27 , upvalues : _ENV, charFavorLevelUnlockVoice
   local nVoiceId = nil
   local mapData = (PlayerData.Char):GetCharAffinityData(nCharId)
   if mapData ~= nil then
@@ -512,7 +539,7 @@ PlayerVoiceData.PlayCharFavourUpVoice = function(self, nCharId, nLastFavourLevel
 end
 
 PlayerVoiceData.ClearTimer = function(self)
-  -- function num : 0_27
+  -- function num : 0_28
   self:ResetBoardPlayTimer()
   self:ResetBoardFreeTimer()
   self:ResetBoardClickTimer()
@@ -523,7 +550,7 @@ PlayerVoiceData.ClearTimer = function(self)
 end
 
 PlayerVoiceData.OnEvent_UIOperate = function(self)
-  -- function num : 0_28 , upvalues : board_free_trigger_none
+  -- function num : 0_29 , upvalues : board_free_trigger_none
   self.nBoardFreeTime = 0
   self.nTriggerFreeVoiceState = board_free_trigger_none
   if self.bStartBoardClickTimer and self.nVoiceDuration == 0 then
@@ -532,7 +559,7 @@ PlayerVoiceData.OnEvent_UIOperate = function(self)
 end
 
 PlayerVoiceData.OnEvent_AvgVoiceDuration = function(self, nDuration)
-  -- function num : 0_29 , upvalues : board_free_trigger_ex_hang
+  -- function num : 0_30 , upvalues : board_free_trigger_ex_hang
   self:ResetBoardPlayTimer()
   self.nVoiceDuration = nDuration
   if self.bStartBoardClickTimer and self.nTriggerFreeVoiceState ~= board_free_trigger_ex_hang then
@@ -542,7 +569,7 @@ PlayerVoiceData.OnEvent_AvgVoiceDuration = function(self, nDuration)
 end
 
 PlayerVoiceData.OnEvent_NewDay = function(self)
-  -- function num : 0_30
+  -- function num : 0_31
   self:CheckHoliday()
 end
 

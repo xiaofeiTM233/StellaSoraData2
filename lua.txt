@@ -80,6 +80,11 @@ Game/UI/ActivityTheme/10105/Shop/ActivityShopPanel.lua
 Game/UI/ActivityTheme/10105/Story/WinterNightStoryPanel.lua
 Game/UI/ActivityTheme/10105/Task/WinterNightTaskPanel.lua
 Game/UI/ActivityTheme/10105/WinterNightThemePanel.lua
+Game/UI/ActivityTheme/10106/ActivityLevels/ActivityLevelsSelectPanel.lua
+Game/UI/ActivityTheme/10106/PostalThemePanel.lua
+Game/UI/ActivityTheme/10106/Shop/ActivityShopPanel.lua
+Game/UI/ActivityTheme/10106/Story/PostalStoryPanel.lua
+Game/UI/ActivityTheme/10106/Task/PostalTaskPanel.lua
 Game/UI/ActivityTheme/20101/ActivityLevels/ActivityLevelsSelectPanel.lua
 Game/UI/ActivityTheme/20101/ChristmasThemePanel.lua
 Game/UI/ActivityTheme/20101/Shop/ActivityShopPanel.lua
@@ -380,6 +385,7 @@ GameCore/Data/DataClass/Activity/OurRegiment_10101Data.lua
 GameCore/Data/DataClass/Activity/PenguinCardActData.lua
 GameCore/Data/DataClass/Activity/PeriodicQuestActData.lua
 GameCore/Data/DataClass/Activity/PlayerActivityData.lua
+GameCore/Data/DataClass/Activity/Postal_10106Data.lua
 GameCore/Data/DataClass/Activity/SpringFestival_10104Data.lua
 GameCore/Data/DataClass/Activity/SwimThemeData.lua
 GameCore/Data/DataClass/Activity/ThrowGiftData.lua

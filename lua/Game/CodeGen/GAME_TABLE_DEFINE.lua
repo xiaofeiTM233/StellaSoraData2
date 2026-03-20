@@ -868,9 +868,7 @@ StarTowerBookFateCardQuest = {Key = true,
 Lang = {"Desc"}
 }
 , 
-StarTowerBookPotentialReward = {Key = true, 
-Lang = {"Desc"}
-}
+StarTowerBookPotentialReward = {Key = true}
 , 
 StarTowerBuild = {Key = true}
 , 

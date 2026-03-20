@@ -1043,10 +1043,10 @@ PlayerMallData.SendMallPackageListReq = function(self, callback)
 end
 
 PlayerMallData.SendMallPackageOrderReq = function(self, sId, callback)
-  -- function num : 0_48 , upvalues : _ENV, WwiseAudioMgr
+  -- function num : 0_48 , upvalues : _ENV
   local mapMsg = {Value = sId}
   local successCallback = function(_, mapData)
-    -- function num : 0_48_0 , upvalues : _ENV, callback, WwiseAudioMgr
+    -- function num : 0_48_0 , upvalues : _ENV, callback
     if mapData.Order then
       printLog("创建订单：" .. (mapData.Order).Id)
       callback(mapData.Order)
@@ -1056,7 +1056,6 @@ PlayerMallData.SendMallPackageOrderReq = function(self, sId, callback)
       local bMoney = false
       ;
       (EventManager.Hit)("MallOrderClear", bMoney)
-      WwiseAudioMgr:SetState("system", "shop_purchased")
     end
   end
 
@@ -1079,15 +1078,14 @@ PlayerMallData.SendMallShopListReq = function(self, callback)
 end
 
 PlayerMallData.SendMallShopOrderReq = function(self, sId, nCount)
-  -- function num : 0_50 , upvalues : _ENV, WwiseAudioMgr
+  -- function num : 0_50 , upvalues : _ENV
   local mapMsg = {Id = sId, Qty = nCount}
   local successCallback = function(_, mapData)
-    -- function num : 0_50_0 , upvalues : _ENV, WwiseAudioMgr
+    -- function num : 0_50_0 , upvalues : _ENV
     (UTILS.OpenReceiveByChangeInfo)(mapData)
     local bMoney = false
     ;
     (EventManager.Hit)("MallOrderClear", bMoney)
-    WwiseAudioMgr:SetState("system", "shop_purchased")
   end
 
   ;

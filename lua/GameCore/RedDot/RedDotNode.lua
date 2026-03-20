@@ -192,34 +192,39 @@ RedDotNode.CheckLeafNode = function(self)
   -- DECOMPILER ERROR: 1 unprocessed JMP targets
 end
 
-RedDotNode.PrintRedDot = function(self, bParent, bLeaf)
+RedDotNode.PrintRedDot = function(self, bLeaf, tbNode)
   -- function num : 0_12 , upvalues : _ENV
   if self.sNodeKey == "Root" then
     return 
   end
-  local sObj = ""
+  ;
+  (table.insert)(tbNode, self)
+  if bLeaf and self.tbChildNodeList ~= nil then
+    for _,v in ipairs(self.tbChildNodeList) do
+      v:PrintRedDot(true, tbNode)
+    end
+  end
+end
+
+RedDotNode.GetParentKey = function(self, tbKey)
+  -- function num : 0_13 , upvalues : _ENV
+  if self.parentNode ~= nil and (self.parentNode).sNodeKey ~= "Root" then
+    (table.insert)(tbKey, (self.parentNode).sNodeKey)
+    ;
+    (self.parentNode):GetParentKey(tbKey)
+  end
+end
+
+RedDotNode.GetBindObjCount = function(self)
+  -- function num : 0_14 , upvalues : _ENV
   local nCount = 0
   if self.tbObjNode ~= nil then
-    for nInsId,v in pairs(self.tbObjNode) do
+    for _,v in pairs(self.tbObjNode) do
       nCount = nCount + 1
-      sObj = sObj .. (string.format)("%s | %s", nInsId, (v.gameObject):GetInstanceID())
-      sObj = sObj .. "\n"
     end
-    local sLog = (string.format)("<color=red>[RedDot]</color> 节点key %s|红点state %s|绑定gameObject数量 %s\n", self.sNodeKey, self.nRedDotCount, nCount)
-    sLog = sLog .. sObj
-    traceback(sLog)
   end
   do
-    -- DECOMPILER ERROR at PC50: Unhandled construct in 'MakeBoolean' P1
-
-    if bParent and self.parentNode ~= nil then
-      (self.parentNode):PrintRedDot(true)
-    end
-    if bLeaf and self.tbChildNodeList ~= nil then
-      for _,v in ipairs(self.tbChildNodeList) do
-        v:PrintRedDot(nil, true)
-      end
-    end
+    return nCount
   end
 end
 

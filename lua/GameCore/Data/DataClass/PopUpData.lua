@@ -154,6 +154,9 @@ end
 PopUpData.IsNeedPopUp = function(self, popupId, localData)
   -- function num : 0_9 , upvalues : _ENV, GetCurrentYearInfo
   local cfg = (ConfigTable.GetData)("PopUp", popupId)
+  if cfg == nil then
+    return false
+  end
   if localData == nil then
     if cfg.PopUpRes == nil then
       do return cfg.PopRefreshType ~= (GameEnum.PopRefreshType).WholeFirst end

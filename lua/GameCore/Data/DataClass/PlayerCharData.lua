@@ -834,6 +834,9 @@ end
 
 PlayerCharData.IsPlotUnlock = function(self, plotId, charId)
   -- function num : 0_29 , upvalues : _ENV
+  if not self:CheckCharUnlock(charId) then
+    return true, ""
+  end
   local data = (ConfigTable.GetData)("Plot", plotId)
   local bLock = false
   local locktxt = ""
@@ -865,33 +868,69 @@ PlayerCharData.IsPlotUnlock = function(self, plotId, charId)
       end
     end
     do
-      if (self:GetCharAffinityData(charId)).Level >= data.UnlockAffinityLevel then
-        bLock = bLock
-        if not (ConfigTable.GetUIText)("Affinity_UnLock_Level") then
-          locktxt = orderedFormat(not bLock or "", data.UnlockAffinityLevel)
-          if not bLock and data.PrePlot ~= nil and data.PrePlot ~= 0 then
-            bLock = not self:IsCharPlotFinish(charId, data.PrePlot)
-            if bLock then
-              local nIndex = 0
-              local plotData = self:GetCharPlotDataById(charId)
-              ;
-              (table.sort)(plotData, function(a, b)
+      if not bLock then
+        local mapAffinityData = self:GetCharAffinityData(charId)
+        if mapAffinityData.Level >= data.UnlockAffinityLevel then
+          bLock = mapAffinityData == nil
+          bLock = true
+          if not (ConfigTable.GetUIText)("Affinity_UnLock_Level") then
+            do
+              locktxt = orderedFormat(not bLock or "", data.UnlockAffinityLevel)
+              if not bLock and data.PrePlot ~= nil and data.PrePlot ~= 0 then
+                bLock = not self:IsCharPlotFinish(charId, data.PrePlot)
+                if bLock then
+                  local nIndex = 0
+                  local nType = data.PlotType
+                  local nParam = 0
+                  if nType == (GameEnum.CharPlotType).SkinPlot then
+                    nParam = data.UnlockSkinId
+                  end
+                  local plotData = self:GetCharPlotDataById(charId)
+                  ;
+                  (table.sort)(plotData, function(a, b)
     -- function num : 0_29_0
-    do return a.Id < b.Id end
-    -- DECOMPILER ERROR: 1 unprocessed JMP targets
+    if a.Id >= b.Id then
+      do return a.PlotType ~= b.PlotType end
+      do return a.PlotType < b.PlotType end
+      -- DECOMPILER ERROR: 3 unprocessed JMP targets
+    end
   end
 )
-              for k,v in ipairs(plotData) do
-                if v.Id == data.PrePlot then
-                  nIndex = k
-                  break
+                  local nCurIndex = 0
+                  for k,v in ipairs(plotData) do
+                    -- DECOMPILER ERROR at PC171: Unhandled construct in 'MakeBoolean' P1
+
+                    -- DECOMPILER ERROR at PC171: Unhandled construct in 'MakeBoolean' P1
+
+                    if v.PlotType == nType and v.PlotType == (GameEnum.CharPlotType).SkinPlot and v.UnlockSkinId == nParam then
+                      nCurIndex = nCurIndex + 1
+                    end
+                    nCurIndex = nCurIndex + 1
+                    if v.Id == data.PrePlot then
+                      nIndex = nCurIndex
+                      break
+                    end
+                  end
+                  if not (ConfigTable.GetUIText)("Affinity_UnLock_PrePlot") then
+                    locktxt = orderedFormat(nType ~= (GameEnum.CharPlotType).CharPlot or "", nIndex)
+                    if nType == (GameEnum.CharPlotType).SkinPlot then
+                      local mapSkinCfg = (ConfigTable.GetData)("CharacterSkin", nParam)
+                      if not (ConfigTable.GetUIText)("Affinity_UnLock_PrePlot_Skin") then
+                        do
+                          locktxt = orderedFormat(mapSkinCfg == nil or "", mapSkinCfg.Name, nIndex)
+                          if not bLock and data.UnlockSkinId ~= nil and data.UnlockSkinId ~= 0 then
+                            bLock = not (PlayerData.CharSkin):CheckSkinUnlock(data.UnlockSkinId)
+                          end
+                          do return bLock, locktxt end
+                          -- DECOMPILER ERROR: 15 unprocessed JMP targets
+                        end
+                      end
+                    end
+                  end
                 end
               end
-              locktxt = orderedFormat((ConfigTable.GetUIText)("Affinity_UnLock_PrePlot") or "", nIndex)
             end
           end
-          do return bLock, locktxt end
-          -- DECOMPILER ERROR: 7 unprocessed JMP targets
         end
       end
     end
@@ -2389,8 +2428,31 @@ PlayerCharData.UpdateCharVoiceReddot = function(self, nCharId, bReset, lastLevel
   end
 end
 
-PlayerCharData.UpdateCharPlotReddot = function(self, nCharId)
+PlayerCharData.UpdateCharSkinVoiceReddot = function(self, bReset, nCharId, nSkinId)
   -- function num : 0_87 , upvalues : _ENV
+  local mapData = self:GetCharAffinityData(nCharId)
+  local curLevel = mapData ~= nil and mapData.Level or 0
+  local foreachCharacterArchiveVoice = function(mapData)
+    -- function num : 0_87_0 , upvalues : nCharId, _ENV, nSkinId, bReset, curLevel
+    if mapData.CharacterId == nCharId and mapData.ArchVoiceType == (GameEnum.ArchVoiceType).SkinVoice and mapData.UnlockSkinId == nSkinId then
+      if bReset then
+        (RedDotManager.SetValid)(RedDotDefine.Role_Record_Voice_Item, {nCharId, mapData.Id}, false)
+      else
+        local bAffinityLevel = (mapData.UnlockAffinityLevel > 0 and mapData.UnlockAffinityLevel <= curLevel) or mapData.UnlockAffinityLevel == 0
+        local bPlot = (mapData.UnlockPlot > 0 and mapData.UnlockAffinityLevel <= curLevel) or mapData.UnlockPlot == 0
+        if bAffinityLevel and bPlot then
+          (RedDotManager.SetValid)(RedDotDefine.Role_Record_Voice_Item, {nCharId, mapData.Id}, true)
+        end
+      end
+    end
+    -- DECOMPILER ERROR: 4 unprocessed JMP targets
+  end
+
+  ForEachTableLine(DataTable.CharacterArchiveVoice, foreachCharacterArchiveVoice)
+end
+
+PlayerCharData.UpdateCharPlotReddot = function(self, nCharId)
+  -- function num : 0_88 , upvalues : _ENV
   local tbPlot = (CacheTable.GetData)("_Plot", nCharId)
   if tbPlot ~= nil then
     for _,v in ipairs(tbPlot) do
@@ -2406,10 +2468,10 @@ PlayerCharData.UpdateCharPlotReddot = function(self, nCharId)
 end
 
 PlayerCharData.UpdateCharArchiveRewardRedDot = function(self, nCharId)
-  -- function num : 0_88 , upvalues : _ENV
+  -- function num : 0_89 , upvalues : _ENV
   local nCurFavorLevel = (self:GetCharAffinityData(nCharId)).Level
   local foreachCharacterArchive = function(mapData)
-    -- function num : 0_88_0 , upvalues : nCharId, nCurFavorLevel, _ENV, self
+    -- function num : 0_89_0 , upvalues : nCharId, nCurFavorLevel, _ENV, self
     if mapData.CharacterId == nCharId then
       local bReward = false
       if mapData.UnlockAffinityLevel <= nCurFavorLevel and mapData.ArchType == (GameEnum.ArchType).SpecialType and mapData.ArchReward ~= 0 then
@@ -2424,7 +2486,7 @@ PlayerCharData.UpdateCharArchiveRewardRedDot = function(self, nCharId)
 end
 
 PlayerCharData.UpdateCharRecordInfoReddot = function(self, nCharId, bReset, lastLevel, curLevel)
-  -- function num : 0_89
+  -- function num : 0_90
   self:UpdateCharPlotReddot(nCharId)
   self:UpdateCharRecordReddot(nCharId, bReset, lastLevel, curLevel)
   self:UpdateCharVoiceReddot(nCharId, bReset, lastLevel, curLevel)
@@ -2432,7 +2494,7 @@ PlayerCharData.UpdateCharRecordInfoReddot = function(self, nCharId, bReset, last
 end
 
 PlayerCharData.InitCharArchiveContentUpdateRedDot = function(self, nCharId)
-  -- function num : 0_90 , upvalues : _ENV
+  -- function num : 0_91 , upvalues : _ENV
   local tbContentList = (self._tbArchiveUpdate)[nCharId]
   if tbContentList ~= nil then
     for nId,v in pairs(tbContentList) do
@@ -2458,7 +2520,7 @@ PlayerCharData.InitCharArchiveContentUpdateRedDot = function(self, nCharId)
 end
 
 PlayerCharData.UpdateCharArchiveContentUpdateRedDot = function(self, nCharId, nIndex, nNewValue, nLastValue)
-  -- function num : 0_91 , upvalues : _ENV
+  -- function num : 0_92 , upvalues : _ENV
   local affinityData = (PlayerData.Char):GetCharAffinityData(nCharId)
   if affinityData == nil then
     return 
@@ -2567,7 +2629,7 @@ PlayerCharData.UpdateCharArchiveContentUpdateRedDot = function(self, nCharId, nI
 end
 
 PlayerCharData.StoryPass = function(self, tbStoryId)
-  -- function num : 0_92 , upvalues : _ENV
+  -- function num : 0_93 , upvalues : _ENV
   if #tbStoryId > 0 then
     for nCharId,v in pairs(self._tbArchiveUpdate) do
       for _,nStoryId in ipairs(tbStoryId) do
@@ -2578,7 +2640,7 @@ PlayerCharData.StoryPass = function(self, tbStoryId)
 end
 
 PlayerCharData.ResetArchiveContentUpdateRedDot = function(self, nCharId)
-  -- function num : 0_93 , upvalues : _ENV
+  -- function num : 0_94 , upvalues : _ENV
   local tbContentList = (self._tbArchiveUpdate)[nCharId]
   if tbContentList ~= nil then
     for nId,v in pairs(tbContentList) do
@@ -2594,24 +2656,24 @@ PlayerCharData.ResetArchiveContentUpdateRedDot = function(self, nCharId)
 end
 
 PlayerCharData.GetCharPanelSkillDescType = function(self, ...)
-  -- function num : 0_94
+  -- function num : 0_95
   return self.bCharPanel_IsSimpleDesc
 end
 
 PlayerCharData.SetCharPanelSkillDescType = function(self, bIsSimple)
-  -- function num : 0_95 , upvalues : LocalData
+  -- function num : 0_96 , upvalues : LocalData
   self.bCharPanel_IsSimpleDesc = bIsSimple
   ;
   (LocalData.SetLocalData)("Char_", "CharPanel_IsSimpleDesc", self.bCharPanel_IsSimpleDesc)
 end
 
 PlayerCharData.GetTipsPanelSkillDescType = function(self, ...)
-  -- function num : 0_96
+  -- function num : 0_97
   return self.bTipsPanel_IsSimpleDesc
 end
 
 PlayerCharData.SetTipsPanelSkillDescType = function(self, bIsSimple)
-  -- function num : 0_97 , upvalues : LocalData
+  -- function num : 0_98 , upvalues : LocalData
   self.bTipsPanel_IsSimpleDesc = bIsSimple
   ;
   (LocalData.SetLocalData)("Char_", "TipsPanel_IsSimpleDesc", self.bTipsPanel_IsSimpleDesc)
@@ -2621,17 +2683,17 @@ local tbSortNameTextCfg = {"CharList_Sort_Toggle_Level", "CharList_Sort_Toggle_R
 local tbSortType = {[1] = (AllEnum.SortType).Level, [2] = (AllEnum.SortType).Rarity, [3] = (AllEnum.SortType).Skill, [4] = (AllEnum.SortType).Affinity, [5] = (AllEnum.SortType).Time, [100] = (AllEnum.SortType).ElementType, [101] = (AllEnum.SortType).Id}
 local tbDefaultSortField = {"Level", "Rare", "EET", "nId"}
 PlayerCharData.GetCharSortNameTextCfg = function(self)
-  -- function num : 0_98 , upvalues : tbSortNameTextCfg
+  -- function num : 0_99 , upvalues : tbSortNameTextCfg
   return tbSortNameTextCfg
 end
 
 PlayerCharData.GetCharSortType = function(self)
-  -- function num : 0_99 , upvalues : tbSortType
+  -- function num : 0_100 , upvalues : tbSortType
   return tbSortType
 end
 
 PlayerCharData.GetCharSortField = function(self)
-  -- function num : 0_100 , upvalues : tbDefaultSortField
+  -- function num : 0_101 , upvalues : tbDefaultSortField
   return tbDefaultSortField
 end
 

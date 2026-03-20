@@ -396,7 +396,7 @@ local OnOpenPanel = function(listener, nPanelId, ...)
         objTempPanel:_Exit()
         objTempPanel:_Destroy()
         objTempPanel = nil
-        printError("[界面切换] 打开非主 Panel：" .. GetPanelName(nPanelId) .. " 失败，不能重复打开。")
+        printWarn("[界面切换] 打开非主 Panel：" .. GetPanelName(nPanelId) .. " 失败，不能重复打开。")
         return 
       end
     end

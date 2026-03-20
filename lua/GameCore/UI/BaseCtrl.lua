@@ -666,7 +666,7 @@ BaseCtrl.GetAtlasSprite = function(self, sAtlasPath, sSpriteName)
     return nil
   end
   local sFullPath = (string.format)("%sUI/CommonEx/atlas_png/%s/%s.png", sRootPath, sAtlasPath, sSpriteName)
-  return (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(Sprite))
+  return (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(Sprite), "UI", (self._panel)._nPanelId)
 end
 
 BaseCtrl.GetPngSprite = function(self, sPath, sSurfix, imgObj)
@@ -686,7 +686,7 @@ BaseCtrl.GetPngSprite = function(self, sPath, sSurfix, imgObj)
     printError("配置表中 Icon 资源字段内容填写错误，应填路径，如：Icon/Item/item_1，panel id:" .. (self._panel)._nPanelId .. "，ctrl name:" .. self.__cname)
     return nil
   else
-    local sp = (GameResourceLoader.LoadAsset)(ResType.Any, sRootPath .. sPath .. ".png", typeof(Sprite))
+    local sp = (GameResourceLoader.LoadAsset)(ResType.Any, sRootPath .. sPath .. ".png", typeof(Sprite), "UI", (self._panel)._nPanelId)
     if sp == nil then
       printError((string.format)("未找到 icon 资源：%s，panel id：%s，ctrl name：%s", sPath, tostring((self._panel)._nPanelId), tostring(self.__cname)))
     end
@@ -908,7 +908,7 @@ BaseCtrl.GetAvgStageEffect = function(self, sName, sType)
     return nil
   end
   local sFullPath = (string.format)("%sImageAvg/AvgStageEffect/%s.png", sRootPath, sName)
-  return (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(Texture))
+  return (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(Texture), "UI", (self._panel)._nPanelId)
 end
 
 BaseCtrl.GetAvgPortrait = function(self, sAvgCharId, sPose, sFace)
@@ -916,17 +916,17 @@ BaseCtrl.GetAvgPortrait = function(self, sAvgCharId, sPose, sFace)
   local sPathBody = (string.format)("%sActor2D/CharacterAvg/%s/atlas_png/%s/%s_%s_001.png", sRootPath, sAvgCharId, sPose, sAvgCharId, sPose)
   local sPathFace = (string.format)("%sActor2D/CharacterAvg/%s/atlas_png/%s/%s_%s_%s.png", sRootPath, sAvgCharId, sPose, sAvgCharId, sPose, sFace)
   local sPathBlackBody = (string.format)("%sActor2D/CharacterAvg/%s/%s_%s_001x.png", sRootPath, sAvgCharId, sAvgCharId, sPose)
-  local spBody = ((GameResourceLoader.LoadAsset)(ResType.Any, sPathBody, typeof(Sprite)))
+  local spBody = ((GameResourceLoader.LoadAsset)(ResType.Any, sPathBody, typeof(Sprite), "UI", (self._panel)._nPanelId))
   local spFace = nil
   if (GameResourceLoader.ExistsAsset)(sPathFace) == true then
-    spFace = (GameResourceLoader.LoadAsset)(ResType.Any, sPathFace, typeof(Sprite))
+    spFace = (GameResourceLoader.LoadAsset)(ResType.Any, sPathFace, typeof(Sprite), "UI", (self._panel)._nPanelId)
   end
   local spBlackBody = spBody
   if (GameResourceLoader.ExistsAsset)(sPathBlackBody) == true then
-    spBlackBody = (GameResourceLoader.LoadAsset)(ResType.Any, sPathBlackBody, typeof(Sprite))
+    spBlackBody = (GameResourceLoader.LoadAsset)(ResType.Any, sPathBlackBody, typeof(Sprite), "UI", (self._panel)._nPanelId)
   end
   local sFullPath = (string.format)("%sActor2D/CharacterAvg/%s/%s.asset", sRootPath, sAvgCharId, sAvgCharId)
-  local objOffset = (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(CS.Actor2DOffsetData))
+  local objOffset = (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(CS.Actor2DOffsetData), "UI", (self._panel)._nPanelId)
   local nX, nY = 0, 0
   if objOffset == nil then
     printError(sFullPath)
@@ -941,7 +941,7 @@ end
 BaseCtrl.GetAvgPortraitEmojiOffsetData = function(self, sAvgCharId, sPose, nEmojiIndex)
   -- function num : 0_33 , upvalues : _ENV, sRootPath, GameResourceLoader, ResType, typeof
   local sFullPath = (string.format)("%sActor2D/CharacterAvg/%s/%s.asset", sRootPath, sAvgCharId, sAvgCharId)
-  local objOffset = (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(CS.Actor2DOffsetData))
+  local objOffset = (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(CS.Actor2DOffsetData), "UI", (self._panel)._nPanelId)
   local nX, nY = 0, 0
   local s, x, y = objOffset:GetEmojiData(PanelId.AvgST, indexOfPose(sPose), nEmojiIndex, nX, nY)
   local v3OffsetPos = Vector3(x, y, 0)
@@ -952,7 +952,7 @@ end
 BaseCtrl.GetAvgHeadFrameOffsetData = function(self, sAvgCharId, sPose, nFrameIndex)
   -- function num : 0_34 , upvalues : _ENV, sRootPath, GameResourceLoader, ResType, typeof
   local sFullPath = (string.format)("%sActor2D/CharacterAvg/%s/%s.asset", sRootPath, sAvgCharId, sAvgCharId)
-  local objOffset = (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(CS.Actor2DOffsetData))
+  local objOffset = (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(CS.Actor2DOffsetData), "UI", (self._panel)._nPanelId)
   if nFrameIndex == 2 then
     nFrameIndex = 3
   end

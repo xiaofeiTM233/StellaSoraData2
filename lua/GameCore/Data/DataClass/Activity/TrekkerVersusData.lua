@@ -25,21 +25,21 @@ TrekkerVersusData.RefreshTrekkerVersusData = function(self, nActId, msgData)
   -- function num : 0_2 , upvalues : _ENV
   self:Init()
   self.nActId = nActId
+  self.nDayNum = msgData.DayNum
+  self.nFanLevel = msgData.Level
+  self.nFanExp = msgData.Exp
+  self.nIdleRewardStartTime = (msgData.Show).IdleTime
+  self.tbIdleReward = (msgData.Show).IdleValues
+  self.nSelfHotValue = (msgData.Show).SelfHotValue
+  self.nRivalHotValue = (msgData.Show).RivalHotValue
+  self.tbHotValueRewardIds = msgData.HotValueRewardIds
+  self.tbDuelRewardIds = msgData.DuelRewardIds
+  self.tbDuelHistory = msgData.HistoryResult
   self.nLastBuildId = msgData.BuildId
   self.nCachedBuildId = msgData.BuildId
-  self.tbRecordAffix = (msgData.Show).AffixIds
-  self.tbRecordChar = (msgData.Show).CharIds
-  self.nRecordBuildLevel = (msgData.Show).BuildScore
-  local nRecordLevel = 0
-  for _,nAffixId in ipairs(self.tbRecordAffix) do
-    local mapAffixCfgData = (ConfigTable.GetData)("TravelerDuelChallengeAffix", nAffixId)
-    if mapAffixCfgData ~= nil then
-      nRecordLevel = nRecordLevel + mapAffixCfgData.Difficulty
-    end
-  end
-  self.nRecord = nRecordLevel
+  self.nRecord = (msgData.Show).Difficulty
   for _,mapQuest in ipairs(msgData.Quests) do
-    -- DECOMPILER ERROR at PC39: Confused about usage of register: R9 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC40: Confused about usage of register: R8 in 'UnsetPending'
 
     (self.mapQuests)[mapQuest.Id] = mapQuest
   end
@@ -108,25 +108,68 @@ TrekkerVersusData.GetAllQuestData = function(self)
   return ret
 end
 
+TrekkerVersusData.GetCurStreamerDuelData = function(self)
+  -- function num : 0_7 , upvalues : _ENV
+  (self:GetTrekkerVersusCfgData())
+  local mapStreamerDuelCfgData = nil
+  local mapDuelData = nil
+  local foreachDuel = function(mapData)
+    -- function num : 0_7_0 , upvalues : mapStreamerDuelCfgData, self, mapDuelData
+    if mapData.GroupId == mapStreamerDuelCfgData.TargetGroupId and mapData.DayNum == self.nDayNum then
+      mapDuelData = mapData
+    end
+  end
+
+  ForEachTableLine(DataTable.TravelerDuelTarget, foreachDuel)
+  return mapDuelData
+end
+
+TrekkerVersusData.GetCurHeatValue = function(self)
+  -- function num : 0_8
+  local mapHeatData = {nSelfHotValue = self.nSelfHotValue or 0, nRivalHotValue = self.nRivalHotValue or 0}
+  return mapHeatData
+end
+
+TrekkerVersusData.GetCurDayNum = function(self)
+  -- function num : 0_9
+  return self.nDayNum
+end
+
+TrekkerVersusData.GetCurFanData = function(self)
+  -- function num : 0_10
+  local mapFanData = {nFanLevel = self.nFanLevel or 0, nFanExp = self.nFanExp or 0}
+  return mapFanData
+end
+
+TrekkerVersusData.GetDuelHistory = function(self)
+  -- function num : 0_11
+  return self.tbDuelHistory
+end
+
+TrekkerVersusData.GetIdleReward = function(self)
+  -- function num : 0_12
+  return self.tbIdleReward
+end
+
 TrekkerVersusData.SetCachedBuildId = function(self, nBuildId)
-  -- function num : 0_7
+  -- function num : 0_13
   self.nCachedBuildId = nBuildId
 end
 
 TrekkerVersusData.SetCacheAffixids = function(self, tbAffixes)
-  -- function num : 0_8
+  -- function num : 0_14
   if tbAffixes ~= nil then
     self.CachedAffixes = tbAffixes
   end
 end
 
 TrekkerVersusData.GetCacheAffixids = function(self)
-  -- function num : 0_9
+  -- function num : 0_15
   return self.CachedAffixes
 end
 
 TrekkerVersusData.EnterGame = function(self, nLevel, nBuildId, tbAffixes)
-  -- function num : 0_10 , upvalues : _ENV
+  -- function num : 0_16 , upvalues : _ENV
   if self.curLevel ~= nil then
     printError("当前关卡level不为空1")
     return 
@@ -146,9 +189,9 @@ TrekkerVersusData.EnterGame = function(self, nLevel, nBuildId, tbAffixes)
 end
 
 TrekkerVersusData.SettleBattle = function(self, bSuccess, nLevelId, nTime, tbAffix, nBuildId, msgCallback)
-  -- function num : 0_11 , upvalues : _ENV
+  -- function num : 0_17 , upvalues : _ENV
   local callback = function()
-    -- function num : 0_11_0 , upvalues : bSuccess, _ENV, tbAffix, self, nBuildId, msgCallback
+    -- function num : 0_17_0 , upvalues : bSuccess, _ENV, tbAffix, self, nBuildId, msgCallback
     local bNewRecord = false
     if bSuccess then
       local nRecordLevel = 0
@@ -163,7 +206,7 @@ TrekkerVersusData.SettleBattle = function(self, bSuccess, nLevelId, nTime, tbAff
         self.tbRecordAffix = clone(tbAffix)
         bNewRecord = true
         local buildDataCallback = function(mapBuild)
-      -- function num : 0_11_0_0 , upvalues : self, _ENV
+      -- function num : 0_17_0_0 , upvalues : self, _ENV
       self.nRecordBuildLevel = mapBuild.nScore
       self.tbRecordChar = {}
       for _,mapBuildChar in ipairs(mapBuild.tbChar) do
@@ -204,8 +247,91 @@ Events = {List = (PlayerData.Achievement):GetBattleAchievement((GameEnum.levelTy
   (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_trekker_versus_settle_req, msg, nil, callback)
 end
 
+TrekkerVersusData.RequestIdleRefresh = function(self)
+  -- function num : 0_18 , upvalues : _ENV
+  local msg = {Value = self.nActId}
+  local callback = function(_, msgData)
+    -- function num : 0_18_0 , upvalues : self
+    if msgData ~= nil then
+      self.nIdleRewardStartTime = msgData.IdleTime
+      self.nDifficult = msgData.Difficulty
+      self.tbIdleReward = msgData.IdleValues
+      self.nSelfHotValue = msgData.SelfHotValue
+      self.nRivalHotValue = msgData.RivalHotValue
+    end
+  end
+
+  ;
+  (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_trekker_versus_idle_refresh_req, msg, nil, callback)
+end
+
+TrekkerVersusData.RequestIdleRewardReceive = function(self, callback)
+  -- function num : 0_19 , upvalues : _ENV
+  local msg = {Value = self.nActId}
+  local cb = function(_, msgData)
+    -- function num : 0_19_0 , upvalues : _ENV, self, callback
+    if msgData ~= nil then
+      if msgData.Change ~= nil then
+        (HttpNetHandler.ProcChangeInfo)(msgData.Change)
+        ;
+        (UTILS.OpenReceiveByDisplayItem)(msgData.AwardItems, msgData.ChangeInfo)
+      end
+      self.nIdleRewardStartTime = msgData.IdleTime
+      if callback ~= nil then
+        callback(msgData)
+      end
+    end
+  end
+
+  ;
+  (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_trekker_versus_idle_reward_receive_req, msg, nil, cb)
+end
+
+TrekkerVersusData.RequestSendStreamerGift = function(self, tbGift, callback)
+  -- function num : 0_20 , upvalues : _ENV
+  local msg = {ActivityId = self.nActId, Items = tbGift}
+  local cb = function(_, msgData)
+    -- function num : 0_20_0 , upvalues : self, _ENV, callback
+    if msgData ~= nil then
+      local nPrevFanLevel = self.nFanLevel
+      local nPrevFanExp = self.nFanExp
+      self.nFanLevel = msgData.Level
+      self.nFanExp = msgData.Exp
+      self.nSelfHotValue = (msgData.Show).SelfHotValue
+      self.nRivalHotValue = (msgData.Show).RivalHotValue
+      if msgData.Change ~= nil then
+        (HttpNetHandler.ProcChangeInfo)(msgData.Change)
+        ;
+        (UTILS.OpenReceiveByDisplayItem)(msgData.AwardItems, msgData.ChangeInfo)
+      end
+      if callback ~= nil then
+        callback(msgData, nPrevFanLevel, nPrevFanExp)
+      end
+    end
+  end
+
+  ;
+  (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_trekker_versus_rank_boost_req, msg, nil, cb)
+end
+
+TrekkerVersusData.RequestReceiveScheduleReward = function(self, nScheduleType)
+  -- function num : 0_21 , upvalues : _ENV
+  local msg = {ActivityId = self.nActId, ScheduleType = nScheduleType}
+  local callback = function(_, msgData)
+    -- function num : 0_21_0 , upvalues : _ENV
+    if msgData ~= nil and msgData.Change ~= nil then
+      (HttpNetHandler.ProcChangeInfo)(msgData.Change)
+      ;
+      (UTILS.OpenReceiveByDisplayItem)(msgData.AwardItems, msgData.ChangeInfo)
+    end
+  end
+
+  ;
+  (HttpNetHandler.SendMsg)((NetMsgId.Id).activity_trekker_versus_schedule_reward_receive_req, msg, nil, callback)
+end
+
 TrekkerVersusData.CheckBattleSuccess = function(self)
-  -- function num : 0_12
+  -- function num : 0_22
   local retResult = self.nSuccessBattle
   local retHard = self.nLastBattleHard
   self.nSuccessBattle = 0
@@ -214,7 +340,7 @@ TrekkerVersusData.CheckBattleSuccess = function(self)
 end
 
 TrekkerVersusData.LevelEnd = function(self)
-  -- function num : 0_13 , upvalues : _ENV
+  -- function num : 0_23 , upvalues : _ENV
   if type((self.curLevel).UnBindEvent) == "function" then
     (self.curLevel):UnBindEvent()
   end
@@ -222,7 +348,7 @@ TrekkerVersusData.LevelEnd = function(self)
 end
 
 TrekkerVersusData.RefreshQuestData = function(self, questData)
-  -- function num : 0_14
+  -- function num : 0_24
   -- DECOMPILER ERROR at PC2: Confused about usage of register: R2 in 'UnsetPending'
 
   (self.mapQuests)[questData.Id] = questData
@@ -230,7 +356,7 @@ TrekkerVersusData.RefreshQuestData = function(self, questData)
 end
 
 TrekkerVersusData.ReceiveQuestReward = function(self, callback)
-  -- function num : 0_15 , upvalues : _ENV
+  -- function num : 0_25 , upvalues : _ENV
   local bReceive = false
   for _,mapQuest in pairs(self.mapQuests) do
     if mapQuest.Status == 1 then
@@ -240,7 +366,7 @@ TrekkerVersusData.ReceiveQuestReward = function(self, callback)
   end
   do
     local msgCallback = function(_, msgData)
-    -- function num : 0_15_0 , upvalues : callback, _ENV, self
+    -- function num : 0_25_0 , upvalues : callback, _ENV, self
     if callback ~= nil then
       callback(msgData)
     end
@@ -267,13 +393,13 @@ TrekkerVersusData.ReceiveQuestReward = function(self, callback)
 end
 
 TrekkerVersusData.GetTrekkerVersusCfgData = function(self)
-  -- function num : 0_16 , upvalues : _ENV
+  -- function num : 0_26 , upvalues : _ENV
   local mapCfgData = (ConfigTable.GetData)("TravelerDuelChallengeControl", self.nActId)
   return mapCfgData
 end
 
 TrekkerVersusData.GetChallengeStartTime = function(self)
-  -- function num : 0_17 , upvalues : _ENV
+  -- function num : 0_27 , upvalues : _ENV
   local mapActivityData = (ConfigTable.GetData)("TravelerDuelChallengeControl", self.nActId)
   if mapActivityData ~= nil then
     return String2Time(mapActivityData.OpenTime)
@@ -282,7 +408,7 @@ TrekkerVersusData.GetChallengeStartTime = function(self)
 end
 
 TrekkerVersusData.GetChallengeEndTime = function(self)
-  -- function num : 0_18 , upvalues : _ENV
+  -- function num : 0_28 , upvalues : _ENV
   local mapActivityData = (ConfigTable.GetData)("TravelerDuelChallengeControl", self.nActId)
   if mapActivityData ~= nil then
     return String2Time(mapActivityData.EndTime)
@@ -291,7 +417,7 @@ TrekkerVersusData.GetChallengeEndTime = function(self)
 end
 
 TrekkerVersusData.RefreshQusetRedDot = function(self)
-  -- function num : 0_19 , upvalues : _ENV
+  -- function num : 0_29 , upvalues : _ENV
   local bVisible = false
   for _,mapQuest in pairs(self.mapQuests) do
     if mapQuest.Status == 1 then
@@ -308,7 +434,7 @@ TrekkerVersusData.RefreshQusetRedDot = function(self)
 end
 
 TrekkerVersusData.GetFirstIn = function(self)
-  -- function num : 0_20
+  -- function num : 0_30
   local bFirst = self.bFirstIn
   if self.bFirstIn == true then
     self.bFirstIn = false

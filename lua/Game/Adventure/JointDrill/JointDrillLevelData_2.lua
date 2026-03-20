@@ -208,37 +208,31 @@ JointDrillLevelData_2.CheckJointDrillGameOver = function(self)
   -- function num : 0_8 , upvalues : _ENV
   local nChallengeCount = (self.parent):GetJointDrillBattleCount()
   local nAllChallengeCount = (self.parent):GetMaxChallengeCount(self.nLevelId)
-  self.recordCallback = function(sRecord)
-    -- function num : 0_8_0 , upvalues : nChallengeCount, nAllChallengeCount, self, _ENV
-    if nAllChallengeCount <= nChallengeCount then
-      local syncCallback = function()
-      -- function num : 0_8_0_0 , upvalues : self, _ENV
-      local callback = function(netMsg)
-        -- function num : 0_8_0_0_0 , upvalues : self, _ENV
-        self:JointDrillFail((AllEnum.JointDrillResultType).ChallengeEnd, netMsg, self.nCurLevel)
-      end
+  if nAllChallengeCount <= nChallengeCount then
+    local callback = function(netMsg)
+    -- function num : 0_8_0 , upvalues : self, _ENV
+    self:JointDrillFail((AllEnum.JointDrillResultType).ChallengeEnd, netMsg, self.nCurLevel)
+  end
 
-      ;
-      (self.parent):JointDrillGameOver(callback)
-    end
-
-      ;
-      (self.parent):JointDrillSync(self.nCurLevel, self.nGameTime, self.nDamageValue, "", syncCallback)
-    else
-      do
-        local callback = function(netMsg)
-      -- function num : 0_8_0_1 , upvalues : self, _ENV
+    ;
+    (self.parent):JointDrillGameOver(callback)
+  else
+    do
+      self.recordCallback = function(sRecord)
+    -- function num : 0_8_1 , upvalues : self, _ENV
+    local callback = function(netMsg)
+      -- function num : 0_8_1_0 , upvalues : self, _ENV
       self:JointDrillFail((AllEnum.JointDrillResultType).BattleEnd, netMsg, self.nCurLevel)
     end
 
-        ;
-        (self.parent):JointDrillGiveUp(self.nCurLevel, self.nGameTime, self.nDamageValue, sRecord, callback)
-      end
-    end
+    ;
+    (self.parent):JointDrillGiveUp(self.nCurLevel, self.nGameTime, self.nDamageValue, sRecord, callback)
   end
 
-  ;
-  (NovaAPI.DispatchEventWithData)("JointDrill_CacheTempData_Start", nil, {false, true, true, false, 0, 0})
+      ;
+      (NovaAPI.DispatchEventWithData)("JointDrill_CacheTempData_Start", nil, {false, true, true, false, 0, 0})
+    end
+  end
 end
 
 JointDrillLevelData_2.JointDrillFail = function(self, nResultType, netMsg, nLevel)

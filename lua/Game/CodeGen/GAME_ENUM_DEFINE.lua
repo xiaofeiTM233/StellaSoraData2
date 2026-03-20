@@ -83,7 +83,7 @@ GameEnum.honorType = {Normal = 1, Character = 2, Group = 3}
 GameEnum.headType = {HeroineAvatar = 1, HeroAvatar = 2, CharacterAvatar = 3, PropAvatar = 4}
 GameEnum.towerBookFateCardFinishType = {FateCardCount = 1, FateCardCollect = 2, FateCardUnlock = 3}
 GameEnum.towerBookPotentialCond = {TowerBookCharPotentialQuantity = 401}
-GameEnum.towerGrowthEffect = {ClientEffect = 0, ReRollPotential = 1, ReRollFateCard = 2, UnlockHighRiskRoom = 3, UnlockTowerSweep = 4, ReRollShopGoods = 5, GetNewPotentialLvUp = 6, UnlockStrengthenMachine = 7, LuckyStrengthenMachine = 8, StrengthenMachineFirstFree = 9, StrengthenMachineDiscount = 10, EnterTowerGetCoins = 11, DropExtraGetCoins = 12, ShopGoodsIncrease = 13, ShopDiscountGoodsIncrease = 14, TowerExtraReward = 15, EnterTowerGetFateCard = 16, FateCardDropPropUp = 17, DropExtraGetFateCard = 18, GetFateCardWeightUp = 19, TowerTicketProductionUp = 20, TowerTicketLimitUp = 21, HighRiskRoomExtraDrop = 22, AddResurrectionCount = 23, UnlockFateCard = 24, BOSSExtraGetRunes = 25, DiscExtraSubSlot = 26, DropExtraGetRunes = 27, EnterTowerGetRunes = 28, GetExtraRuneLevel = 29, PotentialMaxLvUp = 30, RandomExtraEvent = 31}
+GameEnum.towerGrowthEffect = {ClientEffect = 0, ReRollPotential = 1, ReRollFateCard = 2, UnlockHighRiskRoom = 3, UnlockTowerSweep = 4, ReRollShopGoods = 5, GetNewPotentialLvUp = 6, UnlockStrengthenMachine = 7, LuckyStrengthenMachine = 8, StrengthenMachineFirstFree = 9, StrengthenMachineDiscount = 10, EnterTowerGetCoins = 11, DropExtraGetCoins = 12, ShopGoodsIncrease = 13, ShopDiscountGoodsIncrease = 14, TowerExtraReward = 15, EnterTowerGetFateCard = 16, FateCardDropPropUp = 17, DropExtraGetFateCard = 18, GetFateCardWeightUp = 19, TowerTicketProductionUp = 20, TowerTicketLimitUp = 21, HighRiskRoomExtraDrop = 22, AddResurrectionCount = 23, UnlockFateCard = 24, BOSSExtraGetRunes = 25, DiscExtraSubSlot = 26, DropExtraGetRunes = 27, EnterTowerGetRunes = 28, GetExtraRuneLevel = 29, PotentialMaxLvUp = 30, RandomExtraEvent = 31, RemoveDropAssistantRunes = 32, ExtraGetPotentialLvUp = 33, StrengthenPotentialLvUp = 34, StrengthStrengthMachine = 35}
 GameEnum.vampireTalentEffect = {ClientEffect = 0, FateCardSelectUp = 1, BattleGetFateCard = 2, ReRollFateCard = 3, UnlockspecialFateCard = 4, BattleRdmEventUp = 5, VampireExpUp = 6, ActiveDrop = 7, DropItemPropUp = 8}
 GameEnum.towerGrowthNodeType = {Normal = 1, Core = 2}
 GameEnum.towerEventResType = {Common = 0, FateCard = 1, SubNoteSkill = 2, Potential = 3}
@@ -134,7 +134,7 @@ GameEnum.chatTriggerType = {None = 0, Immediately = 1, Time = 2}
 GameEnum.chatTriggerCond = {None = 0, CharacterAcquire = 1, ClearSpecifiedMainlineLevel = 2, CharacterFavorabilityLevel = 3, CharacterLevel = 4, CharacterStarLevel = 5, WorldClass = 6, OutfitAcquire = 7, LevelStar = 8, Date = 9}
 GameEnum.battlePassQuestType = {DAY = 1, WEEK = 2}
 GameEnum.ArchType = {None = 0, BaseType = 1, NormalType = 2, SpecialType = 3}
-GameEnum.ArchVoiceType = {None = 0, DailyVoice = 1, BattlceVoice = 2}
+GameEnum.ArchVoiceType = {None = 0, DailyVoice = 1, BattlceVoice = 2, SkinVoice = 3}
 GameEnum.AmmoType = {Main = 0, Special1 = 1, Special2 = 2, Max = 3}
 GameEnum.ammoParameterType = {MAX_BASE_VALUE = 1, MAX_PERCENTAGE = 2, MAX_ABSOLUTE_VALUE = 3, SET_MAX_PERCENTAGE_VALUE = 4, SET_MAX_ABSOLUTE_VALUE = 5, PERCENTAGE = 6, ABSOLUTE_VALUE = 7, SET_PERCENTAGE_VALUE = 8, SET_ABSOLUTE_VALUE = 9}
 GameEnum.talentType = {KeyNode = 1, OrdinaryNode = 2}
@@ -226,7 +226,7 @@ GameEnum.GemASkillLevelType = {NormalAtk = 1, Skill = 2, AssistSkillI = 3, Ultim
 GameEnum.CharGemEffectType = {ATTR_FIX = 12, PLAYER_ATTR_FIX = 37, SkillLevel = 7, Potential = 99}
 GameEnum.TrialSectType = {MainSect1 = 1, MainSect2 = 2, SupSect1 = 3, SupSect2 = 4}
 GameEnum.activityGroupType = {None = 0, Middle = 1, Huge = 2, BreakOut = 3}
-GameEnum.activityThemeType = {None = 0, Swim = 1, OurRegiment_10101 = 2, Dream_10102 = 3, BreakOut_30101 = 4, Christmas_20101 = 5, Miracle_10103 = 6, Spring_10104 = 7, WinterNight_10105 = 8}
+GameEnum.activityThemeType = {None = 0, Swim = 1, OurRegiment_10101 = 2, Dream_10102 = 3, BreakOut_30101 = 4, Christmas_20101 = 5, Miracle_10103 = 6, Spring_10104 = 7, WinterNight_10105 = 8, Postal_10106 = 9}
 GameEnum.ActivityLevelType = {Explore = 1, Adventure = 2, AVG = 3, HARD = 4}
 GameEnum.TutorialType = {Character = 1, Battle = 2, StarTower = 3}
 GameEnum.ActivityTaskTabType = {Tab1 = 1, Tab2 = 2, Tab3 = 3, Tab4 = 4, Tab5 = 5}
@@ -259,5 +259,7 @@ GameEnum.StoryPreviewType = {None = 0, MainlineStory = 1, StorySet = 2, Activity
 GameEnum.ThrowGiftDifficulty = {Easy = 1, Normal = 2, Speed = 3, Blind = 4}
 GameEnum.ThrowGiftLevelCond = {ThrowCount = 1, HitCount = 2, Score = 3, ThrowCountAfterTime = 4, HitCountAfterTime = 5, ScoreAfterTime = 6}
 GameEnum.AgentQuality = {Quality1 = 1, Quality2 = 2, Quality3 = 3}
+GameEnum.TravelerDuelHotValueItemType = {TypeA = 1, TypeB = 2, TypeC = 3}
+GameEnum.CharPlotType = {CharPlot = 1, SkinPlot = 2}
 return GameEnum
 
