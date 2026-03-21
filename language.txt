@@ -698,11 +698,6 @@ language/zh_TW/StarTowerBookFateCardQuest.json
 language/ja_JP/StarTowerBookFateCardQuest.json
 language/en_US/StarTowerBookFateCardQuest.json
 language/ko_KR/StarTowerBookFateCardQuest.json
-language/zh_CN/StarTowerBookPotentialReward.json
-language/zh_TW/StarTowerBookPotentialReward.json
-language/ja_JP/StarTowerBookPotentialReward.json
-language/en_US/StarTowerBookPotentialReward.json
-language/ko_KR/StarTowerBookPotentialReward.json
 language/zh_CN/StarTowerEventAction.json
 language/zh_TW/StarTowerEventAction.json
 language/ja_JP/StarTowerEventAction.json
