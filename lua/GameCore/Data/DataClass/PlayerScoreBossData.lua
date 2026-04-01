@@ -746,6 +746,11 @@ end
 
 PlayerScoreBossData.SendEnterLvAgain = function(self)
   -- function num : 0_36 , upvalues : _ENV
+  -- DECOMPILER ERROR at PC4: Confused about usage of register: R1 in 'UnsetPending'
+
+  if self.curLevel ~= nil then
+    (self.curLevel).isCanPause = false
+  end
   self.isGoAgain = true
   ;
   (NovaAPI.StopRecord)()

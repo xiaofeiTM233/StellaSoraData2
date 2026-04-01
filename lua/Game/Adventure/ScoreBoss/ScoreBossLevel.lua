@@ -13,6 +13,7 @@ ScoreBossLevel.Init = function(self, parent, nLevelId, nBuildId, isAgain)
   self.BossCurLvTotalChangeHp = 0
   self.BattleLv = 1
   self.nTime = 0
+  self.isCanPause = true
   local leveData = (ConfigTable.GetData)("ScoreBossLevel", nLevelId)
   if leveData == nil then
     printError("ScoreBossLevel 表不存在 id ==== " .. nLevelId)
@@ -85,6 +86,7 @@ end
 
 ScoreBossLevel.OnEvent_LoadLevelRefresh = function(self)
   -- function num : 0_2 , upvalues : _ENV
+  self.isCanPause = true
   local mapAllEft, mapDiscEft, mapNoteEffect, tbNoteInfo = (PlayerData.Build):GetBuildAllEft((self.mapBuildData).nBuildId)
   safe_call_cs_func((CS.AdventureModuleHelper).SetNoteInfo, tbNoteInfo)
   self.mapEftData = (UTILS.AddBuildEffect)(mapAllEft, mapDiscEft, mapNoteEffect)
@@ -140,7 +142,9 @@ end
 
 ScoreBossLevel.OnEvent_Pause = function(self)
   -- function num : 0_6 , upvalues : _ENV
-  (EventManager.Hit)("OpenScoreBossPause", self.LevelId, self.tbCharId)
+  if self.isCanPause then
+    (EventManager.Hit)("OpenScoreBossPause", self.LevelId, self.tbCharId)
+  end
 end
 
 ScoreBossLevel.OnEvent_AbandonBattle = function(self)
