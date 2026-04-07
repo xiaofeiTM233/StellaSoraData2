@@ -24,6 +24,6 @@ end
   -- DECOMPILER ERROR at PC28: Confused about usage of register: R3 in 'UnsetPending'
 
   ;
-  ((CS.GameCameraStackManager).Instance).autoVerticalToHorizontalFieldOfViewAspect = 1.44
+  ((CS.GameCameraStackManager).Instance).autoVerticalToHorizontalFieldOfViewAspect = 1.53
 end
 
