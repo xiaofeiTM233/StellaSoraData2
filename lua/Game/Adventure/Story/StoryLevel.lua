@@ -20,7 +20,7 @@ StoryLevel.Init = function(self, parent, nLevelId, nBuildId, bActivityStory)
   end
   self.bTrialLevel = mapStory.TrialBuild ~= nil and nBuildId == 0
   local GetBuildCallback = function(mapBuildData)
-    -- function num : 0_0_0 , upvalues : self, _ENV, mapStory
+    -- function num : 0_0_0 , upvalues : self, _ENV, bActivityStory, mapStory
     self.mapBuildData = mapBuildData
     self.tbCharTrialId = {}
     self.tbCharId = {}
@@ -37,11 +37,19 @@ StoryLevel.Init = function(self, parent, nLevelId, nBuildId, bActivityStory)
         (table.insert)(self.tbDiscId, nDiscId)
       end
     end
-    -- DECOMPILER ERROR at PC41: Confused about usage of register: R1 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC44: Confused about usage of register: R1 in 'UnsetPending'
 
-    PlayerData.nCurGameType = (AllEnum.WorldMapNodeType).Mainline
-    ;
-    ((CS.AdventureModuleHelper).EnterMainlineMap)((mapStory.FloorId)[1], self.tbCharId, {})
+    if bActivityStory then
+      PlayerData.nCurGameType = (AllEnum.WorldMapNodeType).ActivityStory
+      ;
+      ((CS.AdventureModuleHelper).EnterActivityStoryLevelsInstance)((mapStory.FloorId)[1], self.tbCharId)
+    else
+      -- DECOMPILER ERROR at PC57: Confused about usage of register: R1 in 'UnsetPending'
+
+      PlayerData.nCurGameType = (AllEnum.WorldMapNodeType).Mainline
+      ;
+      ((CS.AdventureModuleHelper).EnterMainlineMap)((mapStory.FloorId)[1], self.tbCharId, {})
+    end
     ;
     (NovaAPI.EnterModule)("AdventureModuleScene", true, 17)
   end
@@ -223,7 +231,9 @@ StoryLevel.PlaySuccessPerform = function(self, FadeTime, mapChangeInfo, sVideoNa
       end
       local nFloorCount = #storyCfg.FloorId
       local nMapId = (storyCfg.FloorId)[nFloorCount]
-      local nType = ((ConfigTable.GetData)("MainlineFloor", nMapId)).Theme
+      if self.bActivityStory ~= true or not ((ConfigTable.GetData)("ActivityLevelsFloor", nMapId)).Theme then
+        local nType = ((ConfigTable.GetData)("MainlineFloor", nMapId)).Theme
+      end
       local sName = ((ConfigTable.GetData)("EndSceneType", nType)).EndSceneName
       ;
       (EventManager.Add)("SettlementPerformLoadFinish", self, openBattleResultPanel)
@@ -349,8 +359,12 @@ StoryLevel.ChangeFloor = function(self)
 
   ;
   (EventManager.Add)("ADVENTURE_LEVEL_UNLOAD_COMPLETE", self, levelUnloadCallback)
-  ;
-  ((CS.AdventureModuleHelper).EnterMainlineMap)((mapStory.FloorId)[self.curFloorIdx], self.tbCharId, {})
+  if self.bActivityStory then
+    ((CS.AdventureModuleHelper).EnterActivityStoryLevelsInstance)((mapStory.FloorId)[self.curFloorIdx], self.tbCharId)
+  else
+    ;
+    ((CS.AdventureModuleHelper).EnterMainlineMap)((mapStory.FloorId)[self.curFloorIdx], self.tbCharId, {})
+  end
   ;
   ((CS.AdventureModuleHelper).LevelStateChanged)(false)
   self.bSettle = false

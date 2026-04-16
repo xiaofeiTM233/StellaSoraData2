@@ -19,7 +19,9 @@ EquipmentData.Clear = function(self)
   self.nRefreshId = nil
   self.bLock = nil
   self.tbAffix = nil
+  self.tbUpgradeCount = nil
   self.tbAlterAffix = nil
+  self.tbAlterUpgradeCount = nil
   self.tbPotentialAffix = nil
   self.tbSkillAffix = nil
   self.tbRandomAttr = nil
@@ -53,19 +55,21 @@ end
 EquipmentData.ParseServerData = function(self, mapEquipment)
   -- function num : 0_4
   self.bLock = mapEquipment.Lock
-  self:UpdateAffix(mapEquipment.Attributes)
-  self:UpdateAlterAffix(mapEquipment.AlterAttributes)
+  self:UpdateAffix(mapEquipment.Attributes, mapEquipment.OverlockCount)
+  self:UpdateAlterAffix(mapEquipment.AlterAttributes, mapEquipment.AlterOverlockCount)
 end
 
-EquipmentData.UpdateAffix = function(self, tbAttributes)
+EquipmentData.UpdateAffix = function(self, tbAttributes, tbCount)
   -- function num : 0_5
   self.tbAffix = tbAttributes
-  self:UpdateRandomAttr(self.tbAffix)
+  self.tbUpgradeCount = tbCount
+  self:UpdateRandomAttr(self.tbAffix, self.tbUpgradeCount)
 end
 
-EquipmentData.UpdateAlterAffix = function(self, tbAttributes)
+EquipmentData.UpdateAlterAffix = function(self, tbAttributes, tbCount)
   -- function num : 0_6
   self.tbAlterAffix = tbAttributes
+  self.tbAlterUpgradeCount = tbCount
 end
 
 EquipmentData.ReplaceRandomAttr = function(self)
@@ -73,67 +77,84 @@ EquipmentData.ReplaceRandomAttr = function(self)
   if not self.tbAlterAffix or next(self.tbAlterAffix) == nil then
     return 
   end
+  if not self.tbAlterUpgradeCount or next(self.tbAlterUpgradeCount) == nil then
+    return 
+  end
   self.tbAffix = clone(self.tbAlterAffix)
   for k,_ in ipairs(self.tbAlterAffix) do
-    -- DECOMPILER ERROR at PC18: Confused about usage of register: R6 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC27: Confused about usage of register: R6 in 'UnsetPending'
 
     (self.tbAlterAffix)[k] = 0
   end
-  self:UpdateRandomAttr(self.tbAffix)
+  self.tbUpgradeCount = clone(self.tbAlterUpgradeCount)
+  for k,_ in ipairs(self.tbAlterUpgradeCount) do
+    -- DECOMPILER ERROR at PC39: Confused about usage of register: R6 in 'UnsetPending'
+
+    (self.tbAlterUpgradeCount)[k] = 0
+  end
+  self:UpdateRandomAttr(self.tbAffix, self.tbUpgradeCount)
 end
 
-EquipmentData.UpdateRandomAttr = function(self, mapAttrs)
+EquipmentData.UpdateRandomAttr = function(self, mapAttrs, tbCount)
   -- function num : 0_8 , upvalues : _ENV, ConfigData
   self.tbPotentialAffix = {}
   self.tbSkillAffix = {}
   self.tbRandomAttr = {}
   self.tbEffect = {}
-  for _,v in ipairs(mapAttrs) do
+  local add = function(mapCfg, nAttrId)
+    -- function num : 0_8_0 , upvalues : _ENV, self, ConfigData
+    if not mapCfg then
+      return 
+    end
+    if mapCfg.AttrType == (GameEnum.CharGemEffectType).Potential then
+      (table.insert)(self.tbPotentialAffix, mapCfg)
+    else
+      if mapCfg.AttrType == (GameEnum.CharGemEffectType).SkillLevel then
+        (table.insert)(self.tbSkillAffix, mapCfg)
+      else
+        if mapCfg.AttrTypeSecondSubtype == (GameEnum.parameterType).BASE_VALUE then
+          if not tonumber(mapCfg.Value) then
+            local value = mapCfg.AttrType ~= (GameEnum.effectType).ATTR_FIX and mapCfg.AttrType ~= (GameEnum.effectType).PLAYER_ATTR_FIX or 0
+          end
+          local mapData = {AttrId = nAttrId, Value = value, CfgValue = value / ConfigData.IntFloatPrecision}
+          ;
+          (table.insert)(self.tbRandomAttr, mapData)
+        else
+          do
+            ;
+            (table.insert)(self.tbEffect, mapCfg.EffectId)
+          end
+        end
+      end
+    end
+  end
+
+  for k,v in ipairs(mapAttrs) do
     if v > 0 then
       local mapCfg = (ConfigTable.GetData)("CharGemAttrValue", v)
       if mapCfg then
-        if mapCfg.AttrType == (GameEnum.CharGemEffectType).Potential then
-          (table.insert)(self.tbPotentialAffix, mapCfg)
+        if tbCount and tbCount[k] > 0 then
+          local nId = mapCfg.TypeId * 100 + tbCount[k] + mapCfg.Level
+          local mapAfterCfg = (ConfigTable.GetData)("CharGemAttrValue", nId)
+          add(mapAfterCfg, nId)
         else
-          if mapCfg.AttrType == (GameEnum.CharGemEffectType).SkillLevel then
-            (table.insert)(self.tbSkillAffix, mapCfg)
-          else
-            if mapCfg.AttrTypeSecondSubtype == (GameEnum.parameterType).BASE_VALUE then
-              if not tonumber(mapCfg.Value) then
-                local value = mapCfg.AttrType ~= (GameEnum.effectType).ATTR_FIX and mapCfg.AttrType ~= (GameEnum.effectType).PLAYER_ATTR_FIX or 0
-              end
-              local mapData = {AttrId = v, Value = value, CfgValue = value / ConfigData.IntFloatPrecision}
-              ;
-              (table.insert)(self.tbRandomAttr, mapData)
-            else
-              do
-                do
-                  ;
-                  (table.insert)(self.tbEffect, mapCfg.EffectId)
-                  -- DECOMPILER ERROR at PC86: LeaveBlock: unexpected jumping out DO_STMT
+          do
+            do
+              add(mapCfg, v)
+              -- DECOMPILER ERROR at PC47: LeaveBlock: unexpected jumping out DO_STMT
 
-                  -- DECOMPILER ERROR at PC86: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+              -- DECOMPILER ERROR at PC47: LeaveBlock: unexpected jumping out IF_ELSE_STMT
 
-                  -- DECOMPILER ERROR at PC86: LeaveBlock: unexpected jumping out IF_STMT
+              -- DECOMPILER ERROR at PC47: LeaveBlock: unexpected jumping out IF_STMT
 
-                  -- DECOMPILER ERROR at PC86: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+              -- DECOMPILER ERROR at PC47: LeaveBlock: unexpected jumping out IF_THEN_STMT
 
-                  -- DECOMPILER ERROR at PC86: LeaveBlock: unexpected jumping out IF_STMT
+              -- DECOMPILER ERROR at PC47: LeaveBlock: unexpected jumping out IF_STMT
 
-                  -- DECOMPILER ERROR at PC86: LeaveBlock: unexpected jumping out IF_ELSE_STMT
+              -- DECOMPILER ERROR at PC47: LeaveBlock: unexpected jumping out IF_THEN_STMT
 
-                  -- DECOMPILER ERROR at PC86: LeaveBlock: unexpected jumping out IF_STMT
+              -- DECOMPILER ERROR at PC47: LeaveBlock: unexpected jumping out IF_STMT
 
-                  -- DECOMPILER ERROR at PC86: LeaveBlock: unexpected jumping out IF_THEN_STMT
-
-                  -- DECOMPILER ERROR at PC86: LeaveBlock: unexpected jumping out IF_STMT
-
-                  -- DECOMPILER ERROR at PC86: LeaveBlock: unexpected jumping out IF_THEN_STMT
-
-                  -- DECOMPILER ERROR at PC86: LeaveBlock: unexpected jumping out IF_STMT
-
-                end
-              end
             end
           end
         end
@@ -197,19 +218,70 @@ EquipmentData.CheckAlterEmpty = function(self)
   return false
 end
 
-EquipmentData.GetTypeDesc = function(self)
+EquipmentData.GetUpgradeCount = function(self)
   -- function num : 0_15 , upvalues : _ENV
+  local nAll = 0
+  if self.tbUpgradeCount then
+    for _,v in ipairs(self.tbUpgradeCount) do
+      nAll = nAll + v
+    end
+  end
+  do
+    return nAll
+  end
+end
+
+EquipmentData.ChangeUpgradeCount = function(self, nAttrIndex, nChange)
+  -- function num : 0_16
+  -- DECOMPILER ERROR at PC16: Confused about usage of register: R3 in 'UnsetPending'
+
+  if (self.tbAlterUpgradeCount)[nAttrIndex] == (self.tbUpgradeCount)[nAttrIndex] and (self.tbAlterAffix)[nAttrIndex] == (self.tbAffix)[nAttrIndex] then
+    (self.tbAlterUpgradeCount)[nAttrIndex] = (self.tbAlterUpgradeCount)[nAttrIndex] + nChange
+  end
+  -- DECOMPILER ERROR at PC21: Confused about usage of register: R3 in 'UnsetPending'
+
+  ;
+  (self.tbUpgradeCount)[nAttrIndex] = (self.tbUpgradeCount)[nAttrIndex] + nChange
+end
+
+EquipmentData.CheckUpgradeAble = function(self)
+  -- function num : 0_17 , upvalues : _ENV
+  local nAll = self:GetUpgradeCount()
+  local nLimit = (ConfigTable.GetConfigNumber)("CharGemOverlockCount")
+  do return nAll < nLimit end
+  -- DECOMPILER ERROR: 1 unprocessed JMP targets
+end
+
+EquipmentData.CheckUpgradeAlterSame = function(self, nAttrIndex)
+  -- function num : 0_18 , upvalues : _ENV
+  if not self.tbAlterAffix or next(self.tbAlterAffix) == nil then
+    return true
+  end
+  if not self.tbAlterUpgradeCount or next(self.tbAlterUpgradeCount) == nil then
+    return true
+  end
+  if (self.tbAlterAffix)[nAttrIndex] == 0 then
+    return true
+  end
+  if (self.tbAlterUpgradeCount)[nAttrIndex] == (self.tbUpgradeCount)[nAttrIndex] and (self.tbAlterAffix)[nAttrIndex] == (self.tbAffix)[nAttrIndex] then
+    return true
+  end
+  return false
+end
+
+EquipmentData.GetTypeDesc = function(self)
+  -- function num : 0_19 , upvalues : _ENV
   local sLanguage = ((AllEnum.EquipmentType)[self.nType]).Language
   return (ConfigTable.GetUIText)(sLanguage)
 end
 
 EquipmentData.GetTypeIcon = function(self)
-  -- function num : 0_16 , upvalues : _ENV
+  -- function num : 0_20 , upvalues : _ENV
   return ((AllEnum.EquipmentType)[self.nType]).Icon
 end
 
 EquipmentData.GetEffectDescId = function(self, attrSybType1, attrSybType2)
-  -- function num : 0_17 , upvalues : _ENV
+  -- function num : 0_21 , upvalues : _ENV
   return (GameEnum.effectType).ATTR_FIX * 10000 + attrSybType1 * 10 + attrSybType2
 end
 

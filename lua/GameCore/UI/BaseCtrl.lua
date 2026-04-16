@@ -837,7 +837,7 @@ BaseCtrl._AutoFitIcon = function(self, imgObj, sPath, sSurfix)
 end
 
 BaseCtrl.SetPngSprite = function(self, imgObj, sPath, sSurfix)
-  -- function num : 0_27 , upvalues : _ENV, bActive_AutoFit, sRootPath
+  -- function num : 0_27 , upvalues : _ENV, bActive_AutoFit, sRootPath, GameResourceLoader, ResType, typeof
   if type(sPath) == "number" then
     traceback("调用接口处需更新，panel id:" .. (self._panel)._nPanelId .. "，ctrl name:" .. self.__cname)
     ;
@@ -858,11 +858,10 @@ BaseCtrl.SetPngSprite = function(self, imgObj, sPath, sSurfix)
     return false
   else
     local sFullPath = sRootPath .. sPath .. ".png"
-    local bSuc = (NovaAPI.SetImageSprite)(imgObj, sFullPath)
-    if not bSuc then
-      traceback((string.format)("icon设置失败：%s，panel id：%s，ctrl name：%s", sFullPath, tostring((self._panel)._nPanelId), tostring(self.__cname)))
-    end
-    return bSuc
+    local _sprite = (GameResourceLoader.LoadAsset)(ResType.Any, sFullPath, typeof(Sprite), "UI", (self._panel)._nPanelId)
+    ;
+    (NovaAPI.SetImageSpriteAsset)(imgObj, _sprite)
+    return true
   end
 end
 
@@ -1112,6 +1111,7 @@ BaseCtrl.DespawnPrefabInstance = function(self, objCtrl, sPoolName)
     objCtrl:_Destroy()
     ;
     (AdventureModuleHelper.DespawnPrefabInstance)(objCtrl.gameObject, sPoolName)
+    objCtrl.gameObject = nil
   end
 end
 

@@ -12,13 +12,13 @@ PlayerTeamData.CacheFormationInfo = function(self, mapData)
   if self._tbTeam == nil then
     self._tbTeam = {}
     for i = 1, (AllEnum.Const).MAX_TEAM_COUNT do
-      -- DECOMPILER ERROR at PC29: Confused about usage of register: R6 in 'UnsetPending'
+      -- DECOMPILER ERROR at PC30: Confused about usage of register: R6 in 'UnsetPending'
 
       (self._tbTeam)[i] = {nCaptainIndex = 0, 
 tbTeamMemberId = {0, 0, 0}
 , 
 tbTeamDiscId = {0, 0, 0}
-}
+, nPreselectionId = 0}
     end
   end
   do
@@ -33,18 +33,19 @@ tbTeamDiscId = {0, 0, 0}
 tbTeamMemberId = {0, 0, 0}
 , 
 tbTeamDiscId = {0, 0, 0}
-}
+, nPreselectionId = 0}
         end
         for nIndex,nCharId in ipairs(v.CharIds) do
-          -- DECOMPILER ERROR at PC65: Confused about usage of register: R14 in 'UnsetPending'
+          -- DECOMPILER ERROR at PC67: Confused about usage of register: R14 in 'UnsetPending'
 
           (mapTeamData.tbTeamMemberId)[nIndex] = nCharId
         end
         for nIndex,nDiscId in ipairs(v.DiscIds) do
-          -- DECOMPILER ERROR at PC73: Confused about usage of register: R14 in 'UnsetPending'
+          -- DECOMPILER ERROR at PC75: Confused about usage of register: R14 in 'UnsetPending'
 
           (mapTeamData.tbTeamDiscId)[nIndex] = nDiscId
         end
+        mapTeamData.nPreselectionId = v.PreselectionId
       end
     end
     do
@@ -55,28 +56,32 @@ tbTeamDiscId = {0, 0, 0}
   end
 end
 
-PlayerTeamData.UpdateFormationInfo = function(self, nTeamId, tbCharIds, tbDiscIds, callback)
+PlayerTeamData.UpdateFormationInfo = function(self, nTeamId, tbCharIds, tbDiscIds, nPreselectionId, callback)
   -- function num : 0_2 , upvalues : _ENV
   local PlayerFormationReq = {}
   PlayerFormationReq.Formation = {}
-  -- DECOMPILER ERROR at PC4: Confused about usage of register: R6 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC4: Confused about usage of register: R7 in 'UnsetPending'
 
   ;
   (PlayerFormationReq.Formation).Number = nTeamId
-  -- DECOMPILER ERROR at PC6: Confused about usage of register: R6 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC6: Confused about usage of register: R7 in 'UnsetPending'
 
   ;
   (PlayerFormationReq.Formation).Captain = 1
-  -- DECOMPILER ERROR at PC8: Confused about usage of register: R6 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC8: Confused about usage of register: R7 in 'UnsetPending'
 
   ;
   (PlayerFormationReq.Formation).CharIds = tbCharIds
-  -- DECOMPILER ERROR at PC10: Confused about usage of register: R6 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC10: Confused about usage of register: R7 in 'UnsetPending'
 
   ;
   (PlayerFormationReq.Formation).DiscIds = tbDiscIds
+  -- DECOMPILER ERROR at PC12: Confused about usage of register: R7 in 'UnsetPending'
+
+  ;
+  (PlayerFormationReq.Formation).PreselectionId = nPreselectionId
   local Callback = function()
-    -- function num : 0_2_0 , upvalues : self, nTeamId, _ENV, tbCharIds, tbDiscIds, callback
+    -- function num : 0_2_0 , upvalues : self, nTeamId, _ENV, tbCharIds, tbDiscIds, nPreselectionId, callback
     if self._tbTeam == nil then
       self._tbTeam = {}
     end
@@ -95,6 +100,7 @@ PlayerTeamData.UpdateFormationInfo = function(self, nTeamId, tbCharIds, tbDiscId
       end
     end
     do
+      mapTeamData.nPreselectionId = nPreselectionId
       if callback ~= nil and type(callback) == "function" then
         callback()
       end
@@ -105,8 +111,13 @@ PlayerTeamData.UpdateFormationInfo = function(self, nTeamId, tbCharIds, tbDiscId
   (HttpNetHandler.SendMsg)((NetMsgId.Id).player_formation_req, PlayerFormationReq, nil, Callback)
 end
 
-PlayerTeamData.GetTeamData = function(self, nTeamId)
+PlayerTeamData.GetAllTeamData = function(self)
   -- function num : 0_3
+  return self._tbTeam
+end
+
+PlayerTeamData.GetTeamData = function(self, nTeamId)
+  -- function num : 0_4
   if self._tbTeam == nil then
     return nil, nil
   end
@@ -119,7 +130,7 @@ PlayerTeamData.GetTeamData = function(self, nTeamId)
 end
 
 PlayerTeamData.GetTeamDiscData = function(self, nTeamId)
-  -- function num : 0_4
+  -- function num : 0_5
   if self._tbTeam == nil then
     return {0, 0, 0, 0, 0, 0}
   end
@@ -132,7 +143,7 @@ PlayerTeamData.GetTeamDiscData = function(self, nTeamId)
 end
 
 PlayerTeamData.GetTeamCharId = function(self, nTeamId)
-  -- function num : 0_5 , upvalues : _ENV
+  -- function num : 0_6 , upvalues : _ENV
   local mapTeamData = (self._tbTeam)[nTeamId]
   local tbCharId = {}
   if mapTeamData ~= nil then
@@ -150,8 +161,21 @@ PlayerTeamData.GetTeamCharId = function(self, nTeamId)
   end
 end
 
+PlayerTeamData.GetTeamPreselectionId = function(self, nTeamId)
+  -- function num : 0_7
+  if self._tbTeam == nil then
+    return 0
+  end
+  local mapTeamData = (self._tbTeam)[nTeamId]
+  if mapTeamData ~= nil then
+    return mapTeamData.nPreselectionId
+  else
+    return 0
+  end
+end
+
 PlayerTeamData.CheckTeamValid = function(self, nTeamId)
-  -- function num : 0_6 , upvalues : _ENV
+  -- function num : 0_8 , upvalues : _ENV
   if self._tbTeam == nil then
     return false
   end
@@ -173,7 +197,7 @@ PlayerTeamData.CheckTeamValid = function(self, nTeamId)
 end
 
 PlayerTeamData.TempCreateRoguelikeTeam = function(self, tbTeamCharId)
-  -- function num : 0_7
+  -- function num : 0_9
   self._tbTeam = {}
   -- DECOMPILER ERROR at PC6: Confused about usage of register: R2 in 'UnsetPending'
 

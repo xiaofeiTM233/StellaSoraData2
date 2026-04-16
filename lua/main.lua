@@ -2,11 +2,12 @@ require("GameCore.GameCore")
 local GameResourceLoader = require("Game.Common.Resource.GameResourceLoader")
 local ResTypeAny = (GameResourceLoader.ResType).Any
 local typeof = typeof
+local ClientManager = CS.ClientManager
+local FrameworkMiscUtils = CS.FrameworkMiscUtils
 ;
 (NovaAPI.EnterModule)("LoginModuleScene", true)
-do
-  if (NovaAPI.IsEditorPlatform)() then
-    local forEachLine_Story = function(mapLineData)
+if (NovaAPI.IsEditorPlatform)() then
+  local forEachLine_Story = function(mapLineData)
   -- function num : 0_0 , upvalues : _ENV
   if mapLineData.AvgLuaName ~= "" then
     local nLanIdx = GetLanguageIndex(Settings.sCurrentTxtLanguage)
@@ -19,11 +20,6 @@ do
   end
 end
 
-    ForEachTableLine(DataTable.Story, forEachLine_Story)
-  end
-  -- DECOMPILER ERROR at PC28: Confused about usage of register: R3 in 'UnsetPending'
-
-  ;
-  ((CS.GameCameraStackManager).Instance).autoVerticalToHorizontalFieldOfViewAspect = 1.53
+  ForEachTableLine(DataTable.Story, forEachLine_Story)
 end
 

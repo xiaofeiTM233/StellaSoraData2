@@ -4,6 +4,7 @@ local BreakOutLevelData = class("BreakOutLevelData")
 local mapEventConfig = {LoadLevelRefresh = "OnEvent_LoadLevelRefresh", AdventureModuleEnter = "OnEvent_AdventureModuleEnter", BattlePause = "OnEvent_Pause", ADVENTURE_LEVEL_UNLOAD_COMPLETE = "OnEvent_UnloadComplete", InputEnable = "OnEvent_InputEnable", BreakOut_Complete = "SetBreakOut_Complete", SetPlayFinishState = "SetPlayFinishState"}
 BreakOutLevelData.InitData = function(self, nLevelId, nCharacterNid, nActId)
   -- function num : 0_0 , upvalues : _ENV, LocalData
+  self:UnBindEvent()
   self.nLevelId = nLevelId
   self.tbSkillData = {}
   self.cacheHasDicList = {}
@@ -11,9 +12,8 @@ BreakOutLevelData.InitData = function(self, nLevelId, nCharacterNid, nActId)
   self.nCharacterNid = nCharacterNid
   self.bRestart = false
   self:BindEvent()
-  self.tbDropCollect = {}
   self.FloorId = ((ConfigTable.GetData)("BreakOutLevel", nLevelId)).FloorId
-  self.bIsEnd = true
+  self.bShouldExit = true
   self.bIsFinishGame = false
   local sJson = (LocalData.GetPlayerLocalData)("BreakOutFloorDicId")
   local tb = decodeJson(sJson)
@@ -35,6 +35,7 @@ end
 
 BreakOutLevelData.GetCurrentFloorDrops = function(self, FloorData)
   -- function num : 0_2 , upvalues : _ENV
+  self.tbDropCollect = {}
   if FloorData == nil then
     return 
   end
@@ -88,13 +89,13 @@ end
 
 BreakOutLevelData.OnEvent_UnloadComplete = function(self)
   -- function num : 0_6 , upvalues : _ENV
-  if not self.bIsEnd then
+  if not self.bShouldExit then
     local tempData = {curChar = self.nCharacterNid, nLevelId = self.nLevelId, nActId = self.nActId, FloorId = self.FloorId}
     ;
     (EventManager.Hit)("BreakOutRestart")
     ;
     (EventManager.Hit)("Event_ReStartBreakOut", tempData)
-    self.bIsEnd = true
+    self.bShouldExit = true
   else
     do
       ;
@@ -106,12 +107,12 @@ end
 
 BreakOutLevelData.SetBreakOut_Complete = function(self, bIsEnd)
   -- function num : 0_7
-  self.bIsEnd = bIsEnd
+  self.bShouldExit = bIsEnd
 end
 
 BreakOutLevelData.GetIsBreakOut_Complete = function(self)
   -- function num : 0_8
-  return self.bIsEnd
+  return self.bShouldExit
 end
 
 BreakOutLevelData.SetPlayFinishState = function(self, bIsFinishGame)

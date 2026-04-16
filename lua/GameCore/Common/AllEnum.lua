@@ -282,7 +282,7 @@ AllEnum.SkillLvPowerFactor = {
 , 
 [4] = {[1] = 0, [2] = 225, [3] = 250, [4] = 300, [5] = 200}
 }
-AllEnum.WorldMapNodeType = {Mainline = 1, Roguelike = 2, Branchline = 3, Rogueboss = 4, FixedRoguelike = 5, Prologue = 6, DailyInstance = 7, TravelerDuel = 8, InfinityTower = 9, EquipmentInstance = 10, VamireSurvivor = 11, ScoreBoss = 12, SkillInstance = 13, Trial = 14, JointDrill = 15}
+AllEnum.WorldMapNodeType = {Mainline = 1, Roguelike = 2, Branchline = 3, Rogueboss = 4, FixedRoguelike = 5, Prologue = 6, DailyInstance = 7, TravelerDuel = 8, InfinityTower = 9, EquipmentInstance = 10, VamireSurvivor = 11, ScoreBoss = 12, SkillInstance = 13, Trial = 14, JointDrill = 15, ActivityLevels = 16, ActivityStory = 17}
 AllEnum.FrameColor_New = {[0] = "0", [(GameEnum.itemRarity).SSR] = "5", [(GameEnum.itemRarity).SR] = "4", [(GameEnum.itemRarity).R] = "3", [(GameEnum.itemRarity).M] = "2", [(GameEnum.itemRarity).N] = "1"}
 AllEnum.BoardFrameColor = {[0] = "0", [(GameEnum.itemRarity).SSR] = "5", [(GameEnum.itemRarity).SR] = "4", [(GameEnum.itemRarity).R] = "3", [(GameEnum.itemRarity).M] = "0", [(GameEnum.itemRarity).N] = "0"}
 AllEnum.FrameType_New = {Item = "rare_item_a_", ItemS = "rare_item_b_", ItemSS = "rare_item_c_", CharList = "rare_list_", CharFrame = "rare_character_", BoardFrame = "rare_mainchara_", VestigePerk = "rare_vestige_xintiao_", RareBag = "rare_bag_", Outfit = "rare_fengjing_", OutfitPortrait = "rare_scenery_card_", PresentsSide = "rare_gift_side_", PresentsEllipse = "rare_gift_ellipse_", PresentsDB = "rare_gift_db_", PresentsCircle = "rare_gift_circle_", SuperscriptDB = "rare_outfit_", Talent = "rare_talent_", SlotPerk = "rare_vestige_slot_", ThemePerk = "rare_vestige_theme_", ExclusivePerk = "db_weapon_perk_", Text = "rare_character_text_", BuildRank = "rare_build_", BuildRankDB = "rare_build_db_", BuildFormation = "rare_team_build_db_", ShopGoods = "db_shop_character_", MallGoods = "db_mall_character_", DiscList = "rare_outfit_list_", FateCard = "rare_vestige_fatecard_", FateCardS = "rare_vestige_fatecard_icon_", Potential = "rare_vestige_card_", PotentialS = "rare_vestige_card_s_", StarTowerFateCard = "rare_vestige_fatecard_icon_", HarmonySkillL = "rare_outfit_skill_l_", HarmonySkillS = "rare_outfit_skill_s_", RandomProperty = "rare_chargem_db_a_", RandomPropertyLock = "rare_chargem_db_b_", DiscLimitS = "rare_outfit_exceed_s_", DiscLimitL = "rare_outfit_exceed_l_", DiscFrameL = "rare_outfit_team_l_", DiscFrameS = "rare_outfit_team_s_"}
@@ -729,7 +729,7 @@ AllEnum.TutorialLevelLockType = {None = 1, WorldClass = 2, PreLevel = 3}
 AllEnum.JointDrillActStatus = {WaitStart = 1, Start = 2, WaitClose = 3, Closed = 4}
 AllEnum.DiscReadType = {DiscStory = 1, DiscAvg = 2}
 AllEnum.BattleHudType = {Sector = 1, Horizontal = 2}
-AllEnum.ActivityThemeFuncIndex = {MiniGame = 1, Task = 2, Story = 3, Shop = 4, Level = 5, Other = 6}
+AllEnum.ActivityThemeFuncIndex = {MiniGame = 1, Task = 2, Story = 3, Shop = 4, Level = 5, FateCard = 6, TrekkerVersus = 7}
 AllEnum.CgSurfix = {Main = "_M", Image = ""}
 AllEnum.Cg2DType = {Base = 1, L2D = 2}
 AllEnum.CharSkinSource = {[(GameEnum.skinSourceType).ACTIVITY] = "Skin_Unlock_Activity", [(GameEnum.skinSourceType).TIMELIMIT] = "Skin_Unlock_Shop", [(GameEnum.skinSourceType).ADVANCE] = "Skin_Unlock_Advance", [(GameEnum.skinSourceType).BATTLEPASS] = "Skin_Unlock_Battlepass"}
@@ -739,5 +739,9 @@ AllEnum.CookieModeIcon = {[(GameEnum.CookiePackModel).CookiePackNormalModel] = "
 AllEnum.TransitionStatus = {IsPlayingInAnim = 1, InAnimDone = 2, IsPlayingOutAnim = 3, OutAnimDone = 4}
 AllEnum.HandBookTab = {Skin = 1, Disc = 2, MainScreenCG = 3}
 AllEnum.PenguinCardSuitSprite = {[(GameEnum.PenguinBaseCardSuit).Blue] = "icon_PengCard_Water", [(GameEnum.PenguinBaseCardSuit).Red] = "icon_PengCard_Fire", [(GameEnum.PenguinBaseCardSuit).Green] = "icon_PengCard_Wind"}
+AllEnum.GoldenSpyHitAreaType = {Circle = 1, Rectangle = 2}
+AllEnum.TrekkerVersusDuelSelfInfo = {NameKey = "TD_SelfName", Icon = "UI_Activity/_600002/head_172_duel"}
+AllEnum.PreselectionPanelType = {Create = 1, Preview = 2, Edit = 3}
+AllEnum.GoldenSpyBuffType = {ActiveBuff = 1, DelayBuff = 2, UnactiveBuff = 3}
 return AllEnum
 

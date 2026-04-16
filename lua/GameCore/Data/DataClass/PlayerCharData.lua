@@ -320,7 +320,7 @@ PlayerCharData.CreateNewChar = function(self, msgData)
   if not msgData.ArchiveRewardIds then
     charData = {nId = nCharId, nRankExp = msgData.Exp, tbDatingEventIds = msgData.DatingEventIds, tbDatingEventRewardIds = msgData.DatingEventRewardIds, nFavor = msgData.Favor, nSkinId = msgData.Skin, nLevel = msgData.Level, nCreateTime = msgData.CreateTime, nAdvance = msgData.Advance, tbSkillLvs = msgData.SkillLvs, bUseSkillWhenActive_Branch1 = tbTempUseSkill.bBranch1, bUseSkillWhenActive_Branch2 = tbTempUseSkill.bBranch2, tbPlot = msgData.Plots, nAffinityExp = msgData.AffinityExp, nAffinityLevel = msgData.AffinityLevel, tbAffinityQuests = msgData.AffinityQuests, 
 tbArchiveRewardIds = {}
-}
+, bIsFavorite = msgData.IsFavorite}
     if msgData.DatingEventIds ~= nil and msgData.DatingEventRewardIds ~= nil then
       (PlayerData.Dating):RefreshLimitedEventList(nCharId, msgData.DatingEventIds, msgData.DatingEventRewardIds)
     end
@@ -1539,6 +1539,10 @@ PlayerCharData.GetDataForCharList = function(self)
 
       ;
       (mapChar[nCharId]).Favorability = (self:GetCharAffinityData(nCharId)).Level
+      -- DECOMPILER ERROR at PC50: Confused about usage of register: R8 in 'UnsetPending'
+
+      ;
+      (mapChar[nCharId]).IsFavorite = self:GetCharFavoriteState(nCharId)
     else
       printError(nCharId .. "角色数据不存在")
     end
@@ -1560,6 +1564,7 @@ PlayerCharData.GetCharDataById = function(self, nCharId)
     tbCharData.CreateTime = ((self._mapChar)[nCharId]).nCreateTime
     tbCharData.Advance = self:GetCharAdvance(nCharId)
     tbCharData.Favorability = (self:GetCharAffinityData(nCharId)).Level
+    tbCharData.IsFavorite = self:GetCharFavoriteState(nCharId)
   end
   return tbCharData
 end
@@ -1672,8 +1677,30 @@ PlayerCharData.SetCharSkinId = function(self, nCharId, nSkinId)
   (EventManager.Hit)(EventId.CharacterSkinChange, nCharId, nSkinId)
 end
 
-PlayerCharData.CalcAffinityEffect = function(self, nCharId)
+PlayerCharData.SetCharFavoriteState = function(self, nCharId, bOnFavorite)
   -- function num : 0_67 , upvalues : _ENV
+  local mapChar = (self._mapChar)[nCharId]
+  if mapChar == nil then
+    printError("没有该角色数据" .. nCharId)
+  end
+  -- DECOMPILER ERROR at PC11: Confused about usage of register: R4 in 'UnsetPending'
+
+  ;
+  ((self._mapChar)[nCharId]).bIsFavorite = bOnFavorite
+end
+
+PlayerCharData.GetCharFavoriteState = function(self, nCharId)
+  -- function num : 0_68 , upvalues : _ENV
+  local mapChar = (self._mapChar)[nCharId]
+  if mapChar == nil then
+    printError("没有该角色数据" .. nCharId)
+    return false
+  end
+  return mapChar.bIsFavorite
+end
+
+PlayerCharData.CalcAffinityEffect = function(self, nCharId)
+  -- function num : 0_69 , upvalues : _ENV
   local tbEfts = (PlayerData.Char):GetCharAffinityEffects(nCharId)
   if tbEfts == nil then
     return 
@@ -1682,7 +1709,7 @@ PlayerCharData.CalcAffinityEffect = function(self, nCharId)
 end
 
 PlayerCharData.CalcTalentEffect = function(self, nCharId)
-  -- function num : 0_68 , upvalues : _ENV
+  -- function num : 0_70 , upvalues : _ENV
   local tbEfts = (PlayerData.Talent):GetTalentEffect(nCharId)
   if tbEfts == nil then
     return {1130101}
@@ -1691,12 +1718,12 @@ PlayerCharData.CalcTalentEffect = function(self, nCharId)
 end
 
 PlayerCharData.GetCharFavorability = function(self, nCharId)
-  -- function num : 0_69
+  -- function num : 0_71
   return 1
 end
 
 PlayerCharData.GetCharAdvance = function(self, nCharId)
-  -- function num : 0_70
+  -- function num : 0_72
   local mapData = (self._mapChar)[nCharId]
   if mapData ~= nil then
     return mapData.nAdvance
@@ -1706,7 +1733,7 @@ PlayerCharData.GetCharAdvance = function(self, nCharId)
 end
 
 PlayerCharData.GetCharAffinityEffects = function(self, nCharId)
-  -- function num : 0_71 , upvalues : _ENV
+  -- function num : 0_73 , upvalues : _ENV
   local mapData = (self._mapChar)[nCharId]
   local effectIds = {}
   if mapData ~= nil then
@@ -1717,7 +1744,7 @@ PlayerCharData.GetCharAffinityEffects = function(self, nCharId)
       end
       local templateId = mapCfg.TemplateId
       local forEachAffinityLevel = function(affinityData)
-    -- function num : 0_71_0 , upvalues : templateId, mapData, _ENV, effectIds
+    -- function num : 0_73_0 , upvalues : templateId, mapData, _ENV, effectIds
     if affinityData.TemplateId == templateId and mapData.nAffinityLevel ~= nil and affinityData.AffinityLevel == mapData.nAffinityLevel and affinityData.Effect ~= nil and #affinityData.Effect > 0 then
       for k,v in ipairs(affinityData.Effect) do
         (table.insert)(effectIds, v)
@@ -1734,7 +1761,7 @@ PlayerCharData.GetCharAffinityEffects = function(self, nCharId)
 end
 
 PlayerCharData.CharUpgrade = function(self, nCharId, tbMat, mapTargetLevel, callback)
-  -- function num : 0_72 , upvalues : _ENV
+  -- function num : 0_74 , upvalues : _ENV
   local tbItems = {}
   for _,mapMat in pairs(tbMat) do
     if mapMat.nCost > 0 then
@@ -1743,7 +1770,7 @@ PlayerCharData.CharUpgrade = function(self, nCharId, tbMat, mapTargetLevel, call
   end
   local mapMsg = {CharId = nCharId, Items = tbItems}
   local msgCallback = function(_, mapMsgData)
-    -- function num : 0_72_0 , upvalues : _ENV, self, nCharId, mapTargetLevel, callback
+    -- function num : 0_74_0 , upvalues : _ENV, self, nCharId, mapTargetLevel, callback
     local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData.Change)
     ;
     (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
@@ -1765,10 +1792,10 @@ PlayerCharData.CharUpgrade = function(self, nCharId, tbMat, mapTargetLevel, call
 end
 
 PlayerCharData.CharAdvance = function(self, nCharId, callback)
-  -- function num : 0_73 , upvalues : _ENV
+  -- function num : 0_75 , upvalues : _ENV
   local mapMsg = {Value = nCharId}
   local msgCallback = function(_, mapMsgData)
-    -- function num : 0_73_0 , upvalues : _ENV, self, nCharId, callback
+    -- function num : 0_75_0 , upvalues : _ENV, self, nCharId, callback
     local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
     ;
     (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
@@ -1786,10 +1813,10 @@ PlayerCharData.CharAdvance = function(self, nCharId, callback)
 end
 
 PlayerCharData.CharAdvanceReward = function(self, nCharId, nAdvance, callback)
-  -- function num : 0_74 , upvalues : _ENV
+  -- function num : 0_76 , upvalues : _ENV
   local mapMsg = {CharId = nCharId, Advance = nAdvance}
   local msgCallback = function(_, mapMsgData)
-    -- function num : 0_74_0 , upvalues : callback, _ENV
+    -- function num : 0_76_0 , upvalues : callback, _ENV
     if callback ~= nil then
       (UTILS.OpenReceiveByChangeInfo)(mapMsgData.Change)
       callback()
@@ -1801,10 +1828,10 @@ PlayerCharData.CharAdvanceReward = function(self, nCharId, nAdvance, callback)
 end
 
 PlayerCharData.CharPlotFinish = function(self, nCharId, nPlotId, callback)
-  -- function num : 0_75 , upvalues : _ENV
+  -- function num : 0_77 , upvalues : _ENV
   local mapMsg = {Value = nPlotId}
   local msgCallback = function(_, mapMsgData)
-    -- function num : 0_75_0 , upvalues : _ENV, self, nCharId, nPlotId, callback
+    -- function num : 0_77_0 , upvalues : _ENV, self, nCharId, nPlotId, callback
     local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
     self:ChangeCharPlotState(nCharId, nPlotId)
     ;
@@ -1824,7 +1851,7 @@ PlayerCharData.CharPlotFinish = function(self, nCharId, nPlotId, callback)
 end
 
 PlayerCharData.ChangeCharPlotState = function(self, nCharId, nPlotId)
-  -- function num : 0_76 , upvalues : _ENV
+  -- function num : 0_78 , upvalues : _ENV
   if (self._mapChar)[nCharId] == nil then
     return 
   end
@@ -1838,10 +1865,10 @@ PlayerCharData.ChangeCharPlotState = function(self, nCharId, nPlotId)
 end
 
 PlayerCharData.SendCharArchiveRewardReceive = function(self, nCharId, nArchiveId, callback)
-  -- function num : 0_77 , upvalues : _ENV
+  -- function num : 0_79 , upvalues : _ENV
   local mapMsg = {ArchiveId = nArchiveId}
   local msgCallback = function(_, mapMsgData)
-    -- function num : 0_77_0 , upvalues : self, nCharId, _ENV, nArchiveId, callback
+    -- function num : 0_79_0 , upvalues : self, nCharId, _ENV, nArchiveId, callback
     if (self._mapChar)[nCharId] ~= nil and ((self._mapChar)[nCharId]).tbArchiveRewardIds ~= nil then
       (table.insert)(((self._mapChar)[nCharId]).tbArchiveRewardIds, nArchiveId)
     end
@@ -1858,10 +1885,10 @@ PlayerCharData.SendCharArchiveRewardReceive = function(self, nCharId, nArchiveId
 end
 
 PlayerCharData.CharSkillUpgrade = function(self, nCharId, nSkillIdx, callback)
-  -- function num : 0_78 , upvalues : _ENV
+  -- function num : 0_80 , upvalues : _ENV
   local mapMsg = {CharId = nCharId, Index = nSkillIdx}
   local msgCallback = function(_, mapMsgData)
-    -- function num : 0_78_0 , upvalues : _ENV, self, nCharId, nSkillIdx, callback
+    -- function num : 0_80_0 , upvalues : _ENV, self, nCharId, nSkillIdx, callback
     local mapDecodedChangeInfo = (UTILS.DecodeChangeInfo)(mapMsgData)
     ;
     (HttpNetHandler.ProcChangeInfo)(mapDecodedChangeInfo)
@@ -1879,10 +1906,10 @@ PlayerCharData.CharSkillUpgrade = function(self, nCharId, nSkillIdx, callback)
 end
 
 PlayerCharData.ReqCharFragmentRecruit = function(self, nCharId, callBack)
-  -- function num : 0_79 , upvalues : _ENV
+  -- function num : 0_81 , upvalues : _ENV
   local mapMsg = {Value = nCharId}
   local successCallback = function(_, mapChangeInfo)
-    -- function num : 0_79_0 , upvalues : nCharId, _ENV, callBack
+    -- function num : 0_81_0 , upvalues : nCharId, _ENV, callBack
     local tbSpReward = {}
     local rewardData = {nId = nCharId, nType = (GameEnum.itemType).Char, bNew = true}
     ;
@@ -1896,9 +1923,9 @@ PlayerCharData.ReqCharFragmentRecruit = function(self, nCharId, callBack)
 end
 
 PlayerCharData.QueryLevelInfo = function(self, nId, nType, nParam1, nParam2)
-  -- function num : 0_80 , upvalues : _ENV
+  -- function num : 0_82 , upvalues : _ENV
   local useSkillLevel = function(tbSkillLevel)
-    -- function num : 0_80_0 , upvalues : nParam1, nParam2, _ENV
+    -- function num : 0_82_0 , upvalues : nParam1, nParam2, _ENV
     if nParam1 == nil then
       return tbSkillLevel[1]
     else
@@ -1975,7 +2002,7 @@ PlayerCharData.QueryLevelInfo = function(self, nId, nType, nParam1, nParam2)
 end
 
 PlayerCharData.GetCharDatingEvent = function(self, nChar)
-  -- function num : 0_81
+  -- function num : 0_83
   local data = {}
   if (self._mapChar)[nChar] ~= nil then
     if not ((self._mapChar)[nChar]).tbDatingEventIds then
@@ -1989,7 +2016,7 @@ PlayerCharData.GetCharDatingEvent = function(self, nChar)
 end
 
 PlayerCharData.CalCharacterAttrBattle = function(self, nCharId, stAttr, bMainChar, tbDiscId, nBuildId)
-  -- function num : 0_82 , upvalues : _ENV, ConfigData, AttrConfig
+  -- function num : 0_84 , upvalues : _ENV, ConfigData, AttrConfig
   local mapChar = (self._mapChar)[nCharId]
   if mapChar == nil then
     printError("没有该角色数据" .. nCharId)
@@ -2067,7 +2094,7 @@ tbSkillLvs = {1, 1, 1, 1}
       mapCharAttr["_" .. v.sKey .. "Amend"] = 0
     end
     local AddAttrEffect_AllEffectSub = function(nSubType, nValue, mapAttr)
-    -- function num : 0_82_0 , upvalues : _ENV, ConfigData, mapCharAttr
+    -- function num : 0_84_0 , upvalues : _ENV, ConfigData, mapCharAttr
     local value = tonumber(nValue) or 0
     if nSubType == (GameEnum.parameterType).BASE_VALUE then
       if not mapAttr.bPercent or not value then
@@ -2194,7 +2221,7 @@ tbSkillLvs = {1, 1, 1, 1}
 end
 
 PlayerCharData.CalCharacterTrialAttrBattle = function(self, nTrialId, stAttr, bMainChar, tbDiscId, nBuildId)
-  -- function num : 0_83 , upvalues : _ENV
+  -- function num : 0_85 , upvalues : _ENV
   local mapChar = (self._mapTrialChar)[nTrialId]
   if mapChar == nil then
     printError("没有该角色数据" .. nTrialId)
@@ -2347,14 +2374,14 @@ PlayerCharData.CalCharacterTrialAttrBattle = function(self, nTrialId, stAttr, bM
 end
 
 PlayerCharData.UpdateAllCharRecordInfoRedDot = function(self)
-  -- function num : 0_84 , upvalues : _ENV
+  -- function num : 0_86 , upvalues : _ENV
   for charId,v in pairs(self._mapChar) do
     self:UpdateCharRecordInfoReddot(charId, false)
   end
 end
 
 PlayerCharData.UpdateCharRecordReddot = function(self, nCharId, bReset, lastLevel, curLevel)
-  -- function num : 0_85 , upvalues : LocalData, _ENV
+  -- function num : 0_87 , upvalues : LocalData, _ENV
   local bNew = false
   if lastLevel ~= nil and curLevel ~= nil and lastLevel < curLevel then
     bNew = true
@@ -2371,7 +2398,7 @@ PlayerCharData.UpdateCharRecordReddot = function(self, nCharId, bReset, lastLeve
         ;
         (LocalData.DelPlayerLocalData)("CharacterArchive" .. nCharId)
         local foreachCharacterArchive = function(mapData)
-    -- function num : 0_85_0 , upvalues : nCharId, bNew, _ENV, lastLevel, curLevel
+    -- function num : 0_87_0 , upvalues : nCharId, bNew, _ENV, lastLevel, curLevel
     if mapData.CharacterId == nCharId then
       if not bNew then
         (RedDotManager.SetValid)(RedDotDefine.Role_Record_Info_Item, {nCharId, mapData.Id}, false)
@@ -2390,7 +2417,7 @@ PlayerCharData.UpdateCharRecordReddot = function(self, nCharId, bReset, lastLeve
 end
 
 PlayerCharData.UpdateCharVoiceReddot = function(self, nCharId, bReset, lastLevel, curLevel, nPlotId)
-  -- function num : 0_86 , upvalues : LocalData, _ENV
+  -- function num : 0_88 , upvalues : LocalData, _ENV
   local bNew = false
   if lastLevel ~= nil and curLevel ~= nil and lastLevel < curLevel then
     bNew = true
@@ -2407,7 +2434,7 @@ PlayerCharData.UpdateCharVoiceReddot = function(self, nCharId, bReset, lastLevel
         ;
         (LocalData.DelPlayerLocalData)("CharacterArchiveVoice" .. nCharId)
         local foreachCharacterArchiveVoice = function(mapData)
-    -- function num : 0_86_0 , upvalues : nCharId, bNew, _ENV, lastLevel, curLevel, nPlotId
+    -- function num : 0_88_0 , upvalues : nCharId, bNew, _ENV, lastLevel, curLevel, nPlotId
     if mapData.CharacterId == nCharId then
       if not bNew then
         (RedDotManager.SetValid)(RedDotDefine.Role_Record_Voice_Item, {nCharId, mapData.Id}, false)
@@ -2429,11 +2456,11 @@ PlayerCharData.UpdateCharVoiceReddot = function(self, nCharId, bReset, lastLevel
 end
 
 PlayerCharData.UpdateCharSkinVoiceReddot = function(self, bReset, nCharId, nSkinId)
-  -- function num : 0_87 , upvalues : _ENV
+  -- function num : 0_89 , upvalues : _ENV
   local mapData = self:GetCharAffinityData(nCharId)
   local curLevel = mapData ~= nil and mapData.Level or 0
   local foreachCharacterArchiveVoice = function(mapData)
-    -- function num : 0_87_0 , upvalues : nCharId, _ENV, nSkinId, bReset, curLevel
+    -- function num : 0_89_0 , upvalues : nCharId, _ENV, nSkinId, bReset, curLevel
     if mapData.CharacterId == nCharId and mapData.ArchVoiceType == (GameEnum.ArchVoiceType).SkinVoice and mapData.UnlockSkinId == nSkinId then
       if bReset then
         (RedDotManager.SetValid)(RedDotDefine.Role_Record_Voice_Item, {nCharId, mapData.Id}, false)
@@ -2452,7 +2479,7 @@ PlayerCharData.UpdateCharSkinVoiceReddot = function(self, bReset, nCharId, nSkin
 end
 
 PlayerCharData.UpdateCharPlotReddot = function(self, nCharId)
-  -- function num : 0_88 , upvalues : _ENV
+  -- function num : 0_90 , upvalues : _ENV
   local tbPlot = (CacheTable.GetData)("_Plot", nCharId)
   if tbPlot ~= nil then
     for _,v in ipairs(tbPlot) do
@@ -2468,10 +2495,14 @@ PlayerCharData.UpdateCharPlotReddot = function(self, nCharId)
 end
 
 PlayerCharData.UpdateCharArchiveRewardRedDot = function(self, nCharId)
-  -- function num : 0_89 , upvalues : _ENV
-  local nCurFavorLevel = (self:GetCharAffinityData(nCharId)).Level
+  -- function num : 0_91 , upvalues : _ENV
+  local affinityData = self:GetCharAffinityData(nCharId)
+  if affinityData == nil then
+    return 
+  end
+  local nCurFavorLevel = affinityData.Level
   local foreachCharacterArchive = function(mapData)
-    -- function num : 0_89_0 , upvalues : nCharId, nCurFavorLevel, _ENV, self
+    -- function num : 0_91_0 , upvalues : nCharId, nCurFavorLevel, _ENV, self
     if mapData.CharacterId == nCharId then
       local bReward = false
       if mapData.UnlockAffinityLevel <= nCurFavorLevel and mapData.ArchType == (GameEnum.ArchType).SpecialType and mapData.ArchReward ~= 0 then
@@ -2486,7 +2517,7 @@ PlayerCharData.UpdateCharArchiveRewardRedDot = function(self, nCharId)
 end
 
 PlayerCharData.UpdateCharRecordInfoReddot = function(self, nCharId, bReset, lastLevel, curLevel)
-  -- function num : 0_90
+  -- function num : 0_92
   self:UpdateCharPlotReddot(nCharId)
   self:UpdateCharRecordReddot(nCharId, bReset, lastLevel, curLevel)
   self:UpdateCharVoiceReddot(nCharId, bReset, lastLevel, curLevel)
@@ -2494,7 +2525,7 @@ PlayerCharData.UpdateCharRecordInfoReddot = function(self, nCharId, bReset, last
 end
 
 PlayerCharData.InitCharArchiveContentUpdateRedDot = function(self, nCharId)
-  -- function num : 0_91 , upvalues : _ENV
+  -- function num : 0_93 , upvalues : _ENV
   local tbContentList = (self._tbArchiveUpdate)[nCharId]
   if tbContentList ~= nil then
     for nId,v in pairs(tbContentList) do
@@ -2520,7 +2551,7 @@ PlayerCharData.InitCharArchiveContentUpdateRedDot = function(self, nCharId)
 end
 
 PlayerCharData.UpdateCharArchiveContentUpdateRedDot = function(self, nCharId, nIndex, nNewValue, nLastValue)
-  -- function num : 0_92 , upvalues : _ENV
+  -- function num : 0_94 , upvalues : _ENV
   local affinityData = (PlayerData.Char):GetCharAffinityData(nCharId)
   if affinityData == nil then
     return 
@@ -2629,7 +2660,7 @@ PlayerCharData.UpdateCharArchiveContentUpdateRedDot = function(self, nCharId, nI
 end
 
 PlayerCharData.StoryPass = function(self, tbStoryId)
-  -- function num : 0_93 , upvalues : _ENV
+  -- function num : 0_95 , upvalues : _ENV
   if #tbStoryId > 0 then
     for nCharId,v in pairs(self._tbArchiveUpdate) do
       for _,nStoryId in ipairs(tbStoryId) do
@@ -2640,7 +2671,7 @@ PlayerCharData.StoryPass = function(self, tbStoryId)
 end
 
 PlayerCharData.ResetArchiveContentUpdateRedDot = function(self, nCharId)
-  -- function num : 0_94 , upvalues : _ENV
+  -- function num : 0_96 , upvalues : _ENV
   local tbContentList = (self._tbArchiveUpdate)[nCharId]
   if tbContentList ~= nil then
     for nId,v in pairs(tbContentList) do
@@ -2656,24 +2687,24 @@ PlayerCharData.ResetArchiveContentUpdateRedDot = function(self, nCharId)
 end
 
 PlayerCharData.GetCharPanelSkillDescType = function(self, ...)
-  -- function num : 0_95
+  -- function num : 0_97
   return self.bCharPanel_IsSimpleDesc
 end
 
 PlayerCharData.SetCharPanelSkillDescType = function(self, bIsSimple)
-  -- function num : 0_96 , upvalues : LocalData
+  -- function num : 0_98 , upvalues : LocalData
   self.bCharPanel_IsSimpleDesc = bIsSimple
   ;
   (LocalData.SetLocalData)("Char_", "CharPanel_IsSimpleDesc", self.bCharPanel_IsSimpleDesc)
 end
 
 PlayerCharData.GetTipsPanelSkillDescType = function(self, ...)
-  -- function num : 0_97
+  -- function num : 0_99
   return self.bTipsPanel_IsSimpleDesc
 end
 
 PlayerCharData.SetTipsPanelSkillDescType = function(self, bIsSimple)
-  -- function num : 0_98 , upvalues : LocalData
+  -- function num : 0_100 , upvalues : LocalData
   self.bTipsPanel_IsSimpleDesc = bIsSimple
   ;
   (LocalData.SetLocalData)("Char_", "TipsPanel_IsSimpleDesc", self.bTipsPanel_IsSimpleDesc)
@@ -2683,17 +2714,17 @@ local tbSortNameTextCfg = {"CharList_Sort_Toggle_Level", "CharList_Sort_Toggle_R
 local tbSortType = {[1] = (AllEnum.SortType).Level, [2] = (AllEnum.SortType).Rarity, [3] = (AllEnum.SortType).Skill, [4] = (AllEnum.SortType).Affinity, [5] = (AllEnum.SortType).Time, [100] = (AllEnum.SortType).ElementType, [101] = (AllEnum.SortType).Id}
 local tbDefaultSortField = {"Level", "Rare", "EET", "nId"}
 PlayerCharData.GetCharSortNameTextCfg = function(self)
-  -- function num : 0_99 , upvalues : tbSortNameTextCfg
+  -- function num : 0_101 , upvalues : tbSortNameTextCfg
   return tbSortNameTextCfg
 end
 
 PlayerCharData.GetCharSortType = function(self)
-  -- function num : 0_100 , upvalues : tbSortType
+  -- function num : 0_102 , upvalues : tbSortType
   return tbSortType
 end
 
 PlayerCharData.GetCharSortField = function(self)
-  -- function num : 0_101 , upvalues : tbDefaultSortField
+  -- function num : 0_103 , upvalues : tbDefaultSortField
   return tbDefaultSortField
 end
 

@@ -1,7 +1,7 @@
 local TrekkerVersusPanel = class("TrekkerVersusPanel", BasePanel)
 TrekkerVersusPanel._sUIResRootPath = "UI_Activity/"
 TrekkerVersusPanel._tbDefine = {
-{sPrefabPath = "_600001/TrekkerVersus/TrekkerVersuslLevelSelect.prefab", sCtrlName = "Game.UI.TrekkerVersus.TrekkerVersusCtrl"}
+{sPrefabPath = "_600002/TrekkerVersus/TrekkerVersuslLevelSelect.prefab", sCtrlName = "Game.UI.TrekkerVersus_600002.TrekkerVersusCtrl"}
 }
 TrekkerVersusPanel.Awake = function(self)
   -- function num : 0_0

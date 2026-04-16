@@ -7,6 +7,7 @@ PlayerEquipmentData.Init = function(self)
   self.tbCharSelectPreset = {}
   self.tbCharEquipment = {}
   self.bRollWarning = true
+  self.bRollUpgradeWarning = true
   self:ProcessTableData()
   self.isTestPresetTeam = false
 end
@@ -285,13 +286,23 @@ PlayerEquipmentData.SetRollWarning = function(self, bAble)
   self.bRollWarning = bAble
 end
 
-PlayerEquipmentData.CacheEquipmentSelect = function(self, nSlotId, nGemIndex, nCharId)
+PlayerEquipmentData.GetRollUpgradeWarning = function(self)
   -- function num : 0_19
+  return self.bRollUpgradeWarning
+end
+
+PlayerEquipmentData.SetRollUpgradeWarning = function(self, bAble)
+  -- function num : 0_20
+  self.bRollUpgradeWarning = bAble
+end
+
+PlayerEquipmentData.CacheEquipmentSelect = function(self, nSlotId, nGemIndex, nCharId)
+  -- function num : 0_21
   self.mapSelect = {nSlotId = nSlotId, nGemIndex = nGemIndex, nCharId = nCharId}
 end
 
 PlayerEquipmentData.GetEquipmentSelect = function(self)
-  -- function num : 0_20 , upvalues : _ENV
+  -- function num : 0_22 , upvalues : _ENV
   if self.mapSelect == nil then
     return false
   end
@@ -300,8 +311,23 @@ PlayerEquipmentData.GetEquipmentSelect = function(self)
   return mapSelect
 end
 
+PlayerEquipmentData.CacheEquipmentUpgrade = function(self, nSlotId, nGemIndex, nCharId, nSelectUpgradeIndex)
+  -- function num : 0_23
+  self.mapUpgrade = {nSlotId = nSlotId, nGemIndex = nGemIndex, nCharId = nCharId, nSelectUpgradeIndex = nSelectUpgradeIndex}
+end
+
+PlayerEquipmentData.GetEquipmentUpgrade = function(self)
+  -- function num : 0_24 , upvalues : _ENV
+  if self.mapUpgrade == nil then
+    return false
+  end
+  local mapUpgrade = clone(self.mapUpgrade)
+  self.mapUpgrade = nil
+  return mapUpgrade
+end
+
 PlayerEquipmentData.CheckAlterHighQualityAffix = function(self, tbAlterAffix, tbLockId)
-  -- function num : 0_21 , upvalues : _ENV
+  -- function num : 0_25 , upvalues : _ENV
   for _,v in ipairs(tbAlterAffix) do
     if v ~= 0 and (table.indexof)(tbLockId, v) == 0 then
       local mapCfg = (ConfigTable.GetData)("CharGemAttrValue", v)
@@ -314,14 +340,14 @@ PlayerEquipmentData.CheckAlterHighQualityAffix = function(self, tbAlterAffix, tb
 end
 
 PlayerEquipmentData.UpdateRedDot = function(self)
-  -- function num : 0_22
+  -- function num : 0_26
 end
 
 PlayerEquipmentData.SendCharGemEquipGemReq = function(self, nCharId, nSlotId, nGemIndex, nPresetId, callback)
-  -- function num : 0_23 , upvalues : _ENV
+  -- function num : 0_27 , upvalues : _ENV
   local msgData = {CharId = nCharId, SlotId = nSlotId, GemIndex = nGemIndex - 1, PresetId = nPresetId - 1}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_23_0 , upvalues : self, nCharId, nPresetId, nSlotId, nGemIndex, callback
+    -- function num : 0_27_0 , upvalues : self, nCharId, nPresetId, nSlotId, nGemIndex, callback
     -- DECOMPILER ERROR at PC8: Confused about usage of register: R2 in 'UnsetPending'
 
     ((((self.tbCharPreset)[nCharId])[nPresetId]).tbSlot)[nSlotId] = nGemIndex
@@ -335,10 +361,10 @@ PlayerEquipmentData.SendCharGemEquipGemReq = function(self, nCharId, nSlotId, nG
 end
 
 PlayerEquipmentData.SendCharGemRenamePresetReq = function(self, nCharId, nPresetId, sNewName, callback)
-  -- function num : 0_24 , upvalues : _ENV
+  -- function num : 0_28 , upvalues : _ENV
   local msgData = {CharId = nCharId, PresetId = nPresetId - 1, NewName = sNewName}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_24_0 , upvalues : self, nCharId, nPresetId, sNewName, callback
+    -- function num : 0_28_0 , upvalues : self, nCharId, nPresetId, sNewName, callback
     -- DECOMPILER ERROR at PC6: Confused about usage of register: R2 in 'UnsetPending'
 
     (((self.tbCharPreset)[nCharId])[nPresetId]).sName = sNewName
@@ -352,10 +378,10 @@ PlayerEquipmentData.SendCharGemRenamePresetReq = function(self, nCharId, nPreset
 end
 
 PlayerEquipmentData.SendCharGemReplaceAttributeReq = function(self, nCharId, nSlotId, nGemIndex, callback)
-  -- function num : 0_25 , upvalues : _ENV
+  -- function num : 0_29 , upvalues : _ENV
   local msgData = {CharId = nCharId, SlotId = nSlotId, GemIndex = nGemIndex - 1}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_25_0 , upvalues : self, nCharId, nSlotId, nGemIndex, callback
+    -- function num : 0_29_0 , upvalues : self, nCharId, nSlotId, nGemIndex, callback
     ((((self.tbCharEquipment)[nCharId])[nSlotId])[nGemIndex]):ReplaceRandomAttr()
     if callback then
       callback()
@@ -367,10 +393,10 @@ PlayerEquipmentData.SendCharGemReplaceAttributeReq = function(self, nCharId, nSl
 end
 
 PlayerEquipmentData.SendCharGemUpdateGemLockStatusReq = function(self, nCharId, nSlotId, nGemIndex, bLock, callback)
-  -- function num : 0_26 , upvalues : _ENV
+  -- function num : 0_30 , upvalues : _ENV
   local msgData = {CharId = nCharId, SlotId = nSlotId, GemIndex = nGemIndex - 1, Lock = bLock}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_26_0 , upvalues : self, nCharId, nSlotId, nGemIndex, bLock, callback
+    -- function num : 0_30_0 , upvalues : self, nCharId, nSlotId, nGemIndex, bLock, callback
     ((((self.tbCharEquipment)[nCharId])[nSlotId])[nGemIndex]):UpdateLockState(bLock)
     if callback then
       callback()
@@ -382,10 +408,10 @@ PlayerEquipmentData.SendCharGemUpdateGemLockStatusReq = function(self, nCharId, 
 end
 
 PlayerEquipmentData.SendCharGemUsePresetReq = function(self, nCharId, nPresetId, callback)
-  -- function num : 0_27 , upvalues : _ENV
+  -- function num : 0_31 , upvalues : _ENV
   local msgData = {CharId = nCharId, PresetId = nPresetId - 1}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_27_0 , upvalues : self, nCharId, nPresetId, callback
+    -- function num : 0_31_0 , upvalues : self, nCharId, nPresetId, callback
     -- DECOMPILER ERROR at PC3: Confused about usage of register: R2 in 'UnsetPending'
 
     (self.tbCharSelectPreset)[nCharId] = nPresetId
@@ -399,11 +425,11 @@ PlayerEquipmentData.SendCharGemUsePresetReq = function(self, nCharId, nPresetId,
 end
 
 PlayerEquipmentData.SendCharGemRefreshReq = function(self, nCharId, nSlotId, nGemIndex, tbLockAttrs, callback)
-  -- function num : 0_28 , upvalues : _ENV
+  -- function num : 0_32 , upvalues : _ENV
   local msgData = {CharId = nCharId, SlotId = nSlotId, GemIndex = nGemIndex - 1, LockAttrs = tbLockAttrs}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_28_0 , upvalues : self, nCharId, nSlotId, nGemIndex, callback
-    ((((self.tbCharEquipment)[nCharId])[nSlotId])[nGemIndex]):UpdateAlterAffix(mapMainData.Attributes)
+    -- function num : 0_32_0 , upvalues : self, nCharId, nSlotId, nGemIndex, callback
+    ((((self.tbCharEquipment)[nCharId])[nSlotId])[nGemIndex]):UpdateAlterAffix(mapMainData.Attributes, mapMainData.OverlockCount)
     if callback then
       callback()
     end
@@ -414,10 +440,10 @@ PlayerEquipmentData.SendCharGemRefreshReq = function(self, nCharId, nSlotId, nGe
 end
 
 PlayerEquipmentData.SendCharGemGenerateReq = function(self, nCharId, nSlotId, callback)
-  -- function num : 0_29 , upvalues : EquipmentData, _ENV
+  -- function num : 0_33 , upvalues : EquipmentData, _ENV
   local msgData = {CharId = nCharId, SlotId = nSlotId}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_29_0 , upvalues : self, nCharId, nSlotId, EquipmentData, _ENV, callback
+    -- function num : 0_33_0 , upvalues : self, nCharId, nSlotId, EquipmentData, _ENV, callback
     local nGemId = self:GetGemIdBySlot(nCharId, nSlotId)
     local equipmentData = (EquipmentData.new)(mapMainData.CharGem, nCharId, nGemId)
     ;
@@ -432,8 +458,46 @@ PlayerEquipmentData.SendCharGemGenerateReq = function(self, nCharId, nSlotId, ca
   (HttpNetHandler.SendMsg)((NetMsgId.Id).char_gem_generate_req, msgData, nil, successCallback)
 end
 
+PlayerEquipmentData.SendCharGemOverlockReq = function(self, nCharId, nSlotId, nGemIndex, nAttrIndex, callback)
+  -- function num : 0_34 , upvalues : _ENV
+  local msgData = {CharId = nCharId, SlotId = nSlotId, GemIndex = nGemIndex - 1, AttrIndex = nAttrIndex - 1}
+  local successCallback = function(_, mapMainData)
+    -- function num : 0_34_0 , upvalues : self, nCharId, nSlotId, nGemIndex, nAttrIndex, _ENV, callback
+    local mapEquip = (((self.tbCharEquipment)[nCharId])[nSlotId])[nGemIndex]
+    mapEquip:ChangeUpgradeCount(nAttrIndex, 1)
+    mapEquip:UpdateRandomAttr(mapEquip.tbAffix, mapEquip.tbUpgradeCount)
+    ;
+    (EventManager.Hit)("EquipmentSlotChanged")
+    if callback then
+      callback()
+    end
+  end
+
+  ;
+  (HttpNetHandler.SendMsg)((NetMsgId.Id).char_gem_overlock_req, msgData, nil, successCallback)
+end
+
+PlayerEquipmentData.SendCharGemOverlockRevertReq = function(self, nCharId, nSlotId, nGemIndex, nAttrIndex, callback)
+  -- function num : 0_35 , upvalues : _ENV
+  local msgData = {CharId = nCharId, SlotId = nSlotId, GemIndex = nGemIndex - 1, AttrIndex = nAttrIndex - 1}
+  local successCallback = function(_, mapMainData)
+    -- function num : 0_35_0 , upvalues : self, nCharId, nSlotId, nGemIndex, nAttrIndex, _ENV, callback
+    local mapEquip = (((self.tbCharEquipment)[nCharId])[nSlotId])[nGemIndex]
+    mapEquip:ChangeUpgradeCount(nAttrIndex, -1)
+    mapEquip:UpdateRandomAttr(mapEquip.tbAffix, mapEquip.tbUpgradeCount)
+    ;
+    (EventManager.Hit)("EquipmentSlotChanged")
+    if callback then
+      callback()
+    end
+  end
+
+  ;
+  (HttpNetHandler.SendMsg)((NetMsgId.Id).char_gem_overlock_revert_req, msgData, nil, successCallback)
+end
+
 PlayerEquipmentData.CacheEquipmentDataForChar = function(self, mapMsgData)
-  -- function num : 0_30
+  -- function num : 0_36
   if self.tbCharPreset == nil then
     self.tbCharPreset = {}
   end

@@ -1053,8 +1053,9 @@ PlayerDiscData.GetTrialDiscById = function(self, nId)
   if not nId then
     return 
   end
-  if (self._mapTrialDisc)[nId] == nil then
+  if self._mapTrialDisc == nil or (self._mapTrialDisc)[nId] == nil then
     printLog((string.format)("该星盘不存在或新获得, 唯一Id: %d", nId))
+    return 
   end
   return (self._mapTrialDisc)[nId]
 end
@@ -1131,21 +1132,41 @@ PlayerDiscData.CalcTrialInfoInBuild = function(self, nTrialId, tbSecondarySkill)
   end
 end
 
+PlayerDiscData.GetRankDetailDisc = function(self, nId)
+  -- function num : 0_56 , upvalues : _ENV, DiscData
+  if not nId then
+    return 
+  end
+  if not nId then
+    printError("GenerateLocalDiscData Failed!")
+    return 
+  end
+  local mapDisc = {}
+  mapDisc.Id = nId
+  mapDisc.Exp = 0
+  mapDisc.Level = 1
+  mapDisc.Phase = 0
+  mapDisc.Star = 0
+  mapDisc.Read = false
+  local discData = (DiscData.new)(mapDisc)
+  return discData
+end
+
 local tbSortNameTextCfg = {"CharList_Sort_Toggle_Level", "CharList_Sort_Toggle_Rare", "CharList_Sort_Toggle_Time"}
 local tbSortType = {[1] = (AllEnum.SortType).Level, [2] = (AllEnum.SortType).Rarity, [3] = (AllEnum.SortType).Time, [100] = (AllEnum.SortType).ElementType, [101] = (AllEnum.SortType).Id}
 local tbDefaultSortField = {"nLevel", "nRarity", "nEET", "nId"}
 PlayerDiscData.GetDiscSortNameTextCfg = function(self)
-  -- function num : 0_56 , upvalues : tbSortNameTextCfg
+  -- function num : 0_57 , upvalues : tbSortNameTextCfg
   return tbSortNameTextCfg
 end
 
 PlayerDiscData.GetDiscSortType = function(self)
-  -- function num : 0_57 , upvalues : tbSortType
+  -- function num : 0_58 , upvalues : tbSortType
   return tbSortType
 end
 
 PlayerDiscData.GetDiscSortField = function(self)
-  -- function num : 0_58 , upvalues : tbDefaultSortField
+  -- function num : 0_59 , upvalues : tbDefaultSortField
   return tbDefaultSortField
 end
 

@@ -226,156 +226,160 @@ AvgPanel.BindCmdProcFunc = function(self)
   -- DECOMPILER ERROR at PC157: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetPhone = self:FindCmdProcFunc("Avg_5_PhoneCtrl", "SetPhone")
+  (self.mapProcFunc).SetCameraAperture = self:FindCmdProcFunc("Avg_4_TalkCtrl", "SetCameraAperture")
   -- DECOMPILER ERROR at PC163: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetPhoneMsg = self:FindCmdProcFunc("Avg_5_PhoneCtrl", "SetPhoneMsg")
+  (self.mapProcFunc).SetPhone = self:FindCmdProcFunc("Avg_5_PhoneCtrl", "SetPhone")
   -- DECOMPILER ERROR at PC169: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetPhoneThinking = self:FindCmdProcFunc("Avg_5_PhoneCtrl", "SetPhoneThinking")
+  (self.mapProcFunc).SetPhoneMsg = self:FindCmdProcFunc("Avg_5_PhoneCtrl", "SetPhoneMsg")
   -- DECOMPILER ERROR at PC175: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetPhoneMsgChoiceBegin = self:FindCmdProcFunc("Avg_5_PhoneCtrl", "SetPhoneMsgChoiceBegin")
+  (self.mapProcFunc).SetPhoneThinking = self:FindCmdProcFunc("Avg_5_PhoneCtrl", "SetPhoneThinking")
   -- DECOMPILER ERROR at PC181: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetPhoneMsgChoiceJumpTo = self:FindCmdProcFunc("Avg_5_PhoneCtrl", "SetPhoneMsgChoiceJumpTo")
+  (self.mapProcFunc).SetPhoneMsgChoiceBegin = self:FindCmdProcFunc("Avg_5_PhoneCtrl", "SetPhoneMsgChoiceBegin")
   -- DECOMPILER ERROR at PC187: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetPhoneMsgChoiceEnd = self:FindCmdProcFunc("Avg_5_PhoneCtrl", "SetPhoneMsgChoiceEnd")
+  (self.mapProcFunc).SetPhoneMsgChoiceJumpTo = self:FindCmdProcFunc("Avg_5_PhoneCtrl", "SetPhoneMsgChoiceJumpTo")
   -- DECOMPILER ERROR at PC193: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetChoiceBegin = self:FindCmdProcFunc("Avg_7_ChoiceCtrl", "SetChoiceBegin")
+  (self.mapProcFunc).SetPhoneMsgChoiceEnd = self:FindCmdProcFunc("Avg_5_PhoneCtrl", "SetPhoneMsgChoiceEnd")
   -- DECOMPILER ERROR at PC199: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetChoiceJumpTo = self:FindCmdProcFunc("Avg_7_ChoiceCtrl", "SetChoiceJumpTo")
+  (self.mapProcFunc).SetChoiceBegin = self:FindCmdProcFunc("Avg_7_ChoiceCtrl", "SetChoiceBegin")
   -- DECOMPILER ERROR at PC205: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetChoiceRollback = self:FindCmdProcFunc("Avg_7_ChoiceCtrl", "SetChoiceRollback")
+  (self.mapProcFunc).SetChoiceJumpTo = self:FindCmdProcFunc("Avg_7_ChoiceCtrl", "SetChoiceJumpTo")
   -- DECOMPILER ERROR at PC211: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetChoiceRollover = self:FindCmdProcFunc("Avg_7_ChoiceCtrl", "SetChoiceRollover")
+  (self.mapProcFunc).SetChoiceRollback = self:FindCmdProcFunc("Avg_7_ChoiceCtrl", "SetChoiceRollback")
   -- DECOMPILER ERROR at PC217: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetChoiceEnd = self:FindCmdProcFunc("Avg_7_ChoiceCtrl", "SetChoiceEnd")
+  (self.mapProcFunc).SetChoiceRollover = self:FindCmdProcFunc("Avg_7_ChoiceCtrl", "SetChoiceRollover")
   -- DECOMPILER ERROR at PC223: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetMajorChoice = self:FindCmdProcFunc("Avg_7_MajorChoiceCtrl", "SetMajorChoice")
+  (self.mapProcFunc).SetChoiceEnd = self:FindCmdProcFunc("Avg_7_ChoiceCtrl", "SetChoiceEnd")
   -- DECOMPILER ERROR at PC229: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetMajorChoiceJumpTo = self:FindCmdProcFunc("Avg_7_MajorChoiceCtrl", "SetMajorChoiceJumpTo")
+  (self.mapProcFunc).SetMajorChoice = self:FindCmdProcFunc("Avg_7_MajorChoiceCtrl", "SetMajorChoice")
   -- DECOMPILER ERROR at PC235: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetMajorChoiceRollover = self:FindCmdProcFunc("Avg_7_MajorChoiceCtrl", "SetMajorChoiceRollover")
+  (self.mapProcFunc).SetMajorChoiceJumpTo = self:FindCmdProcFunc("Avg_7_MajorChoiceCtrl", "SetMajorChoiceJumpTo")
   -- DECOMPILER ERROR at PC241: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetMajorChoiceEnd = self:FindCmdProcFunc("Avg_7_MajorChoiceCtrl", "SetMajorChoiceEnd")
+  (self.mapProcFunc).SetMajorChoiceRollover = self:FindCmdProcFunc("Avg_7_MajorChoiceCtrl", "SetMajorChoiceRollover")
   -- DECOMPILER ERROR at PC247: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetPersonalityChoice = self:FindCmdProcFunc("Avg_7_PersonalityChoiceCtrl", "SetPersonalityChoice")
+  (self.mapProcFunc).SetMajorChoiceEnd = self:FindCmdProcFunc("Avg_7_MajorChoiceCtrl", "SetMajorChoiceEnd")
   -- DECOMPILER ERROR at PC253: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetPersonalityChoiceJumpTo = self:FindCmdProcFunc("Avg_7_PersonalityChoiceCtrl", "SetPersonalityChoiceJumpTo")
+  (self.mapProcFunc).SetPersonalityChoice = self:FindCmdProcFunc("Avg_7_PersonalityChoiceCtrl", "SetPersonalityChoice")
   -- DECOMPILER ERROR at PC259: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetPersonalityChoiceRollover = self:FindCmdProcFunc("Avg_7_PersonalityChoiceCtrl", "SetPersonalityChoiceRollover")
+  (self.mapProcFunc).SetPersonalityChoiceJumpTo = self:FindCmdProcFunc("Avg_7_PersonalityChoiceCtrl", "SetPersonalityChoiceJumpTo")
   -- DECOMPILER ERROR at PC265: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetPersonalityChoiceEnd = self:FindCmdProcFunc("Avg_7_PersonalityChoiceCtrl", "SetPersonalityChoiceEnd")
+  (self.mapProcFunc).SetPersonalityChoiceRollover = self:FindCmdProcFunc("Avg_7_PersonalityChoiceCtrl", "SetPersonalityChoiceRollover")
   -- DECOMPILER ERROR at PC271: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).IfTrue = {ctrl = self, func = self.IfTrue}
+  (self.mapProcFunc).SetPersonalityChoiceEnd = self:FindCmdProcFunc("Avg_7_PersonalityChoiceCtrl", "SetPersonalityChoiceEnd")
   -- DECOMPILER ERROR at PC277: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).EndIf = {ctrl = self, func = self.EndIf}
+  (self.mapProcFunc).IfTrue = {ctrl = self, func = self.IfTrue}
   -- DECOMPILER ERROR at PC283: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).GetEvidence = self:FindCmdProcFunc("Avg_7_MajorChoiceCtrl", "GetEvidence")
+  (self.mapProcFunc).EndIf = {ctrl = self, func = self.EndIf}
   -- DECOMPILER ERROR at PC289: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).IfUnlock = {ctrl = self, func = self.IfUnlock}
+  (self.mapProcFunc).GetEvidence = self:FindCmdProcFunc("Avg_7_MajorChoiceCtrl", "GetEvidence")
   -- DECOMPILER ERROR at PC295: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).IfUnlockElse = {ctrl = self, func = self.IfUnlockElse}
+  (self.mapProcFunc).IfUnlock = {ctrl = self, func = self.IfUnlock}
   -- DECOMPILER ERROR at PC301: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).IfUnlockEnd = {ctrl = self, func = self.IfUnlockEnd}
+  (self.mapProcFunc).IfUnlockElse = {ctrl = self, func = self.IfUnlockElse}
   -- DECOMPILER ERROR at PC307: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetAudio = {ctrl = self, func = self.SetAudio}
+  (self.mapProcFunc).IfUnlockEnd = {ctrl = self, func = self.IfUnlockEnd}
   -- DECOMPILER ERROR at PC313: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetBGM = {ctrl = self, func = self.SetBGM}
+  (self.mapProcFunc).SetAudio = {ctrl = self, func = self.SetAudio}
   -- DECOMPILER ERROR at PC319: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetSceneHeading = self:FindCmdProcFunc("Avg_6_MenuCtrl", "SetSceneHeading")
+  (self.mapProcFunc).SetBGM = {ctrl = self, func = self.SetBGM}
   -- DECOMPILER ERROR at PC325: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetIntro = self:FindCmdProcFunc("Avg_6_MenuCtrl", "SetIntro")
+  (self.mapProcFunc).SetSceneHeading = self:FindCmdProcFunc("Avg_6_MenuCtrl", "SetSceneHeading")
   -- DECOMPILER ERROR at PC331: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).NewCharIntro = self:FindCmdProcFunc("Avg_6_MenuCtrl", "NewCharIntro")
+  (self.mapProcFunc).SetIntro = self:FindCmdProcFunc("Avg_6_MenuCtrl", "SetIntro")
   -- DECOMPILER ERROR at PC337: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).Wait = {ctrl = self, func = self.Wait}
+  (self.mapProcFunc).NewCharIntro = self:FindCmdProcFunc("Avg_6_MenuCtrl", "NewCharIntro")
   -- DECOMPILER ERROR at PC343: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).Jump = {ctrl = self, func = self.Jump}
+  (self.mapProcFunc).Wait = {ctrl = self, func = self.Wait}
   -- DECOMPILER ERROR at PC349: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).Clear = {ctrl = self, func = self.Clear}
+  (self.mapProcFunc).Jump = {ctrl = self, func = self.Jump}
   -- DECOMPILER ERROR at PC355: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).End = {ctrl = self, func = self.End}
+  (self.mapProcFunc).Clear = {ctrl = self, func = self.Clear}
   -- DECOMPILER ERROR at PC361: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).SetGroupId = {ctrl = self, func = self.SetGroupId}
+  (self.mapProcFunc).End = {ctrl = self, func = self.End}
   -- DECOMPILER ERROR at PC367: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).Comment = {ctrl = self, func = self.Comment}
+  (self.mapProcFunc).SetGroupId = {ctrl = self, func = self.SetGroupId}
   -- DECOMPILER ERROR at PC373: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).BadEnding_Check = {ctrl = self, func = self.BadEnding_Check}
+  (self.mapProcFunc).Comment = {ctrl = self, func = self.Comment}
   -- DECOMPILER ERROR at PC379: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
-  (self.mapProcFunc).BadEnding_Mark = {ctrl = self, func = self.BadEnding_Mark}
+  (self.mapProcFunc).BadEnding_Check = {ctrl = self, func = self.BadEnding_Check}
   -- DECOMPILER ERROR at PC385: Confused about usage of register: R1 in 'UnsetPending'
+
+  ;
+  (self.mapProcFunc).BadEnding_Mark = {ctrl = self, func = self.BadEnding_Mark}
+  -- DECOMPILER ERROR at PC391: Confused about usage of register: R1 in 'UnsetPending'
 
   ;
   (self.mapProcFunc).JUMP_AVG_ID = {ctrl = self, func = self.JUMP_AVG_ID}

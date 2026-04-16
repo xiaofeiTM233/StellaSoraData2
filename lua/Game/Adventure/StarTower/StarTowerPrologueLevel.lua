@@ -1590,26 +1590,40 @@ mapEffect = {}
 
                 ;
                 (((self.mapCharacterTempData).ammoInfo)[charTid]).nAmmo3 = tbAmmo[2]
-                -- DECOMPILER ERROR at PC268: Confused about usage of register: R18 in 'UnsetPending'
+                -- DECOMPILER ERROR at PC271: Confused about usage of register: R18 in 'UnsetPending'
 
-                ;
-                (((self.mapCharacterTempData).ammoInfo)[charTid]).nAmmoMax1 = tbAmmo[3]
-                -- DECOMPILER ERROR at PC273: Confused about usage of register: R18 in 'UnsetPending'
+                if tbAmmo.Length >= 6 then
+                  (((self.mapCharacterTempData).ammoInfo)[charTid]).nAmmoMax1 = tbAmmo[3]
+                  -- DECOMPILER ERROR at PC276: Confused about usage of register: R18 in 'UnsetPending'
 
-                ;
-                (((self.mapCharacterTempData).ammoInfo)[charTid]).nAmmoMax2 = tbAmmo[4]
-                -- DECOMPILER ERROR at PC278: Confused about usage of register: R18 in 'UnsetPending'
+                  ;
+                  (((self.mapCharacterTempData).ammoInfo)[charTid]).nAmmoMax2 = tbAmmo[4]
+                  -- DECOMPILER ERROR at PC281: Confused about usage of register: R18 in 'UnsetPending'
 
-                ;
-                (((self.mapCharacterTempData).ammoInfo)[charTid]).nAmmoMax3 = tbAmmo[5]
+                  ;
+                  (((self.mapCharacterTempData).ammoInfo)[charTid]).nAmmoMax3 = tbAmmo[5]
+                else
+                  -- DECOMPILER ERROR at PC286: Confused about usage of register: R18 in 'UnsetPending'
+
+                  ;
+                  (((self.mapCharacterTempData).ammoInfo)[charTid]).nAmmoMax1 = 0
+                  -- DECOMPILER ERROR at PC290: Confused about usage of register: R18 in 'UnsetPending'
+
+                  ;
+                  (((self.mapCharacterTempData).ammoInfo)[charTid]).nAmmoMax2 = 0
+                  -- DECOMPILER ERROR at PC294: Confused about usage of register: R18 in 'UnsetPending'
+
+                  ;
+                  (((self.mapCharacterTempData).ammoInfo)[charTid]).nAmmoMax3 = 0
+                end
               end
-              -- DECOMPILER ERROR at PC279: LeaveBlock: unexpected jumping out DO_STMT
+              -- DECOMPILER ERROR at PC295: LeaveBlock: unexpected jumping out DO_STMT
 
-              -- DECOMPILER ERROR at PC279: LeaveBlock: unexpected jumping out DO_STMT
+              -- DECOMPILER ERROR at PC295: LeaveBlock: unexpected jumping out DO_STMT
 
-              -- DECOMPILER ERROR at PC279: LeaveBlock: unexpected jumping out DO_STMT
+              -- DECOMPILER ERROR at PC295: LeaveBlock: unexpected jumping out DO_STMT
 
-              -- DECOMPILER ERROR at PC279: LeaveBlock: unexpected jumping out DO_STMT
+              -- DECOMPILER ERROR at PC295: LeaveBlock: unexpected jumping out DO_STMT
 
             end
           end
@@ -1954,10 +1968,10 @@ StarTowerPrologueLevel.GetRecommondPotential = function(self, tbPotentialData)
         ret = {}
         curRarity = nRarity
         ;
-        (table.insert)(ret, nPotentialId)
+        (table.insert)(ret, {nId = nPotentialId})
       else
         if nRarity == curRarity then
-          (table.insert)(ret, nPotentialId)
+          (table.insert)(ret, {nId = nPotentialId})
         end
       end
     end
@@ -1981,7 +1995,8 @@ StarTowerPrologueLevel.GetRecommondPotential = function(self, tbPotentialData)
     end
   end
 
-  for _,nPotentialId in ipairs(ret) do
+  for _,v in ipairs(ret) do
+    local nPotentialId = v.nId
     local potentialCfg = (ConfigTable.GetData)("Potential", nPotentialId)
     if potentialCfg ~= nil then
       local nCharId = potentialCfg.CharId
@@ -1990,17 +2005,17 @@ StarTowerPrologueLevel.GetRecommondPotential = function(self, tbPotentialData)
         nCurCharId = nCharId
         nCurCount = nCount
         ;
-        (table.insert)(ret1, nPotentialId)
+        (table.insert)(ret1, {nId = nPotentialId})
       else
         if nCharId ~= nCurCharId and nCount < nCurCount then
           ret1 = {}
           nCurCharId = nCharId
           nCurCount = nCount
           ;
-          (table.insert)(ret1, nPotentialId)
+          (table.insert)(ret1, {nId = nPotentialId})
         else
           ;
-          (table.insert)(ret1, nPotentialId)
+          (table.insert)(ret1, {nId = nPotentialId})
         end
       end
     end
@@ -2028,19 +2043,20 @@ StarTowerPrologueLevel.GetRecommondPotential = function(self, tbPotentialData)
     end
   end
 
-  for _,nPotentialId in ipairs(ret1) do
+  for _,v in ipairs(ret1) do
+    local nPotentialId = v.nId
     local nCount = GetPotentialBuildCount(nPotentialId)
     if nCurBuildCount < 0 then
-      (table.insert)(ret2, nPotentialId)
+      (table.insert)(ret2, {nId = nPotentialId})
       nCurBuildCount = nCount
     else
       if nCount == nCurBuildCount then
-        (table.insert)(ret2, nPotentialId)
+        (table.insert)(ret2, {nId = nPotentialId})
       else
         if nCount < nCurBuildCount then
           ret2 = {}
           ;
-          (table.insert)(ret2, nPotentialId)
+          (table.insert)(ret2, {nId = nPotentialId})
           nCurBuildCount = nCount
         end
       end
@@ -2051,7 +2067,8 @@ StarTowerPrologueLevel.GetRecommondPotential = function(self, tbPotentialData)
   end
   local ret3 = {}
   local curLessPotential = -1
-  for _,nPotentialId in ipairs(ret2) do
+  for _,v in ipairs(ret2) do
+    local nPotentialId = v.nId
     local potentialCfg = (ConfigTable.GetData)("Potential", nPotentialId)
     if potentialCfg ~= nil then
       local nCharId = potentialCfg.CharId
@@ -2060,16 +2077,16 @@ StarTowerPrologueLevel.GetRecommondPotential = function(self, tbPotentialData)
         nCurCount = ((self._mapPotential)[nCharId])[nPotentialId]
       end
       if curLessPotential < 0 then
-        (table.insert)(ret3, nPotentialId)
+        (table.insert)(ret3, {nId = nPotentialId})
         curLessPotential = nCurCount
       else
         if nCurCount == curLessPotential then
-          (table.insert)(ret3, nPotentialId)
+          (table.insert)(ret3, {nId = nPotentialId})
         else
           if nCurCount < curLessPotential then
             ret3 = {}
             ;
-            (table.insert)(ret3, nPotentialId)
+            (table.insert)(ret3, {nId = nPotentialId})
             curLessPotential = nCurCount
           end
         end

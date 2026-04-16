@@ -202,10 +202,16 @@ EventManager.Remove = function(nEventId, listener, callback)
 end
 
 EventManager.RemoveAll = function(nEventId)
-  -- function num : 0_8 , upvalues : mapEvent, mapTempAdd, mapTempRemove
-  mapEvent[nEventId] = nil
-  mapTempAdd[nEventId] = nil
-  mapTempRemove[nEventId] = nil
+  -- function num : 0_8 , upvalues : _ENV, mapEvent, mapTempAdd, mapTempRemove
+  if type(mapEvent) == "table" then
+    mapEvent[nEventId] = nil
+  end
+  if type(mapTempAdd) == "table" then
+    mapTempAdd[nEventId] = nil
+  end
+  if type(mapTempRemove) == "table" then
+    mapTempRemove[nEventId] = nil
+  end
 end
 
 EventManager.Hit = function(nEventId, ...)
@@ -250,6 +256,10 @@ EventManager.Hit = function(nEventId, ...)
     mapOnHitEventId[nEventId] = nil
     ProcAdd(nEventId)
     ProcRemove(nEventId)
+  else
+    if mapOnHitEventId[nEventId] ~= nil then
+      printWarn("在同一帧里，不应重复触发同一事件，EvendId:" .. tostring(nEventId))
+    end
   end
 end
 

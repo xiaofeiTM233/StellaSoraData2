@@ -94,17 +94,22 @@ PreviewLevel.PlaySuccessPerform = function(self)
                   sName = ((ConfigTable.GetData)("EndSceneType", nType)).EndSceneName
                 else
                   do
-                    do
-                      local nType = ((ConfigTable.GetData)("StarTowerMap", self.nLevelId)).Theme
+                    if self.nLevelType == (GameEnum.worldLevelType).ActivityStory then
+                      local nType = ((ConfigTable.GetData)("ActivityLevelsFloor", self.nLevelId)).Theme
                       sName = ((ConfigTable.GetData)("EndSceneType", nType)).EndSceneName
-                      local jumpPerform = function()
+                    else
+                      do
+                        do
+                          local nType = ((ConfigTable.GetData)("StarTowerMap", self.nLevelId)).Theme
+                          sName = ((ConfigTable.GetData)("EndSceneType", nType)).EndSceneName
+                          local jumpPerform = function()
       -- function num : 0_7_1_0 , upvalues : _ENV
       (NovaAPI.DispatchEventWithData)("SKIP_SETTLEMENT_PERFORM")
     end
 
-                      ;
-                      (EventManager.Hit)(EventId.OpenPanel, PanelId.BtnTips, jumpPerform)
-                      local openBattleResultPanel = function()
+                          ;
+                          (EventManager.Hit)(EventId.OpenPanel, PanelId.BtnTips, jumpPerform)
+                          local openBattleResultPanel = function()
       -- function num : 0_7_1_1 , upvalues : _ENV, self, openBattleResultPanel
       (EventManager.Remove)("SettlementPerformLoadFinish", self, openBattleResultPanel)
       local sLarge, sSmall = "", ""
@@ -115,16 +120,18 @@ PreviewLevel.PlaySuccessPerform = function(self)
       (self.parent):LevelEnd()
     end
 
-                      ;
-                      (EventManager.Add)("SettlementPerformLoadFinish", self, openBattleResultPanel)
-                      local tbSkin = {}
-                      for _,nCharId in ipairs(tbChar) do
-                        local nSkinId = (PlayerData.Char):GetCharSkinId(nCharId)
-                        ;
-                        (table.insert)(tbSkin, nSkinId)
+                          ;
+                          (EventManager.Add)("SettlementPerformLoadFinish", self, openBattleResultPanel)
+                          local tbSkin = {}
+                          for _,nCharId in ipairs(tbChar) do
+                            local nSkinId = (PlayerData.Char):GetCharSkinId(nCharId)
+                            ;
+                            (table.insert)(tbSkin, nSkinId)
+                          end
+                          ;
+                          ((CS.AdventureModuleHelper).PlaySettlementPerform)(sName, "", tbSkin, func_OpenResult)
+                        end
                       end
-                      ;
-                      ((CS.AdventureModuleHelper).PlaySettlementPerform)(sName, "", tbSkin, func_OpenResult)
                     end
                   end
                 end

@@ -610,8 +610,23 @@ PlayerStarTowerData.GetMaxDifficult = function(self, nGroupId)
   return ret
 end
 
-PlayerStarTowerData.GetMaxPassedDifficult = function(self, nGroupId)
+PlayerStarTowerData.GetGlobalMaxDifficult = function(self)
   -- function num : 0_23 , upvalues : _ENV
+  local ret = 1
+  local foreachStarTower = function(mapData)
+    -- function num : 0_23_0 , upvalues : self, ret
+    local nTempRet = self:GetMaxDifficult(mapData.Id)
+    if ret < nTempRet then
+      ret = nTempRet
+    end
+  end
+
+  ForEachTableLine(DataTable.StarTowerGroup, foreachStarTower)
+  return ret
+end
+
+PlayerStarTowerData.GetMaxPassedDifficult = function(self, nGroupId)
+  -- function num : 0_24 , upvalues : _ENV
   local ret = 0
   local mapGroup = (CacheTable.GetData)("_StarTower", nGroupId)
   if mapGroup == nil then
@@ -626,7 +641,7 @@ PlayerStarTowerData.GetMaxPassedDifficult = function(self, nGroupId)
 end
 
 PlayerStarTowerData.CheckUnlockTowerSweep = function(self)
-  -- function num : 0_24 , upvalues : _ENV
+  -- function num : 0_25 , upvalues : _ENV
   if (self.tbClientEffectNodeByType)[(GameEnum.towerGrowthEffect).UnlockTowerSweep] then
     for nNodeId,v in pairs((self.tbClientEffectNodeByType)[(GameEnum.towerGrowthEffect).UnlockTowerSweep]) do
       if not self.nFirstGrowthGroup then
@@ -644,7 +659,7 @@ PlayerStarTowerData.CheckUnlockTowerSweep = function(self)
 end
 
 PlayerStarTowerData.CheckCanSweep = function(self, nGroupId, nStarTowerId)
-  -- function num : 0_25 , upvalues : _ENV
+  -- function num : 0_26 , upvalues : _ENV
   local sTips, sLock = "", ""
   if (self.tbClientEffectNodeByType)[(GameEnum.towerGrowthEffect).UnlockTowerSweep] then
     for nNodeId,v in pairs((self.tbClientEffectNodeByType)[(GameEnum.towerGrowthEffect).UnlockTowerSweep]) do
@@ -691,7 +706,7 @@ PlayerStarTowerData.CheckCanSweep = function(self, nGroupId, nStarTowerId)
 end
 
 PlayerStarTowerData.GetStarTowerRewardLimit = function(self)
-  -- function num : 0_26 , upvalues : _ENV
+  -- function num : 0_27 , upvalues : _ENV
   local nWorldClass = (PlayerData.Base):GetWorldClass()
   local worldClassCfg = (ConfigTable.GetData)("WorldClass", nWorldClass, true)
   if not worldClassCfg then
@@ -723,7 +738,7 @@ PlayerStarTowerData.GetStarTowerRewardLimit = function(self)
 end
 
 PlayerStarTowerData.GetDiscFormationSubSlot = function(self)
-  -- function num : 0_27 , upvalues : _ENV
+  -- function num : 0_28 , upvalues : _ENV
   local nBase = (ConfigTable.GetConfigNumber)("StarTowerDiscExtraSubSlotCount")
   local nSlotCount = 0
   if (self.tbClientEffectNodeByType)[(GameEnum.towerGrowthEffect).DiscExtraSubSlot] then
@@ -752,12 +767,12 @@ PlayerStarTowerData.GetDiscFormationSubSlot = function(self)
 end
 
 PlayerStarTowerData.CacheStarTowerTicket = function(self, nCount)
-  -- function num : 0_28
+  -- function num : 0_29
   self.nStarTowerTicket = nCount
 end
 
 PlayerStarTowerData.AddStarTowerTicket = function(self, nCount)
-  -- function num : 0_29
+  -- function num : 0_30
   if nCount == nil then
     return 
   end
@@ -765,19 +780,19 @@ PlayerStarTowerData.AddStarTowerTicket = function(self, nCount)
 end
 
 PlayerStarTowerData.GetStarTowerTicket = function(self)
-  -- function num : 0_30
+  -- function num : 0_31
   return self.nStarTowerTicket
 end
 
 PlayerStarTowerData.GetAvailableStarTowerTicket = function(self)
-  -- function num : 0_31
+  -- function num : 0_32
   local nLimit = self:GetStarTowerRewardLimit()
   local nAvailable = nLimit - self.nStarTowerTicket
   return nAvailable
 end
 
 PlayerStarTowerData.OnEvent_NewDay = function(self)
-  -- function num : 0_32 , upvalues : _ENV
+  -- function num : 0_33 , upvalues : _ENV
   self.bGetAffinity = false
   local curTimeStamp = ((CS.ClientManager).Instance).serverTimeStampWithTimeZone
   local nWeek = tonumber((os.date)("!%w", curTimeStamp))
@@ -787,11 +802,11 @@ PlayerStarTowerData.OnEvent_NewDay = function(self)
 end
 
 PlayerStarTowerData.CacheClientEffectNodeConfigData = function(self)
-  -- function num : 0_33 , upvalues : _ENV
+  -- function num : 0_34 , upvalues : _ENV
   self.tbClientEffectNodeByIndex = {}
   self.tbClientEffectNodeByType = {}
   local foreachNode = function(mapLineData)
-    -- function num : 0_33_0 , upvalues : self
+    -- function num : 0_34_0 , upvalues : self
     if mapLineData.IsClient then
       local nGroupId = mapLineData.Group
       -- DECOMPILER ERROR at PC10: Confused about usage of register: R2 in 'UnsetPending'
@@ -819,7 +834,7 @@ PlayerStarTowerData.CacheClientEffectNodeConfigData = function(self)
 end
 
 PlayerStarTowerData.GetClientEffectByNode = function(self, tbActiveNode)
-  -- function num : 0_34 , upvalues : _ENV
+  -- function num : 0_35 , upvalues : _ENV
   local tbEffectType = {}
   for nGroupId,tbGroupNode in pairs(self.tbClientEffectNodeByIndex) do
     for NodeId,mapLine in pairs(tbGroupNode) do
@@ -836,7 +851,7 @@ PlayerStarTowerData.GetClientEffectByNode = function(self, tbActiveNode)
 end
 
 PlayerStarTowerData.ParseGrowthData = function(self, mapMsgData)
-  -- function num : 0_35
+  -- function num : 0_36
   self.tbGrowthNodes = {}
   self.tbGrowthGroup = {}
   self.nFirstGrowthGroup = 0
@@ -847,9 +862,9 @@ PlayerStarTowerData.ParseGrowthData = function(self, mapMsgData)
 end
 
 PlayerStarTowerData.ParseGrowthGroupConfigData = function(self)
-  -- function num : 0_36 , upvalues : _ENV
+  -- function num : 0_37 , upvalues : _ENV
   local create = function(mapLineData)
-    -- function num : 0_36_0 , upvalues : self
+    -- function num : 0_37_0 , upvalues : self
     local mapGroup = (self.tbGrowthGroup)[mapLineData.Id]
     if not mapGroup then
       mapGroup = {nId = mapLineData.Id, nPreGroup = mapLineData.PreGroup, nNextGroup = 0, nWorldClass = mapLineData.WorldClass, bLock = true, nAllNodeCount = 0, nActiveNodeCount = 0}
@@ -862,7 +877,7 @@ PlayerStarTowerData.ParseGrowthGroupConfigData = function(self)
   end
 
   local foreachGroup = function(mapLineData)
-    -- function num : 0_36_1 , upvalues : create, _ENV, self
+    -- function num : 0_37_1 , upvalues : create, _ENV, self
     local nGroupId = mapLineData.Id
     create(mapLineData)
     if mapLineData.PreGroup ~= 0 then
@@ -882,9 +897,9 @@ PlayerStarTowerData.ParseGrowthGroupConfigData = function(self)
 end
 
 PlayerStarTowerData.ParseGrowthNodeConfigData = function(self, tbActiveNode)
-  -- function num : 0_37 , upvalues : _ENV
+  -- function num : 0_38 , upvalues : _ENV
   local create = function(mapLineData)
-    -- function num : 0_37_0 , upvalues : self, tbActiveNode
+    -- function num : 0_38_0 , upvalues : self, tbActiveNode
     local mapNode = ((self.tbGrowthNodes)[mapLineData.Group])[mapLineData.Id]
     if not mapNode then
       local nNode = tbActiveNode[mapLineData.Group]
@@ -903,7 +918,7 @@ tbNextNodes = {}
   end
 
   local foreachNode = function(mapLineData)
-    -- function num : 0_37_1 , upvalues : self, create, _ENV
+    -- function num : 0_38_1 , upvalues : self, create, _ENV
     local nGroupId = mapLineData.Group
     -- DECOMPILER ERROR at PC7: Confused about usage of register: R2 in 'UnsetPending'
 
@@ -927,7 +942,7 @@ tbNextNodes = {}
 end
 
 PlayerStarTowerData.ParseGrowthGroupServerData = function(self)
-  -- function num : 0_38 , upvalues : _ENV
+  -- function num : 0_39 , upvalues : _ENV
   local nCurWorldClass = (PlayerData.Base):GetWorldClass()
   local bPreGroupAllActive = true
   local mapCurGroup = (self.tbGrowthGroup)[self.nFirstGrowthGroup]
@@ -960,7 +975,7 @@ PlayerStarTowerData.ParseGrowthGroupServerData = function(self)
 end
 
 PlayerStarTowerData.ParseGrowthNodeServerData = function(self)
-  -- function num : 0_39 , upvalues : _ENV
+  -- function num : 0_40 , upvalues : _ENV
   for nGroupId,tbNodes in pairs(self.tbGrowthNodes) do
     local bGroupLock = ((self.tbGrowthGroup)[nGroupId]).bLock
     for nId,_ in pairs(tbNodes) do
@@ -976,7 +991,7 @@ PlayerStarTowerData.ParseGrowthNodeServerData = function(self)
 end
 
 PlayerStarTowerData.CheckNodeReady = function(self, nId, nGroupId)
-  -- function num : 0_40 , upvalues : _ENV
+  -- function num : 0_41 , upvalues : _ENV
   local bAllPreActive = true
   for _,nPreId in pairs((((self.tbGrowthNodes)[nGroupId])[nId]).tbPreNodes) do
     if not ((self.tbGrowthNodes)[nGroupId])[nPreId] then
@@ -997,7 +1012,7 @@ PlayerStarTowerData.CheckNodeReady = function(self, nId, nGroupId)
 end
 
 PlayerStarTowerData.UnlockNode = function(self, nId, nGroupId)
-  -- function num : 0_41 , upvalues : _ENV
+  -- function num : 0_42 , upvalues : _ENV
   local nCurWorldClass = (PlayerData.Base):GetWorldClass()
   local mapCurGroup = (self.tbGrowthGroup)[nGroupId]
   -- DECOMPILER ERROR at PC9: Confused about usage of register: R5 in 'UnsetPending'
@@ -1036,7 +1051,7 @@ PlayerStarTowerData.UnlockNode = function(self, nId, nGroupId)
 end
 
 PlayerStarTowerData.UnlockMultiNode = function(self, tbNodeId, nGroupId)
-  -- function num : 0_42 , upvalues : _ENV
+  -- function num : 0_43 , upvalues : _ENV
   local bHasCore = false
   for _,nId in ipairs(tbNodeId) do
     local mapCfg = (ConfigTable.GetData)("StarTowerGrowthNode", nId)
@@ -1086,12 +1101,12 @@ PlayerStarTowerData.UnlockMultiNode = function(self, tbNodeId, nGroupId)
 end
 
 PlayerStarTowerData.GetGrowthGroup = function(self, nId)
-  -- function num : 0_43
+  -- function num : 0_44
   return (self.tbGrowthGroup)[nId]
 end
 
 PlayerStarTowerData.GetSortedGrowthGroup = function(self)
-  -- function num : 0_44 , upvalues : _ENV
+  -- function num : 0_45 , upvalues : _ENV
   local tbSorted = {}
   local mapCurGroup = (self.tbGrowthGroup)[self.nFirstGrowthGroup]
   while mapCurGroup do
@@ -1102,12 +1117,12 @@ PlayerStarTowerData.GetSortedGrowthGroup = function(self)
 end
 
 PlayerStarTowerData.GetGrowthNodesByGroup = function(self, nGroupId)
-  -- function num : 0_45
+  -- function num : 0_46
   return (self.tbGrowthNodes)[nGroupId]
 end
 
 PlayerStarTowerData.GetGrowthNode = function(self, nId, nGroupId)
-  -- function num : 0_46 , upvalues : _ENV
+  -- function num : 0_47 , upvalues : _ENV
   do
     if not nGroupId then
       local mapCfg = (ConfigTable.GetData)("StarTowerGrowthNode", nId)
@@ -1122,7 +1137,7 @@ PlayerStarTowerData.GetGrowthNode = function(self, nId, nGroupId)
 end
 
 PlayerStarTowerData.CheckGroupReady = function(self, nGroupId)
-  -- function num : 0_47 , upvalues : _ENV
+  -- function num : 0_48 , upvalues : _ENV
   if ((self.tbGrowthGroup)[nGroupId]).bLock then
     return false, (ConfigTable.GetUIText)("STGrowth_GroupLocked")
   end
@@ -1136,13 +1151,13 @@ PlayerStarTowerData.CheckGroupReady = function(self, nGroupId)
   end
   ;
   (table.sort)(tbGroup, function(a, b)
-    -- function num : 0_47_0 , upvalues : _ENV
+    -- function num : 0_48_0 , upvalues : _ENV
     do return ((ConfigTable.GetData)("StarTowerGrowthNode", a.nId)).NodeId < ((ConfigTable.GetData)("StarTowerGrowthNode", b.nId)).NodeId end
     -- DECOMPILER ERROR: 1 unprocessed JMP targets
   end
 )
   local checkMat = function(mapCfg)
-    -- function num : 0_47_1 , upvalues : _ENV
+    -- function num : 0_48_1 , upvalues : _ENV
     local bMat = true
     for i = 1, 3 do
       if mapCfg["ItemId" .. i] ~= 0 then
@@ -1173,10 +1188,10 @@ PlayerStarTowerData.CheckGroupReady = function(self, nGroupId)
 end
 
 PlayerStarTowerData.SendTowerGrowthDetailReq = function(self, callback)
-  -- function num : 0_48 , upvalues : _ENV
+  -- function num : 0_49 , upvalues : _ENV
   if not self.nFirstGrowthGroup then
     local successCallback = function(_, mapMainData)
-    -- function num : 0_48_0 , upvalues : self, callback
+    -- function num : 0_49_0 , upvalues : self, callback
     self:ParseGrowthData(mapMainData.Detail)
     self:UpdateGrowthReddot()
     if callback then
@@ -1196,10 +1211,10 @@ PlayerStarTowerData.SendTowerGrowthDetailReq = function(self, callback)
 end
 
 PlayerStarTowerData.SendTowerGrowthNodeUnlockReq = function(self, nId, nGroupId, callback)
-  -- function num : 0_49 , upvalues : _ENV
+  -- function num : 0_50 , upvalues : _ENV
   local msgData = {Value = nId}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_49_0 , upvalues : self, nId, nGroupId, callback
+    -- function num : 0_50_0 , upvalues : self, nId, nGroupId, callback
     self:UnlockNode(nId, nGroupId)
     self:UpdateGrowthReddot()
     if callback then
@@ -1212,10 +1227,10 @@ PlayerStarTowerData.SendTowerGrowthNodeUnlockReq = function(self, nId, nGroupId,
 end
 
 PlayerStarTowerData.SendTowerGrowthGroupNodeUnlockReq = function(self, nGroupId, callback)
-  -- function num : 0_50 , upvalues : _ENV
+  -- function num : 0_51 , upvalues : _ENV
   local msgData = {Value = nGroupId}
   local successCallback = function(_, mapMainData)
-    -- function num : 0_50_0 , upvalues : _ENV, self, nGroupId, callback
+    -- function num : 0_51_0 , upvalues : _ENV, self, nGroupId, callback
     local tbDecodeChange = (UTILS.DecodeChangeInfo)(mapMainData.ChangeInfo)
     local tbItem = tbDecodeChange["proto.Item"]
     do
@@ -1237,9 +1252,9 @@ PlayerStarTowerData.SendTowerGrowthGroupNodeUnlockReq = function(self, nGroupId,
 end
 
 PlayerStarTowerData.UpdateGrowthReddot = function(self)
-  -- function num : 0_51 , upvalues : _ENV
+  -- function num : 0_52 , upvalues : _ENV
   local checkMat = function(mapCfg)
-    -- function num : 0_51_0 , upvalues : _ENV
+    -- function num : 0_52_0 , upvalues : _ENV
     local bMat = true
     for i = 1, 3 do
       if mapCfg["ItemId" .. i] ~= 0 then
@@ -1284,7 +1299,7 @@ PlayerStarTowerData.UpdateGrowthReddot = function(self)
 end
 
 PlayerStarTowerData.UpdateGrowthRedDotByItem = function(self, mapChange)
-  -- function num : 0_52 , upvalues : _ENV
+  -- function num : 0_53 , upvalues : _ENV
   if not self.nFirstGrowthGroup then
     return 
   end
@@ -1300,7 +1315,7 @@ PlayerStarTowerData.UpdateGrowthRedDotByItem = function(self, mapChange)
 end
 
 PlayerStarTowerData.OnEvent_WorldClass = function(self)
-  -- function num : 0_53 , upvalues : _ENV
+  -- function num : 0_54 , upvalues : _ENV
   if not self.nFirstGrowthGroup then
     return 
   end
@@ -1330,9 +1345,9 @@ PlayerStarTowerData.OnEvent_WorldClass = function(self)
 end
 
 PlayerStarTowerData.GetAffinity = function(self, callback)
-  -- function num : 0_54 , upvalues : _ENV
+  -- function num : 0_55 , upvalues : _ENV
   local netMsg_callback = function(_, msgData)
-    -- function num : 0_54_0 , upvalues : self, callback
+    -- function num : 0_55_0 , upvalues : self, callback
     self:CacheNpcAffinity(msgData)
     if callback ~= nil then
       self.bGetAffinity = true
@@ -1351,14 +1366,14 @@ PlayerStarTowerData.GetAffinity = function(self, callback)
 end
 
 PlayerStarTowerData.InitNpcAffinity = function(self)
-  -- function num : 0_55
+  -- function num : 0_56
   self.mapNpcAffinity = {}
   self.nAffinityGetCount = 0
   self.bGetAffinity = false
 end
 
 PlayerStarTowerData.CacheNpcAffinity = function(self, mapData)
-  -- function num : 0_56 , upvalues : _ENV
+  -- function num : 0_57 , upvalues : _ENV
   self.nAffinityGetCount = mapData.Number
   for _,mapAffinityData in ipairs(mapData.Infos) do
     local ret = {Level = 0, Exp = 0, nNeed = 0, nTotalExp = mapAffinityData.Affinity, nMaxLevel = 0, tbPlotIds = mapAffinityData.PlotIds}
@@ -1417,17 +1432,17 @@ PlayerStarTowerData.CacheNpcAffinity = function(self, mapData)
 end
 
 PlayerStarTowerData.ReceiveNpcAffinityReward = function(self, nNpcId, nPlotId, receiveCallback)
-  -- function num : 0_57 , upvalues : _ENV
+  -- function num : 0_58 , upvalues : _ENV
   local mapMsg = {Value = nPlotId}
   local receivePropCallback = function(mapShow, mapChange)
-    -- function num : 0_57_0 , upvalues : receiveCallback, _ENV
+    -- function num : 0_58_0 , upvalues : receiveCallback, _ENV
     if receiveCallback ~= nil and type(receiveCallback) == "function" then
       receiveCallback(mapShow, mapChange)
     end
   end
 
   local callback = function(_, mapRespData)
-    -- function num : 0_57_1 , upvalues : self, nNpcId, _ENV, nPlotId, receivePropCallback
+    -- function num : 0_58_1 , upvalues : self, nNpcId, _ENV, nPlotId, receivePropCallback
     -- DECOMPILER ERROR at PC18: Confused about usage of register: R2 in 'UnsetPending'
 
     if self.mapNpcAffinity ~= nil then
@@ -1449,12 +1464,12 @@ tbPlotIds = {}
 end
 
 PlayerStarTowerData.GetNpcAffinityWeekCount = function(self)
-  -- function num : 0_58
+  -- function num : 0_59
   return self.nAffinityGetCount
 end
 
 PlayerStarTowerData.CacheNpcAffinityChange = function(self, tbRewards, nCount)
-  -- function num : 0_59 , upvalues : _ENV
+  -- function num : 0_60 , upvalues : _ENV
   for _,mapReward in ipairs(tbRewards) do
     local nNpcId = (mapReward.Change).NPCId
     -- DECOMPILER ERROR at PC19: Confused about usage of register: R9 in 'UnsetPending'
@@ -1529,7 +1544,7 @@ tbPlotIds = {}
 end
 
 PlayerStarTowerData.GetNpcAffinityData = function(self, nNpcId)
-  -- function num : 0_60 , upvalues : _ENV
+  -- function num : 0_61 , upvalues : _ENV
   if (self.mapNpcAffinity)[nNpcId] ~= nil then
     return clone((self.mapNpcAffinity)[nNpcId])
   else
@@ -1552,7 +1567,7 @@ tbPlotIds = {}
 end
 
 PlayerStarTowerData.GetNpcReceivedPlot = function(self, nNpcId)
-  -- function num : 0_61
+  -- function num : 0_62
   if (self.mapNpcAffinity)[nNpcId] ~= nil then
     return ((self.mapNpcAffinity)[nNpcId]).tbPlotIds
   else
@@ -1561,7 +1576,7 @@ PlayerStarTowerData.GetNpcReceivedPlot = function(self, nNpcId)
 end
 
 PlayerStarTowerData.GetNpcPlotReceived = function(self, nNpcId, nPlotId)
-  -- function num : 0_62 , upvalues : _ENV
+  -- function num : 0_63 , upvalues : _ENV
   if (table.indexof)(((self.mapNpcAffinity)[nNpcId]).tbPlotIds, nPlotId) <= 0 then
     do return (self.mapNpcAffinity)[nNpcId] == nil end
     do return false end
@@ -1570,7 +1585,7 @@ PlayerStarTowerData.GetNpcPlotReceived = function(self, nNpcId, nPlotId)
 end
 
 PlayerStarTowerData.ChangeNpcAffinity = function(self, mapInfo)
-  -- function num : 0_63 , upvalues : _ENV
+  -- function num : 0_64 , upvalues : _ENV
   local nNpcId = mapInfo.NPCId
   -- DECOMPILER ERROR at PC14: Confused about usage of register: R3 in 'UnsetPending'
 
@@ -1642,16 +1657,16 @@ tbPlotIds = {}
 end
 
 PlayerStarTowerData.UpdateNpcAffinityRedDot = function(self)
-  -- function num : 0_64 , upvalues : _ENV
+  -- function num : 0_65 , upvalues : _ENV
   (RedDotManager.SetValid)(RedDotDefine.StarTowerBook_Affinity_Reward, "server", false)
   local forEachNpc = function(mapData)
-    -- function num : 0_64_0 , upvalues : _ENV
+    -- function num : 0_65_0 , upvalues : _ENV
     (RedDotManager.SetValid)(RedDotDefine.StarTowerBook_Affinity_Reward, mapData.Id, false)
   end
 
   ForEachTableLine(DataTable.StarTowerNPC, forEachNpc)
   local ForEachNpcPlot = function(mapData)
-    -- function num : 0_64_1 , upvalues : self, _ENV
+    -- function num : 0_65_1 , upvalues : self, _ENV
     local nNpcId = mapData.NPCId
     if (self.mapNpcAffinity)[nNpcId] ~= nil and mapData.AffinityLevel <= ((self.mapNpcAffinity)[nNpcId]).Level and (table.indexof)(((self.mapNpcAffinity)[nNpcId]).tbPlotIds, mapData.Id) < 1 then
       (RedDotManager.SetValid)(RedDotDefine.StarTowerBook_Affinity_Reward, nNpcId, true)
@@ -1662,14 +1677,14 @@ PlayerStarTowerData.UpdateNpcAffinityRedDot = function(self)
 end
 
 PlayerStarTowerData.SetPotentialDescSimple = function(self, bSimple)
-  -- function num : 0_65 , upvalues : LocalData
+  -- function num : 0_66 , upvalues : LocalData
   self.bPotentialDescSimple = bSimple
   ;
   (LocalData.SetPlayerLocalData)("StarTowerPotentialDescSimple", bSimple and "1" or "0")
 end
 
 PlayerStarTowerData.GetPotentialDescSimple = function(self)
-  -- function num : 0_66 , upvalues : LocalData, _ENV
+  -- function num : 0_67 , upvalues : LocalData, _ENV
   do
     if self.bPotentialDescSimple == nil then
       local sValue = (LocalData.GetPlayerLocalData)("StarTowerPotentialDescSimple")
@@ -1686,7 +1701,7 @@ PlayerStarTowerData.GetPotentialDescSimple = function(self)
 end
 
 PlayerStarTowerData.GetPotentialMaxLevelWithCurGrowth = function(self, nId)
-  -- function num : 0_67 , upvalues : _ENV
+  -- function num : 0_68 , upvalues : _ENV
   local nMaxLevel = 0
   local mapCfg = (ConfigTable.GetData)("Potential", nId)
   if mapCfg then
@@ -1716,7 +1731,7 @@ PlayerStarTowerData.GetPotentialMaxLevelWithCurGrowth = function(self, nId)
 end
 
 PlayerStarTowerData.GetPotentialMaxLevelWithMaxGrowth = function(self, nId)
-  -- function num : 0_68 , upvalues : _ENV
+  -- function num : 0_69 , upvalues : _ENV
   local nMaxLevel = 0
   local mapCfg = (ConfigTable.GetData)("Potential", nId)
   if mapCfg then
@@ -1738,7 +1753,7 @@ PlayerStarTowerData.GetPotentialMaxLevelWithMaxGrowth = function(self, nId)
 end
 
 PlayerStarTowerData.GetPotentialMaxLevelWithEquipment = function(self)
-  -- function num : 0_69 , upvalues : _ENV
+  -- function num : 0_70 , upvalues : _ENV
   return (ConfigTable.GetConfigNumber)("CharMaxPonLevel")
 end
 

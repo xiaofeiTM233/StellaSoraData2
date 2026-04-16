@@ -12,6 +12,7 @@ local ResTypeAny = (GameResourceLoader.ResType).Any
 local typeof = typeof
 local TN = (AllEnum.Actor2DType).Normal
 local TF = (AllEnum.Actor2DType).FullScreen
+local b_UseLive2D_EX = false
 local RapidJson = require("rapidjson")
 local Actor_Node_Path = (string.format)("%sUI/CommonEx/Template/----Actor2D_Node----.prefab", Settings.AB_ROOT_PATH)
 local L2DType = {None = 0, Char = 1, Disc = 2, CG = 3}
@@ -648,7 +649,7 @@ local SetL2D = function(sL2D, sOffset, rawImg, nCurPanelId, nReusePanelId, nType
 end
 
 local GetActor2DParams = function(nPanelId, nCharId, nSkinId, param, nSpecifyType)
-  -- function num : 0_30 , upvalues : mapPanelConfig, _ENV, CheckNoExSkin, LocalSettingData, mapCurrent, GetActor2DType, CheckL2DType, GetUIDefaultBgName, TF, GetAssetPath
+  -- function num : 0_30 , upvalues : mapPanelConfig, _ENV, CheckNoExSkin, LocalSettingData, b_UseLive2D_EX, mapCurrent, GetActor2DType, CheckL2DType, GetUIDefaultBgName, TF, GetAssetPath
   local tbConfig = mapPanelConfig[nPanelId]
   if tbConfig == nil then
     printError("此界面未定义“如何”显示2D角色，panel id:" .. tostring(nPanelId))
@@ -662,9 +663,7 @@ local GetActor2DParams = function(nPanelId, nCharId, nSkinId, param, nSpecifyTyp
   if mapSkinData == nil then
     printError("未找到角色皮肤数据")
   end
-  if tbConfig.bL2D then
-    local bL = (LocalSettingData.mapData).UseLive2D
-  end
+  local bL = tbConfig.bL2D and (LocalSettingData.mapData).UseLive2D or b_UseLive2D_EX
   if type(param) == "table" and param[1] == "TalentL2D" then
     bL = true
   end
@@ -873,13 +872,7 @@ Actor2DManager.ClearAll = function()
   mapSprite = {}
   mapBg = {}
   ;
-  (GameResourceLoader.Unload)("Actor2D")
-  ;
-  (GameResourceLoader.Unload)("Disc")
-  ;
-  (GameResourceLoader.Unload)("CG")
-  ;
-  (GameResourceLoader.Unload)("Image")
+  (GameResourceLoader.Unload)("UI")
 end
 
 Actor2DManager.SetActor2D_ForSubSKill = function(nPanelId, rawImg, nCharId, nSkinId, param, nIndex)
@@ -1388,8 +1381,14 @@ Actor2DManager.GetActor2DTypeByPanel = function(nPanelId, nCharId)
   return TF
 end
 
+Actor2DManager.ForceUseL2D = function(bForce)
+  -- function num : 0_52 , upvalues : b_UseLive2D_EX
+  b_UseLive2D_EX = bForce == true
+  -- DECOMPILER ERROR: 1 unprocessed JMP targets
+end
+
 Actor2DManager.SwitchActor2DDragOffset = function()
-  -- function num : 0_52 , upvalues : mapCurrent, tbL2DRenderer, _ENV
+  -- function num : 0_53 , upvalues : mapCurrent, tbL2DRenderer, _ENV
   local mapCurChar = (mapCurrent.tbChar)[1]
   local tbRenderer = tbL2DRenderer[1]
   local v3Offset = (tbRenderer.trOffset).localPosition
@@ -1406,7 +1405,7 @@ Actor2DManager.SwitchActor2DDragOffset = function()
 end
 
 Actor2DManager.ResetActor2DDragOffset = function(v3Offset)
-  -- function num : 0_53 , upvalues : mapCurrent, tbL2DRenderer, _ENV
+  -- function num : 0_54 , upvalues : mapCurrent, tbL2DRenderer, _ENV
   local mapCurChar = (mapCurrent.tbChar)[1]
   local tbRenderer = tbL2DRenderer[1]
   -- DECOMPILER ERROR at PC6: Confused about usage of register: R3 in 'UnsetPending'
@@ -1421,7 +1420,7 @@ Actor2DManager.ResetActor2DDragOffset = function(v3Offset)
 end
 
 Actor2DManager.SetActor2DInUI = function(nPanelId, trRoot, nCharId, nSkinId, bLive2D)
-  -- function num : 0_54 , upvalues : mapPanelConfig, _ENV, CheckNoExSkin, GetTargetPosScale, GetAssetPath, TN, LoadAsset, Actor2DManager
+  -- function num : 0_55 , upvalues : mapPanelConfig, _ENV, CheckNoExSkin, GetTargetPosScale, GetAssetPath, TN, LoadAsset, Actor2DManager
   local tbConfig = mapPanelConfig[nPanelId]
   if tbConfig == nil then
     printError("此界面未定义“如何”显示2D角色立绘, panel id:" .. tostring(nPanelId))
@@ -1472,7 +1471,7 @@ Actor2DManager.SetActor2DInUI = function(nPanelId, trRoot, nCharId, nSkinId, bLi
 end
 
 Actor2DManager.PlayActor2DAnimInUI = function(trRoot, sAnimName)
-  -- function num : 0_55 , upvalues : Actor2DManager
+  -- function num : 0_56 , upvalues : Actor2DManager
   local trSlipInOutAnim = trRoot:GetChild(0)
   local trPanelOffset = trSlipInOutAnim:GetChild(0)
   local trRoleOffset = trPanelOffset:GetChild(0)
@@ -1483,7 +1482,7 @@ end
 local drag_rang_width = {-8, 8}
 local drag_rang_height = {-9, 9}
 local getDragLimit = function(tbRenderer)
-  -- function num : 0_56 , upvalues : drag_rang_width, drag_rang_height
+  -- function num : 0_57 , upvalues : drag_rang_width, drag_rang_height
   local localScale = (tbRenderer.trFreeDrag).localScale
   local panelOffset = (tbRenderer.trPanelOffset).localPosition
   local tbWidthRage = {(drag_rang_width[1] - panelOffset.x) * localScale.x, (drag_rang_width[2] - panelOffset.x) * localScale.x}
@@ -1492,12 +1491,12 @@ local getDragLimit = function(tbRenderer)
 end
 
 local clamp = function(x, min, max)
-  -- function num : 0_57 , upvalues : _ENV
+  -- function num : 0_58 , upvalues : _ENV
   return (math.max)((math.min)(x, max), min)
 end
 
 Actor2DManager.SyncLocalPos = function(x, y, nIndex, rect)
-  -- function num : 0_58 , upvalues : mapCurrent, tbL2DRenderer, getDragLimit, _ENV, clamp
+  -- function num : 0_59 , upvalues : mapCurrent, tbL2DRenderer, getDragLimit, _ENV, clamp
   if nIndex == nil then
     nIndex = 1
   end
@@ -1524,7 +1523,7 @@ Actor2DManager.SyncLocalPos = function(x, y, nIndex, rect)
 end
 
 Actor2DManager.SyncLocalScale = function(s, nIndex)
-  -- function num : 0_59 , upvalues : tbL2DRenderer, _ENV, getDragLimit, clamp
+  -- function num : 0_60 , upvalues : tbL2DRenderer, _ENV, getDragLimit, clamp
   if nIndex == nil then
     nIndex = 1
   end
@@ -1544,19 +1543,19 @@ Actor2DManager.SyncLocalScale = function(s, nIndex)
 end
 
 Actor2DManager.GetCurrentActor2DType = function()
-  -- function num : 0_60 , upvalues : mapCurrent
+  -- function num : 0_61 , upvalues : mapCurrent
   if mapCurrent ~= nil then
     return mapCurrent.nActor2DType
   end
 end
 
 Actor2DManager.GetMapPanelConfig = function(nPanelId)
-  -- function num : 0_61 , upvalues : mapPanelConfig
+  -- function num : 0_62 , upvalues : mapPanelConfig
   return mapPanelConfig[nPanelId]
 end
 
 Actor2DManager.SetBoardNPC2D = function(nPanelId, rawImg, nCharId, nSkinId, param, nIndex)
-  -- function num : 0_62 , upvalues : mapActor2DType, LoadLocalData, mapCurrent, Actor2DManager, mapPanelConfig, _ENV, LocalSettingData, GetUIDefaultBgName, TF, GetAssetPath, GetRenderer, SetL2D, GetFace, SetPortrait, L2DType
+  -- function num : 0_63 , upvalues : mapActor2DType, LoadLocalData, mapCurrent, Actor2DManager, mapPanelConfig, _ENV, LocalSettingData, GetUIDefaultBgName, TF, GetAssetPath, GetRenderer, SetL2D, GetFace, SetPortrait, L2DType
   if mapActor2DType["1"] ~= true then
     LoadLocalData()
   end
@@ -1660,7 +1659,7 @@ Actor2DManager.SetBoardNPC2D = function(nPanelId, rawImg, nCharId, nSkinId, para
 end
 
 Actor2DManager.UnsetBoardNPC2D = function(nIndex)
-  -- function num : 0_63 , upvalues : mapCurrent, _ENV, GetRenderer, ResetRenderer, L2DType
+  -- function num : 0_64 , upvalues : mapCurrent, _ENV, GetRenderer, ResetRenderer, L2DType
   if nIndex == nil then
     nIndex = 1
   end
@@ -1689,7 +1688,7 @@ Actor2DManager.UnsetBoardNPC2D = function(nIndex)
 end
 
 Actor2DManager.SetBoardNPC2D_PNG = function(trActor2D_PNG, nPanelId, nNPCId, nSkinId, param)
-  -- function num : 0_64 , upvalues : mapPanelConfig, _ENV, GetAssetPath, TN, GetFace, GetName, GetTargetPosScale, GetSprite
+  -- function num : 0_65 , upvalues : mapPanelConfig, _ENV, GetAssetPath, TN, GetFace, GetName, GetTargetPosScale, GetSprite
   local tbConfig = mapPanelConfig[nPanelId]
   if tbConfig == nil then
     printError("此界面未定义“如何”显示2D角色，panel id:" .. tostring(nPanelId))
@@ -1737,7 +1736,7 @@ Actor2DManager.SetBoardNPC2D_PNG = function(trActor2D_PNG, nPanelId, nNPCId, nSk
 end
 
 Actor2DManager.SetBoardNPC2DWithRender = function(nPanelId, rawImg, nCharId, nSkinId, param, trRenderer)
-  -- function num : 0_65 , upvalues : mapActor2DType, LoadLocalData, mapPanelConfig, _ENV, LocalSettingData, mapCurrent, GetUIDefaultBgName, TF, GetAssetPath, GetL2DRendererStructure, SetL2D, GetFace, SetPortrait, TN, Actor2DManager
+  -- function num : 0_66 , upvalues : mapActor2DType, LoadLocalData, mapPanelConfig, _ENV, LocalSettingData, mapCurrent, GetUIDefaultBgName, TF, GetAssetPath, GetL2DRendererStructure, SetL2D, GetFace, SetPortrait, TN, Actor2DManager
   if mapActor2DType["1"] ~= true then
     LoadLocalData()
   end
@@ -1807,7 +1806,7 @@ end
 
 local sTempAssetPath, goTempL2DIns = nil, nil
 Actor2DManager.SetActor2D_ForActor2DEditor = function(nPanelId, rawImg, sSkinId, bFull, sFullPath, s, x, y, bL2D, nL2DX, nL2DY, nL2DS, bNpc)
-  -- function num : 0_66 , upvalues : _ENV, mapPanelConfig, GetUIDefaultBgName, GetRenderer, Set_RawImg, sTempAssetPath, SetPanelOffset, typeof, LoadAsset, goTempL2DIns
+  -- function num : 0_67 , upvalues : _ENV, mapPanelConfig, GetUIDefaultBgName, GetRenderer, Set_RawImg, sTempAssetPath, SetPanelOffset, typeof, LoadAsset, goTempL2DIns
   if rawImg == nil then
     return 
   end
@@ -1901,7 +1900,7 @@ Actor2DManager.SetActor2D_ForActor2DEditor = function(nPanelId, rawImg, sSkinId,
 end
 
 Actor2DManager.UnsetActor2D_ForActor2DEditor = function()
-  -- function num : 0_67 , upvalues : sTempAssetPath, GetRenderer, ResetRenderer, goTempL2DIns, _ENV
+  -- function num : 0_68 , upvalues : sTempAssetPath, GetRenderer, ResetRenderer, goTempL2DIns, _ENV
   if sTempAssetPath == nil then
     return 
   end
@@ -1915,7 +1914,7 @@ Actor2DManager.UnsetActor2D_ForActor2DEditor = function()
 end
 
 Actor2DManager.SetActor2D_PNG_ForActor2DEditor = function(nPanelId, trActor2D_PNG, sCharId, sFullPath, s, x, y, sPose)
-  -- function num : 0_68 , upvalues : _ENV, typeof, mapPanelConfig
+  -- function num : 0_69 , upvalues : _ENV, typeof, mapPanelConfig
   local sFullPath_BodyPng, sFullPath_FacePng = nil, nil
   if sPose == nil then
     sFullPath_BodyPng = (string.format)("%s/atlas_png/a/%s_001.png", sFullPath, sCharId)
@@ -1955,7 +1954,7 @@ Actor2DManager.SetActor2D_PNG_ForActor2DEditor = function(nPanelId, trActor2D_PN
 end
 
 Actor2DManager.SetL2D_InBBVEditor = function(rawImg, bIsNpc, nSkinId, bIsCG)
-  -- function num : 0_69 , upvalues : goTempL2DIns, _ENV, tbL2DRenderer, Set_RawImg, LoadAsset, Offset, Actor2DManager
+  -- function num : 0_70 , upvalues : goTempL2DIns, _ENV, tbL2DRenderer, Set_RawImg, LoadAsset, Offset, Actor2DManager
   if goTempL2DIns ~= nil then
     destroy(goTempL2DIns)
     goTempL2DIns = nil
@@ -2027,7 +2026,7 @@ Actor2DManager.SetL2D_InBBVEditor = function(rawImg, bIsNpc, nSkinId, bIsCG)
 end
 
 Actor2DManager.PlayL2DAnim_InBBVEditor = function(sAnimName, bLoop)
-  -- function num : 0_70 , upvalues : goTempL2DIns, Actor2DManager
+  -- function num : 0_71 , upvalues : goTempL2DIns, Actor2DManager
   if bLoop ~= true then
     (Actor2DManager.PlayL2DAnim)(goTempL2DIns.transform, sAnimName, goTempL2DIns == nil, true)
     -- DECOMPILER ERROR: 2 unprocessed JMP targets
@@ -2035,7 +2034,7 @@ Actor2DManager.PlayL2DAnim_InBBVEditor = function(sAnimName, bLoop)
 end
 
 Actor2DManager.DestroyL2D_InBBVEditor = function()
-  -- function num : 0_71 , upvalues : goTempL2DIns, _ENV
+  -- function num : 0_72 , upvalues : goTempL2DIns, _ENV
   if goTempL2DIns ~= nil then
     destroy(goTempL2DIns)
     goTempL2DIns = nil
@@ -2043,7 +2042,7 @@ Actor2DManager.DestroyL2D_InBBVEditor = function()
 end
 
 local getDisc2DAssetsPath = function(nDiscId, bUseL2D)
-  -- function num : 0_72 , upvalues : _ENV, GameResourceLoader, sRootPath
+  -- function num : 0_73 , upvalues : _ENV, GameResourceLoader, sRootPath
   local mapCfg = (ConfigTable.GetData)("Disc", nDiscId)
   do
     if mapCfg ~= nil then
@@ -2068,7 +2067,7 @@ local getDisc2DAssetsPath = function(nDiscId, bUseL2D)
 end
 
 local SetDiscL2D = function(sL2D, rawImg, nIndex)
-  -- function num : 0_73 , upvalues : GetRenderer, GetL2DIns, _ENV, SetL2DInsParent, Set_RawImg
+  -- function num : 0_74 , upvalues : GetRenderer, GetL2DIns, _ENV, SetL2DInsParent, Set_RawImg
   local tbRenderer = GetRenderer(sL2D, false, nIndex)
   if tbRenderer == nil then
     return 
@@ -2113,7 +2112,7 @@ local SetDiscL2D = function(sL2D, rawImg, nIndex)
 end
 
 local SetDiscPortrait = function(sPortrait, rawImg, nIndex)
-  -- function num : 0_74 , upvalues : GetRenderer, _ENV, GetSprite, Set_RawImg
+  -- function num : 0_75 , upvalues : GetRenderer, _ENV, GetSprite, Set_RawImg
   local tbRenderer = GetRenderer(sPortrait, false, nIndex)
   if tbRenderer == nil then
     printError("未找到 Renderer")
@@ -2150,7 +2149,7 @@ local SetDiscPortrait = function(sPortrait, rawImg, nIndex)
 end
 
 Actor2DManager.SetDisc2D = function(nDiscId, rawImg, bUseL2D, nIndex)
-  -- function num : 0_75 , upvalues : mapActor2DType, LoadLocalData, mapCurrent, L2DType, Actor2DManager, LocalSettingData, getDisc2DAssetsPath, _ENV, SetDiscL2D, SetDiscPortrait
+  -- function num : 0_76 , upvalues : mapActor2DType, LoadLocalData, mapCurrent, L2DType, Actor2DManager, LocalSettingData, getDisc2DAssetsPath, _ENV, SetDiscL2D, SetDiscPortrait
   if mapActor2DType["1"] ~= true then
     LoadLocalData()
   end
@@ -2197,7 +2196,7 @@ Actor2DManager.SetDisc2D = function(nDiscId, rawImg, bUseL2D, nIndex)
 end
 
 Actor2DManager.UnSetDisc2D = function(bKeepData, nIndex, bForce)
-  -- function num : 0_76 , upvalues : mapCurrent, L2DType, _ENV, GetRenderer, ResetRenderer, tbL2DRenderer, UnInit_RT
+  -- function num : 0_77 , upvalues : mapCurrent, L2DType, _ENV, GetRenderer, ResetRenderer, tbL2DRenderer, UnInit_RT
   if not mapCurrent.L2DType == L2DType.Disc then
     return 
   end
@@ -2226,7 +2225,7 @@ Actor2DManager.UnSetDisc2D = function(bKeepData, nIndex, bForce)
 end
 
 local getCg2DAssetsPath = function(nCgId, bUseL2D)
-  -- function num : 0_77 , upvalues : _ENV, GameResourceLoader, sRootPath
+  -- function num : 0_78 , upvalues : _ENV, GameResourceLoader, sRootPath
   local mapCfg = (ConfigTable.GetData)("MainScreenCG", nCgId)
   if mapCfg ~= nil then
     local sPath = ""
@@ -2248,7 +2247,7 @@ local getCg2DAssetsPath = function(nCgId, bUseL2D)
 end
 
 local SetCgL2D = function(sL2D, rawImg, nIndex)
-  -- function num : 0_78 , upvalues : GetRenderer, GetL2DIns, _ENV, SetL2DInsParent, Set_RawImg
+  -- function num : 0_79 , upvalues : GetRenderer, GetL2DIns, _ENV, SetL2DInsParent, Set_RawImg
   local tbRenderer = GetRenderer(sL2D, false, nIndex)
   if tbRenderer == nil then
     return 
@@ -2293,7 +2292,7 @@ local SetCgL2D = function(sL2D, rawImg, nIndex)
 end
 
 local SetCgPortrait = function(sPortrait, rawImg, nIndex)
-  -- function num : 0_79 , upvalues : GetRenderer, _ENV, GetSprite, Set_RawImg
+  -- function num : 0_80 , upvalues : GetRenderer, _ENV, GetSprite, Set_RawImg
   local tbRenderer = GetRenderer(sPortrait, false, nIndex)
   if tbRenderer == nil then
     printError("未找到 Renderer")
@@ -2330,7 +2329,7 @@ local SetCgPortrait = function(sPortrait, rawImg, nIndex)
 end
 
 Actor2DManager.SetCg2D = function(nCgId, rawImg, bUseL2D, nIndex)
-  -- function num : 0_80 , upvalues : mapActor2DType, LoadLocalData, mapCurrent, L2DType, Actor2DManager, LocalSettingData, getCg2DAssetsPath, _ENV, SetCgL2D, SetCgPortrait
+  -- function num : 0_81 , upvalues : mapActor2DType, LoadLocalData, mapCurrent, L2DType, Actor2DManager, LocalSettingData, getCg2DAssetsPath, _ENV, SetCgL2D, SetCgPortrait
   if mapActor2DType["1"] ~= true then
     LoadLocalData()
   end
@@ -2377,7 +2376,7 @@ Actor2DManager.SetCg2D = function(nCgId, rawImg, bUseL2D, nIndex)
 end
 
 Actor2DManager.UnSetCg2D = function(bKeepData, nIndex, bForce)
-  -- function num : 0_81 , upvalues : mapCurrent, L2DType, _ENV, GetRenderer, ResetRenderer, tbL2DRenderer, UnInit_RT
+  -- function num : 0_82 , upvalues : mapCurrent, L2DType, _ENV, GetRenderer, ResetRenderer, tbL2DRenderer, UnInit_RT
   if not mapCurrent.L2DType == L2DType.CG then
     return 
   end

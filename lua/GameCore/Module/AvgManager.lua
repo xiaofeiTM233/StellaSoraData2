@@ -87,14 +87,14 @@ local OnEvent_AvgSTStart = function(_, sAvgId, sLanguage, sVoLan, sGroupId, nSta
 end
 
 local OnEvent_AvgSTEnd = function(_)
-  -- function num : 0_3 , upvalues : _ENV, objAvgPanel, GameResourceLoader, bInAvg, nTransitionType
+  -- function num : 0_3 , upvalues : _ENV, objAvgPanel, bInAvg, nTransitionType
   local func_AvgSTEnd = function()
     -- function num : 0_3_0 , upvalues : _ENV
     (EventManager.Hit)("AvgSTEnd")
   end
 
   local func_DoEnd = function()
-    -- function num : 0_3_1 , upvalues : _ENV, objAvgPanel, GameResourceLoader, bInAvg
+    -- function num : 0_3_1 , upvalues : _ENV, objAvgPanel, bInAvg
     (NovaAPI.DispatchEventWithData)("StoryDialog_DialogEnd")
     if objAvgPanel ~= nil then
       objAvgPanel:_PreExit()
@@ -104,13 +104,6 @@ local OnEvent_AvgSTEnd = function(_)
       ;
       (NovaAPI.SetScreenSleepTimeout)(false)
     end
-    if AVG_EDITOR ~= true then
-      (GameResourceLoader.Unload)("UI", "ui_avg")
-    end
-    ;
-    (GameResourceLoader.Unload)("ImageAvg")
-    ;
-    (GameResourceLoader.Unload)("Actor2DAvg")
     bInAvg = false
   end
 

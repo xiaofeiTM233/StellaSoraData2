@@ -425,22 +425,31 @@ PlayerItemData.GetItemCountByID = function(self, Tid)
   end
   if itemCfgData.Type == (GameEnum.itemType).Honor then
     local tbHonor = (PlayerData.Base):GetPlayerHonorTitleList()
-    local bHas = (table.indexof)(tbHonor, Tid) > 0
-    return bHas and 1 or 0
-  end
-  do
-    if (self._mapItem)[Tid] ~= nil then
-      local count = 0
-      for key,value in pairs(((self._mapItem)[Tid]).mapExpires) do
-        local nCurTime = ((CS.ClientManager).Instance).serverTimeStamp
-        if key == 0 or nCurTime < key then
-          count = count + value.nTotalCount
+    local bHas = false
+    for k,v in pairs(tbHonor) do
+      if v.Id == Tid then
+        bHas = true
+        break
+      end
+    end
+    do
+      do
+        do return bHas and 1 or 0 end
+        do
+          if (self._mapItem)[Tid] ~= nil then
+            local count = 0
+            for key,value in pairs(((self._mapItem)[Tid]).mapExpires) do
+              local nCurTime = ((CS.ClientManager).Instance).serverTimeStamp
+              if key == 0 or nCurTime < key then
+                count = count + value.nTotalCount
+              end
+            end
+            return count
+          end
+          return 0
         end
       end
-      return count
     end
-    do return 0 end
-    -- DECOMPILER ERROR: 7 unprocessed JMP targets
   end
 end
 

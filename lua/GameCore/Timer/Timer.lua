@@ -236,7 +236,7 @@ Timer.GetRemainInterval = function(self)
   end
 end
 
-Timer.GetRenmainTime = function(self)
+Timer.GetRemainTime = function(self)
   -- function num : 0_9 , upvalues : TimerStatus, _ENV, TimerScaleType, Time
   local nTotalTime = self._nTargetCount * self._nInterval
   local nPassedTime = self._nInterval * self._nCurCount + self._nElapsed

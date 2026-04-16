@@ -12,6 +12,7 @@ local AvgManager = require("GameCore.Module.AvgManager")
 local MessageBoxManager = require("GameCore.Module.MessageBoxManager")
 local GamepadUIManager = require("GameCore.Module.GamepadUIManager")
 local LampNoticeManager = require("GameCore.Module.LampNoticeManager")
+local NotificationManager = require("GameCore.Module.NotificationManager")
 RedDotManager = require("GameCore.RedDot.RedDotManager")
 ;
 (EventManager.Init)()
@@ -23,7 +24,7 @@ RedDotManager = require("GameCore.RedDot.RedDotManager")
 (HttpNetHandler.Init)()
 ;
 (ConfigData.Load)(Settings.sCurrentTxtLanguage)
--- DECOMPILER ERROR at PC63: Confused about usage of register: R9 in 'UnsetPending'
+-- DECOMPILER ERROR at PC66: Confused about usage of register: R10 in 'UnsetPending'
 
 ;
 ((CS.ClientManager).Instance).serverTimeZone = (ConfigTable.GetConfigValue)("TimeZone")
@@ -43,6 +44,8 @@ RedDotManager = require("GameCore.RedDot.RedDotManager")
 (GamepadUIManager.Init)()
 ;
 (LampNoticeManager.Init)()
+;
+(NotificationManager.Init)()
 ;
 (RedDotManager.Init)()
 ;

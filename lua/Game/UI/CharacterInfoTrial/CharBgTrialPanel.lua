@@ -1,4 +1,5 @@
 local CharBgTrialPanel = class("CharBgTrialPanel", BasePanel)
+local Actor2DManager = require("Game.Actor2D.Actor2DManager")
 CharBgTrialPanel._bIsMainPanel = false
 CharBgTrialPanel._sSortingLayerName = (AllEnum.SortingLayerName).UI_Top
 CharBgTrialPanel._tbDefine = {
@@ -104,7 +105,7 @@ CharBgTrialPanel.GetSubPanel = function(self)
 end
 
 CharBgTrialPanel.Awake = function(self)
-  -- function num : 0_6 , upvalues : _ENV
+  -- function num : 0_6 , upvalues : _ENV, Actor2DManager
   self.nPanelId = 0
   self.nCharId = 0
   self.tbCharList = {}
@@ -121,6 +122,8 @@ CharBgTrialPanel.Awake = function(self)
   end
   ;
   (table.insert)(self.panelStack, self.nPanelId)
+  ;
+  (Actor2DManager.ForceUseL2D)(false)
 end
 
 CharBgTrialPanel.OnEnable = function(self)
@@ -128,7 +131,10 @@ CharBgTrialPanel.OnEnable = function(self)
 end
 
 CharBgTrialPanel.OnDisable = function(self)
-  -- function num : 0_8
+  -- function num : 0_8 , upvalues : _ENV, Actor2DManager
+  if (PanelManager.CheckPanelOpen)(PanelId.GachaSpin) then
+    (Actor2DManager.ForceUseL2D)(true)
+  end
 end
 
 CharBgTrialPanel.OnEvent_CharRelatePanelOpen = function(self, nPanelId, ncharId, tbCharList, param1)

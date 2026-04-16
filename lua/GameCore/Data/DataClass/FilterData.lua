@@ -356,8 +356,15 @@ FilterData.GetCacheFilterByKey = function(self, fKey, sKey)
   return self:GetFilterByKey(fKey, sKey), false
 end
 
+FilterData.GetCacheFilter = function(self, fKey)
+  -- function num : 0_13
+  if (self.tbCacheFilter)[fKey] ~= nil then
+    return (self.tbCacheFilter)[fKey]
+  end
+end
+
 FilterData.CacheCharSort = function(self, nType, bOrder)
-  -- function num : 0_13 , upvalues : LocalData
+  -- function num : 0_14 , upvalues : LocalData
   self.nFormationCharSrotType = nType
   self.bFormationCharOrder = bOrder
   ;
@@ -367,7 +374,7 @@ FilterData.CacheCharSort = function(self, nType, bOrder)
 end
 
 FilterData.CacheDiscSort = function(self, nType, bOrder)
-  -- function num : 0_14 , upvalues : LocalData
+  -- function num : 0_15 , upvalues : LocalData
   self.nFormationDiscSrotType = nType
   self.bFormationDiscOrder = bOrder
   ;
@@ -377,7 +384,7 @@ FilterData.CacheDiscSort = function(self, nType, bOrder)
 end
 
 FilterData.InitSortData = function(self)
-  -- function num : 0_15 , upvalues : _ENV, LocalData
+  -- function num : 0_16 , upvalues : _ENV, LocalData
   self.nFormationCharSrotType = (AllEnum.SortType).Level
   self.bFormationCharOrder = false
   self.nFormationDiscSrotType = (AllEnum.SortType).Level

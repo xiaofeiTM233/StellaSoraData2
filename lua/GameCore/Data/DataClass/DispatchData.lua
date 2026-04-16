@@ -1,4 +1,6 @@
 local dailycheckinctrl = require("Game.UI.CheckIn.DailyCheckInCtrl")
+local NotificationManager = require("GameCore.Module.NotificationManager")
+local LocalSettingData = require("GameCore.Data.LocalSettingData")
 local DispatchData = class("DispatchData")
 local tbAllDispatchData = {}
 local tbWeeklyDispatchDataIds = {}
@@ -12,18 +14,22 @@ local OnEvent_NewDay = function()
   (EventManager.Hit)("UpdateDispatchData")
 end
 
+local OnEvent_SettingsNotificationClose = function()
+  -- function num : 0_1
+end
+
 local Init = function()
-  -- function num : 0_1 , upvalues : _ENV, DispatchData, OnEvent_NewDay
+  -- function num : 0_2 , upvalues : _ENV, DispatchData, OnEvent_NewDay
   (EventManager.Add)(EventId.IsNewDay, DispatchData, OnEvent_NewDay)
 end
 
 local UnInit = function()
-  -- function num : 0_2 , upvalues : _ENV, DispatchData, OnEvent_NewDay
+  -- function num : 0_3 , upvalues : _ENV, DispatchData, OnEvent_NewDay
   (EventManager.Remove)(EventId.IsNewDay, DispatchData, OnEvent_NewDay)
 end
 
 local CacheDispatchData = function(data)
-  -- function num : 0_3 , upvalues : _ENV, tbAllDispatchData, tbCompletedDailyDispatchIds, tbCompletedWeeklyDispatchIds, tbWeeklyDispatchDataIds
+  -- function num : 0_4 , upvalues : _ENV, tbAllDispatchData, tbCompletedDailyDispatchIds, tbCompletedWeeklyDispatchIds, tbWeeklyDispatchDataIds
   if data == nil or data.Infos == nil then
     return 
   end
@@ -45,12 +51,12 @@ local CacheDispatchData = function(data)
 end
 
 local GetAllDispatchingData = function()
-  -- function num : 0_4 , upvalues : tbAllDispatchData
+  -- function num : 0_5 , upvalues : tbAllDispatchData
   return tbAllDispatchData
 end
 
 local GetAccpectingDispatchCount = function()
-  -- function num : 0_5 , upvalues : _ENV, tbAllDispatchData
+  -- function num : 0_6 , upvalues : _ENV, tbAllDispatchData
   local count = 0
   for k,v in pairs(tbAllDispatchData) do
     local agentData = (ConfigTable.GetData)("Agent", (v.Data).Id)
@@ -62,7 +68,7 @@ local GetAccpectingDispatchCount = function()
 end
 
 local GetDispatchState = function(dispatchId)
-  -- function num : 0_6 , upvalues : tbAllDispatchData, _ENV, tbCompletedDailyDispatchIds, tbCompletedWeeklyDispatchIds
+  -- function num : 0_7 , upvalues : tbAllDispatchData, _ENV, tbCompletedDailyDispatchIds, tbCompletedWeeklyDispatchIds
   -- DECOMPILER ERROR at PC21: Confused about usage of register: R1 in 'UnsetPending'
 
   if tbAllDispatchData[dispatchId] ~= nil then
@@ -81,11 +87,11 @@ local GetDispatchState = function(dispatchId)
 end
 
 local GetAllTabData = function()
-  -- function num : 0_7 , upvalues : _ENV
+  -- function num : 0_8 , upvalues : _ENV
   local tabDispatchData = {}
   local allTab = (ConfigTable.Get)("AgentTab")
   local foreachAgentTab = function(mapData)
-    -- function num : 0_7_0 , upvalues : _ENV, tabDispatchData
+    -- function num : 0_8_0 , upvalues : _ENV, tabDispatchData
     (table.insert)(tabDispatchData, mapData.Id)
   end
 
@@ -94,11 +100,11 @@ local GetAllTabData = function()
 end
 
 local GetAllDispatchItemList = function()
-  -- function num : 0_8 , upvalues : _ENV, tbCompletedDailyDispatchIds, tbWeeklyDispatchDataIds, tbAllDispatchData
+  -- function num : 0_9 , upvalues : _ENV, tbCompletedDailyDispatchIds, tbWeeklyDispatchDataIds, tbAllDispatchData
   local allDispatch = (ConfigTable.Get)("Agent")
   local tbDispatchList = {}
   local foreachAgent = function(mapData)
-    -- function num : 0_8_0 , upvalues : _ENV, tbDispatchList, tbCompletedDailyDispatchIds
+    -- function num : 0_9_0 , upvalues : _ENV, tbDispatchList, tbCompletedDailyDispatchIds
     if mapData.Tab ~= (GameEnum.AgentType).Emergency then
       if tbDispatchList[mapData.Tab] == nil then
         tbDispatchList[mapData.Tab] = {}
@@ -121,13 +127,13 @@ local GetAllDispatchItemList = function()
 end
 
 local CheckTabUnlock = function(tabIndex, dispatchListData)
-  -- function num : 0_9 , upvalues : _ENV
+  -- function num : 0_10 , upvalues : _ENV
   local txtLockCondition = ""
   local bDispatchUnlock = false
   if dispatchListData == nil then
     dispatchListData = {}
     local foreachAgent = function(mapData)
-    -- function num : 0_9_0 , upvalues : tabIndex, _ENV, dispatchListData
+    -- function num : 0_10_0 , upvalues : tabIndex, _ENV, dispatchListData
     if mapData.Tab == tabIndex then
       (table.insert)(dispatchListData, mapData.Id)
     end
@@ -147,7 +153,7 @@ local CheckTabUnlock = function(tabIndex, dispatchListData)
 end
 
 local GetDispatchCharList = function(dispatchId)
-  -- function num : 0_10 , upvalues : tbAllDispatchData
+  -- function num : 0_11 , upvalues : tbAllDispatchData
   if tbAllDispatchData[dispatchId] then
     return ((tbAllDispatchData[dispatchId]).Data).CharIds
   end
@@ -155,14 +161,14 @@ local GetDispatchCharList = function(dispatchId)
 end
 
 local GetDispatchBuildData = function(dispatchId, callback)
-  -- function num : 0_11 , upvalues : tbAllDispatchData, _ENV
+  -- function num : 0_12 , upvalues : tbAllDispatchData, _ENV
   local _mapAllBuild = {}
   local buildId = -1
   if tbAllDispatchData[dispatchId] ~= nil then
     buildId = ((tbAllDispatchData[dispatchId]).Data).BuildId
   end
   local GetDataCallback = function(tbBuildData, mapAllBuild)
-    -- function num : 0_11_0 , upvalues : _mapAllBuild, callback, buildId
+    -- function num : 0_12_0 , upvalues : _mapAllBuild, callback, buildId
     _mapAllBuild = mapAllBuild
     if callback ~= nil then
       callback(_mapAllBuild[buildId])
@@ -174,7 +180,7 @@ local GetDispatchBuildData = function(dispatchId, callback)
 end
 
 local CheckDispatchItemUnlock = function(dispatchId)
-  -- function num : 0_12 , upvalues : _ENV
+  -- function num : 0_13 , upvalues : _ENV
   local agentData = (ConfigTable.GetData)("Agent", dispatchId)
   local tbCond = decodeJson(agentData.UnlockConditions)
   if tbCond == nil then
@@ -227,7 +233,7 @@ local CheckDispatchItemUnlock = function(dispatchId)
 end
 
 local GetCharOrBuildState = function(id)
-  -- function num : 0_13 , upvalues : tbAllDispatchData, _ENV
+  -- function num : 0_14 , upvalues : tbAllDispatchData, _ENV
   if tbAllDispatchData ~= nil then
     for k,v in pairs(tbAllDispatchData) do
       if (v.Data).CharIds ~= nil then
@@ -252,7 +258,7 @@ local GetCharOrBuildState = function(id)
 end
 
 local GetSameTagCount = function(dispatchId, bBuild, nId, bExtra)
-  -- function num : 0_14 , upvalues : _ENV
+  -- function num : 0_15 , upvalues : _ENV
   local data = (ConfigTable.GetData)("Agent", dispatchId)
   local charTagList = {}
   local count = 0
@@ -260,7 +266,7 @@ local GetSameTagCount = function(dispatchId, bBuild, nId, bExtra)
     local _mapAllBuild = {}
     do
       local GetDataCallback = function(tbBuildData, mapAllBuild)
-    -- function num : 0_14_0 , upvalues : _mapAllBuild
+    -- function num : 0_15_0 , upvalues : _mapAllBuild
     _mapAllBuild = mapAllBuild
   end
 
@@ -299,7 +305,7 @@ local GetSameTagCount = function(dispatchId, bBuild, nId, bExtra)
 end
 
 local IsSpecialDispatch = function(dispatchId)
-  -- function num : 0_15 , upvalues : _ENV, tbWeeklyDispatchDataIds, tbCompletedDailyDispatchIds, tbCompletedWeeklyDispatchIds
+  -- function num : 0_16 , upvalues : _ENV, tbWeeklyDispatchDataIds, tbCompletedDailyDispatchIds, tbCompletedWeeklyDispatchIds
   if (table.indexof)(tbWeeklyDispatchDataIds, dispatchId) > 0 then
     return true
   end
@@ -313,7 +319,7 @@ local IsSpecialDispatch = function(dispatchId)
 end
 
 local IsBuildDispatching = function(buildId)
-  -- function num : 0_16 , upvalues : _ENV, tbAllDispatchData
+  -- function num : 0_17 , upvalues : _ENV, tbAllDispatchData
   for k,v in pairs(tbAllDispatchData) do
     if (v.Data).BuildId == buildId then
       return true
@@ -323,11 +329,11 @@ local IsBuildDispatching = function(buildId)
 end
 
 local RandomSpecialPerformance = function(charIds)
-  -- function num : 0_17 , upvalues : _ENV
+  -- function num : 0_18 , upvalues : _ENV
   local tbEligible = {}
   local totalWeight = 0
   local foreachAgentSpecialPerformance = function(mapData)
-    -- function num : 0_17_0 , upvalues : charIds, _ENV, totalWeight, tbEligible
+    -- function num : 0_18_0 , upvalues : charIds, _ENV, totalWeight, tbEligible
     if #mapData.CharId <= #charIds then
       local hasAll = true
       for k,v in ipairs(mapData.CharId) do
@@ -360,7 +366,7 @@ local RandomSpecialPerformance = function(charIds)
 end
 
 local CheckReddot = function()
-  -- function num : 0_18 , upvalues : _ENV, tbAllDispatchData
+  -- function num : 0_19 , upvalues : _ENV, tbAllDispatchData
   for k,v in pairs(tbAllDispatchData) do
     local dispatchData = (ConfigTable.GetData)("Agent", k)
     local bComplete = (v.Data).ProcessTime * 60 + (v.Data).StartTime <= ((CS.ClientManager).Instance).serverTimeStamp
@@ -371,7 +377,7 @@ local CheckReddot = function()
 end
 
 local GetCurrentYearInfo = function(time_s)
-  -- function num : 0_19 , upvalues : _ENV
+  -- function num : 0_20 , upvalues : _ENV
   local day = (os.date)("%d", time_s)
   local weekIndex = (os.date)("%W", time_s)
   local month = (os.date)("%m", time_s)
@@ -380,7 +386,7 @@ local GetCurrentYearInfo = function(time_s)
 end
 
 local IsSameDay = function(stampA, stampB, resetHour)
-  -- function num : 0_20 , upvalues : GetCurrentYearInfo
+  -- function num : 0_21 , upvalues : GetCurrentYearInfo
   if not resetHour then
     resetHour = 5
   end
@@ -394,7 +400,7 @@ local IsSameDay = function(stampA, stampB, resetHour)
 end
 
 local IsSameWeek = function(stampA, stampB, resetHour)
-  -- function num : 0_21 , upvalues : GetCurrentYearInfo
+  -- function num : 0_22 , upvalues : GetCurrentYearInfo
   if not resetHour then
     resetHour = 5
   end
@@ -408,7 +414,7 @@ local IsSameWeek = function(stampA, stampB, resetHour)
 end
 
 local ReqApplyAgent = function(agentList, agentData, callback)
-  -- function num : 0_22 , upvalues : _ENV, tbAllDispatchData, bReqApplyAgent
+  -- function num : 0_23 , upvalues : _ENV, tbAllDispatchData, bReqApplyAgent
   local count = ((PlayerData.Dispatch).GetAccpectingDispatchCount)()
   local maxCount = tonumber((ConfigTable.GetConfigValue)("AgentMaximumQuantity"))
   if maxCount <= count then
@@ -426,7 +432,7 @@ local ReqApplyAgent = function(agentList, agentData, callback)
           (EventManager.Hit)(EventId.OpenMessageBox, (ConfigTable.GetUIText)("Agent_Max_Accepted"))
           do return  end
           local func_callback = function(_, msgData)
-    -- function num : 0_22_0 , upvalues : _ENV, agentData, tbAllDispatchData, callback, bReqApplyAgent
+    -- function num : 0_23_0 , upvalues : _ENV, agentData, tbAllDispatchData, callback, bReqApplyAgent
     for k,v in ipairs(msgData.Infos) do
       do
         do
@@ -459,15 +465,15 @@ local ReqApplyAgent = function(agentList, agentData, callback)
 end
 
 local ResetReqLock = function()
-  -- function num : 0_23 , upvalues : bReqApplyAgent
+  -- function num : 0_24 , upvalues : bReqApplyAgent
   bReqApplyAgent = false
 end
 
 local ReqGiveUpAgent = function(dispatchId, callback)
-  -- function num : 0_24 , upvalues : tbAllDispatchData, _ENV, IsSameWeek, tbWeeklyDispatchDataIds
+  -- function num : 0_25 , upvalues : tbAllDispatchData, _ENV, IsSameWeek, tbWeeklyDispatchDataIds
   local mapData = {Id = dispatchId}
   local func_callback = function(msgData)
-    -- function num : 0_24_0 , upvalues : tbAllDispatchData, dispatchId, _ENV, IsSameWeek, tbWeeklyDispatchDataIds, callback
+    -- function num : 0_25_0 , upvalues : tbAllDispatchData, dispatchId, _ENV, IsSameWeek, tbWeeklyDispatchDataIds, callback
     if tbAllDispatchData[dispatchId] ~= nil then
       local dispatchData = tbAllDispatchData[dispatchId]
       local dispathcConfig = (ConfigTable.GetData)("Agent", dispatchId)
@@ -491,10 +497,10 @@ local ReqGiveUpAgent = function(dispatchId, callback)
 end
 
 local ReqReceiveReward = function(dispatchId, callback)
-  -- function num : 0_25 , upvalues : _ENV, tbAllDispatchData, tbWeeklyDispatchDataIds, tbCompletedWeeklyDispatchIds, IsSameDay, tbCompletedDailyDispatchIds
+  -- function num : 0_26 , upvalues : _ENV, tbAllDispatchData, tbWeeklyDispatchDataIds, tbCompletedWeeklyDispatchIds, IsSameDay, tbCompletedDailyDispatchIds
   local mapData = {Id = dispatchId}
   local func_callback = function(_, msgData)
-    -- function num : 0_25_0 , upvalues : _ENV, tbAllDispatchData, tbWeeklyDispatchDataIds, tbCompletedWeeklyDispatchIds, IsSameDay, tbCompletedDailyDispatchIds, callback
+    -- function num : 0_26_0 , upvalues : _ENV, tbAllDispatchData, tbWeeklyDispatchDataIds, tbCompletedWeeklyDispatchIds, IsSameDay, tbCompletedDailyDispatchIds, callback
     local data = {}
     local tbSpecialPerformanceId = {}
     local nTime = ((CS.ClientManager).Instance).serverTimeStamp
@@ -572,7 +578,7 @@ local ReqReceiveReward = function(dispatchId, callback)
 end
 
 local RefreshWeeklyDispatchs = function(msgData)
-  -- function num : 0_26 , upvalues : tbWeeklyDispatchDataIds, tbCompletedWeeklyDispatchIds, _ENV
+  -- function num : 0_27 , upvalues : tbWeeklyDispatchDataIds, tbCompletedWeeklyDispatchIds, _ENV
   if msgData ~= nil then
     tbWeeklyDispatchDataIds = msgData
   end
@@ -584,7 +590,7 @@ local RefreshWeeklyDispatchs = function(msgData)
 end
 
 local RefreshAgentInfos = function(data)
-  -- function num : 0_27 , upvalues : _ENV, tbAllDispatchData
+  -- function num : 0_28 , upvalues : _ENV, tbAllDispatchData
   for k,v in pairs(data.Infos) do
     local state = (AllEnum.DispatchState).Accepting
     if v.ProcessTime * 60 + v.StartTime <= ((CS.ClientManager).Instance).serverTimeStamp then

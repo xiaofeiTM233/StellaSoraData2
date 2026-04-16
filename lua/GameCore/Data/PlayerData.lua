@@ -216,6 +216,10 @@ PlayerData.Init = function()
   PlayerData.Story = (StoryData.new)()
   ;
   (PlayerData.Story):Init()
+  local PotentialPreselection = require("GameCore.Data.DataClass.PlayerPotentialPreselectionData")
+  PlayerData.PotentialPreselection = (PotentialPreselection.new)()
+  ;
+  (PlayerData.PotentialPreselection):Init()
   local foreachEnumDesc = function(mapData)
     -- function num : 0_0_0 , upvalues : _ENV
     (CacheTable.SetField)("_EnumDesc", mapData.EnumName, mapData.Value, mapData.Key)

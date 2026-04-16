@@ -49,6 +49,13 @@ Game/UI/Activity/BdConvert/_500001/BdConvertBuildDetailPanel.lua
 Game/UI/Activity/BdConvert/_500001/BdConvertPanel.lua
 Game/UI/Activity/BdConvert/_500001/BdConvertQuestPanel.lua
 Game/UI/Activity/BdConvert/_500001/BdConvertResultPanel.lua
+Game/UI/Activity/GoldenSpy/GoldenSpyBuffSelectPanel.lua
+Game/UI/Activity/GoldenSpy/GoldenSpyBuffTipsPanel.lua
+Game/UI/Activity/GoldenSpy/GoldenSpyFloorData.lua
+Game/UI/Activity/GoldenSpy/GoldenSpyLevelData.lua
+Game/UI/Activity/GoldenSpy/GoldenSpyLevelPanel.lua
+Game/UI/Activity/GoldenSpy/GoldenSpyLevelSelectPanel.lua
+Game/UI/Activity/GoldenSpy/GoldenSpyResultPanel.lua
 Game/UI/Activity/LoginReward/LoginRewardPopUpPanel.lua
 Game/UI/Activity/ThrowGifts/ThrowGiftLevelSelectPanel.lua
 Game/UI/Activity/ThrowGifts/ThrowGiftPanel.lua
@@ -71,7 +78,6 @@ Game/UI/ActivityTheme/10103/Shop/ActivityShopPopupPanel.lua
 Game/UI/ActivityTheme/10103/Task/MiracleTaskPanel.lua
 Game/UI/ActivityTheme/10104/ActivityLevels/ActivityLevelsSelectPanel.lua
 Game/UI/ActivityTheme/10104/Shop/ActivityShopPanel.lua
-Game/UI/ActivityTheme/10104/SpringFestivalThemeCtrl.lua
 Game/UI/ActivityTheme/10104/SpringFestivalThemePanel.lua
 Game/UI/ActivityTheme/10104/Story/SpringFestivalStoryPanel.lua
 Game/UI/ActivityTheme/10104/Task/SpringTaskPanel.lua
@@ -85,12 +91,17 @@ Game/UI/ActivityTheme/10106/PostalThemePanel.lua
 Game/UI/ActivityTheme/10106/Shop/ActivityShopPanel.lua
 Game/UI/ActivityTheme/10106/Story/PostalStoryPanel.lua
 Game/UI/ActivityTheme/10106/Task/PostalTaskPanel.lua
+Game/UI/ActivityTheme/10107/ActivityLevels/ActivityLevelsSelectPanel.lua
 Game/UI/ActivityTheme/20101/ActivityLevels/ActivityLevelsSelectPanel.lua
 Game/UI/ActivityTheme/20101/ChristmasThemePanel.lua
 Game/UI/ActivityTheme/20101/Shop/ActivityShopPanel.lua
 Game/UI/ActivityTheme/20101/Shop/ActivityShopPopupPanel.lua
 Game/UI/ActivityTheme/20101/Story/ChristmasStoryPanel.lua
 Game/UI/ActivityTheme/20101/Task/ChristmasTaskPanel.lua
+Game/UI/ActivityTheme/20102/ActivityLevels/ActivityLevelsSelectPanel.lua
+Game/UI/ActivityTheme/20102/Shop/ActivityShopPanel.lua
+Game/UI/ActivityTheme/20102/SoloDanceThemePanel.lua
+Game/UI/ActivityTheme/20102/Task/SoloDanceTaskPanel.lua
 Game/UI/ActivityTheme/30101/BreakOutThemePanel.lua
 Game/UI/ActivityTheme/30101/Shop/ActivityShopPanel.lua
 Game/UI/ActivityTheme/30101/Shop/ActivityShopPopupPanel.lua
@@ -194,6 +205,7 @@ Game/UI/Equipment/EquipmentAttrPreviewPanel.lua
 Game/UI/Equipment/EquipmentInfoPanel.lua
 Game/UI/Equipment/EquipmentRenamePanel.lua
 Game/UI/Equipment/EquipmentRollPanel.lua
+Game/UI/Equipment/EquipmentUpgradePanel.lua
 Game/UI/EquipmentInstanceLevelSelect/EquipmentInstanceLevelSelectPanel.lua
 Game/UI/ExChange/ExChangePanel.lua
 Game/UI/ExchangeCode/ExchangeCodePanel.lua
@@ -233,6 +245,7 @@ Game/UI/Mail/MailPanel.lua
 Game/UI/MainlineEx/MainlineExPanel.lua
 Game/UI/MainlineEx/StoryChapterPanel.lua
 Game/UI/MainlineEx/StoryEntrancePanel.lua
+Game/UI/MainlineEx_SolodanceStory/MainlineEx_SolodanceStoryPanel.lua
 Game/UI/MainlineFormationDisc/MainlineFormationDiscPanel.lua
 Game/UI/MainViewBoard/ChooseHomePageRolePanel.lua
 Game/UI/MainViewBoard/ChooseHomePageSkinPanel.lua
@@ -274,12 +287,19 @@ Game/UI/Play_Mining/MiningGameQuestPanel.lua
 Game/UI/Play_Mining_400002/MiningGameGuidePanel.lua
 Game/UI/Play_Mining_400002/MiningGamePanel.lua
 Game/UI/Play_PenguinCard/PenguinCard.lua
+Game/UI/Play_PenguinCard/PenguinCardBuff.lua
 Game/UI/Play_PenguinCard/PenguinCardPanel.lua
+Game/UI/Play_PenguinCard/PenguinCardQuest.lua
 Game/UI/Play_PenguinCard/PenguinCardQuestPanel.lua
 Game/UI/Play_PenguinCard/PenguinCardSelectPanel.lua
+Game/UI/Play_PenguinCard/PenguinCardUtils.lua
 Game/UI/Play_PenguinCard/PenguinLevel.lua
 Game/UI/PopupFunctionUnlockPanel/PopupFunctionUnlockPanel.lua
 Game/UI/PotentialDetail/PotentialDetailPanel.lua
+Game/UI/PotentialPreselection/ImportPreselectionPanel.lua
+Game/UI/PotentialPreselection/PotentialPreselectionEditPanel.lua
+Game/UI/PotentialPreselection/PotentialPreselectionPanel.lua
+Game/UI/PotentialPreselection/PreselectionRenamePanel.lua
 Game/UI/Quest/QuestPanel.lua
 Game/UI/QuestNewbie/QuestNewbiePanel.lua
 Game/UI/Raid/RaidPanel.lua
@@ -303,6 +323,7 @@ Game/UI/ShopEx/ShopPopupPanel.lua
 Game/UI/SideBanner/SideBannerPanel.lua
 Game/UI/SkillInstanceLevelSelect/SkillInstanceLevelSelectPanel.lua
 Game/UI/StarTower/Build/BuildAttrPreviewPanel.lua
+Game/UI/StarTower/Build/RankBuildDetailPanel.lua
 Game/UI/StarTower/Build/StarTowerBuildBriefPanel.lua
 Game/UI/StarTower/Build/StarTowerBuildDetailPanel.lua
 Game/UI/StarTower/Build/StarTowerBuildDetailPreviewPanel.lua
@@ -342,8 +363,8 @@ Game/UI/TravelerDuelLevelSelect/TDClassUpgradePanel.lua
 Game/UI/TravelerDuelLevelSelect/TravelerDuelQuest/TravelerDuelQuestPanel.lua
 Game/UI/TravelerDuelLevelSelect/TravelerDuelRanking/TravelerDuelRankingUploadPanel.lua
 Game/UI/TravelerDuelLevelSelect/TravelerDuelRanking/TravelerDuelRankUploadSuccessPanel.lua
-Game/UI/TrekkerVersus/TDBattleResultPanel.lua
-Game/UI/TrekkerVersus/TrekkerVersusPanel.lua
+Game/UI/TrekkerVersus_600002/TDBattleResultPanel.lua
+Game/UI/TrekkerVersus_600002/TrekkerVersusPanel.lua
 Game/UI/TrialBattle/TrialBattlePanel.lua
 Game/UI/TrialBattle/TrialDepotPanel.lua
 Game/UI/TrialBattle/TrialResultPanel.lua
@@ -377,6 +398,7 @@ GameCore/Data/DataClass/Activity/BreakOut_30101Data.lua
 GameCore/Data/DataClass/Activity/Christmas_20101Data.lua
 GameCore/Data/DataClass/Activity/CookieActData.lua
 GameCore/Data/DataClass/Activity/Dream_10102Data.lua
+GameCore/Data/DataClass/Activity/GoldenSpyData.lua
 GameCore/Data/DataClass/Activity/JointDrillActData.lua
 GameCore/Data/DataClass/Activity/LoginRewardActData.lua
 GameCore/Data/DataClass/Activity/MiningGameData.lua
@@ -386,6 +408,7 @@ GameCore/Data/DataClass/Activity/PenguinCardActData.lua
 GameCore/Data/DataClass/Activity/PeriodicQuestActData.lua
 GameCore/Data/DataClass/Activity/PlayerActivityData.lua
 GameCore/Data/DataClass/Activity/Postal_10106Data.lua
+GameCore/Data/DataClass/Activity/Solodance_20102Data.lua
 GameCore/Data/DataClass/Activity/SpringFestival_10104Data.lua
 GameCore/Data/DataClass/Activity/SwimThemeData.lua
 GameCore/Data/DataClass/Activity/ThrowGiftData.lua
@@ -435,6 +458,7 @@ GameCore/Data/DataClass/PlayerMailData.lua
 GameCore/Data/DataClass/PlayerMainlineDataEx.lua
 GameCore/Data/DataClass/PlayerMallData.lua
 GameCore/Data/DataClass/PlayerPhoneData.lua
+GameCore/Data/DataClass/PlayerPotentialPreselectionData.lua
 GameCore/Data/DataClass/PlayerQuestData.lua
 GameCore/Data/DataClass/PlayerRogueBossData.lua
 GameCore/Data/DataClass/PlayerRoguelikeData.lua
@@ -474,6 +498,7 @@ GameCore/Module/GamepadUIManager.lua
 GameCore/Module/LampNoticeManager.lua
 GameCore/Module/MessageBoxManager.lua
 GameCore/Module/ModuleManager.lua
+GameCore/Module/NotificationManager.lua
 GameCore/Network/HttpNetHandler.lua
 GameCore/Network/HttpNetHandlerPlus.lua
 GameCore/Network/NetMsgId.lua

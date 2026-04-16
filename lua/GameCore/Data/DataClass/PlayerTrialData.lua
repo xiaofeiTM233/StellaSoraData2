@@ -1,5 +1,6 @@
 local PlayerTrialData = class("PlayerTrialData")
 local AdventureModuleHelper = CS.AdventureModuleHelper
+local Actor2DManager = require("Game.Actor2D.Actor2DManager")
 PlayerTrialData.Init = function(self)
   -- function num : 0_0
   self.curLevel = nil
@@ -68,7 +69,7 @@ PlayerTrialData.SendReceiveTrialRewardReq = function(self, callback)
 end
 
 PlayerTrialData.EnterTrialEditor = function(self, nFloor)
-  -- function num : 0_8 , upvalues : _ENV
+  -- function num : 0_8 , upvalues : _ENV, Actor2DManager
   if self.curLevel ~= nil then
     printError("当前关卡level不为空1")
     return 
@@ -82,12 +83,14 @@ PlayerTrialData.EnterTrialEditor = function(self, nFloor)
     (self.curLevel):BindEvent()
   end
   if type((self.curLevel).Init) == "function" then
+    (Actor2DManager.ForceUseL2D)(true)
+    ;
     (self.curLevel):Init(self, nFloor)
   end
 end
 
 PlayerTrialData.EnterTrial = function(self, nLevelId)
-  -- function num : 0_9 , upvalues : _ENV
+  -- function num : 0_9 , upvalues : _ENV, Actor2DManager
   if self.curLevel ~= nil then
     printError("当前关卡level不为空1")
     return 
@@ -101,12 +104,16 @@ PlayerTrialData.EnterTrial = function(self, nLevelId)
     (self.curLevel):BindEvent()
   end
   if type((self.curLevel).Init) == "function" then
+    (Actor2DManager.ForceUseL2D)(true)
+    ;
     (self.curLevel):Init(self, nLevelId)
   end
 end
 
 PlayerTrialData.LevelEnd = function(self)
-  -- function num : 0_10 , upvalues : _ENV
+  -- function num : 0_10 , upvalues : Actor2DManager, _ENV
+  (Actor2DManager.ForceUseL2D)(false)
+  ;
   (PlayerData.Build):DeleteTrialBuild()
   if self.curLevel ~= nil and type((self.curLevel).UnBindEvent) == "function" then
     (self.curLevel):UnBindEvent()

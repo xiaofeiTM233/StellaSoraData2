@@ -122,8 +122,19 @@ local LoadBattleData = function()
   end
 end
 
+local LoadNotificationData = function()
+  -- function num : 0_4 , upvalues : LocalSettingData, LoadLocalData
+  -- DECOMPILER ERROR at PC5: Confused about usage of register: R0 in 'UnsetPending'
+
+  (LocalSettingData.mapData).Energy = LoadLocalData("Energy", true)
+  -- DECOMPILER ERROR at PC11: Confused about usage of register: R0 in 'UnsetPending'
+
+  ;
+  (LocalSettingData.mapData).Dispatch = LoadLocalData("Dispatch", true)
+end
+
 LocalSettingData.Init = function()
-  -- function num : 0_4 , upvalues : LocalSettingData, LoadLocalData, LoadSoundData, LoadBattleData, InitCurSignInData
+  -- function num : 0_5 , upvalues : LocalSettingData, LoadLocalData, LoadSoundData, LoadBattleData, InitCurSignInData, LoadNotificationData
   LocalSettingData.mapData = {}
   -- DECOMPILER ERROR at PC7: Confused about usage of register: R0 in 'UnsetPending'
 
@@ -132,15 +143,16 @@ LocalSettingData.Init = function()
   LoadSoundData()
   LoadBattleData()
   InitCurSignInData()
+  LoadNotificationData()
 end
 
 LocalSettingData.GetLocalSettingData = function(subKey)
-  -- function num : 0_5 , upvalues : LocalSettingData
+  -- function num : 0_6 , upvalues : LocalSettingData
   return (LocalSettingData.mapData)[subKey]
 end
 
 LocalSettingData.SetLocalSettingData = function(subKey, value)
-  -- function num : 0_6 , upvalues : _ENV, LocalData, LocalSettingData
+  -- function num : 0_7 , upvalues : _ENV, LocalData, LocalSettingData
   if type(subKey) ~= "string" or value == nil then
     return 
   end

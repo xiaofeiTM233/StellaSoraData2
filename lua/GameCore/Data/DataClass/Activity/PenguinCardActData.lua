@@ -293,6 +293,10 @@ PenguinCardActData.RefreshLevelRedDot = function(self)
     local bSkip = (table.indexof)(self.tbSkipNewLevel, nId) > 0
     if bSkip then
       (RedDotManager.SetValid)(RedDotDefine.Activity_PenguinCard_Level, {nId}, false)
+      local bInActGroup, nActGroupId = (PlayerData.Activity):IsActivityInActivityGroup(self.nActId)
+      if bInActGroup then
+        (RedDotManager.SetValid)(RedDotDefine.Activity_Group_PenguinCard_Level, {nActGroupId, nId}, false)
+      end
     else
       local bLock = self:CheckLevelLock(nId)
       local bHasScore = not (self.mapLevelData)[nId] or ((self.mapLevelData)[nId]).nScore > 0
@@ -304,13 +308,21 @@ PenguinCardActData.RefreshLevelRedDot = function(self)
       (RedDotManager.SetValid)(RedDotDefine.Activity_PenguinCard_Level, {nId}, bNew)
     end
   end
-  -- DECOMPILER ERROR: 8 unprocessed JMP targets
+  local bInActGroup, nActGroupId = (PlayerData.Activity):IsActivityInActivityGroup(self.nActId)
+  if #self.tbNewLevel <= 0 then
+    (RedDotManager.SetValid)(RedDotDefine.Activity_Group_PenguinCard_Level, {nActGroupId}, not bInActGroup)
+    -- DECOMPILER ERROR: 10 unprocessed JMP targets
+  end
 end
 
 PenguinCardActData.SkipLevelRedDot = function(self)
   -- function num : 0_23 , upvalues : _ENV, LocalData, RapidJson
   for _,nId in ipairs(self.tbNewLevel) do
     (RedDotManager.SetValid)(RedDotDefine.Activity_PenguinCard_Level, {nId}, false)
+    local bInActGroup, nActGroupId = (PlayerData.Activity):IsActivityInActivityGroup(self.nActId)
+    if bInActGroup then
+      (RedDotManager.SetValid)(RedDotDefine.Activity_Group_PenguinCard_Level, {nActGroupId}, false)
+    end
     if (table.indexof)(self.tbSkipNewLevel, nId) == 0 then
       (table.insert)(self.tbSkipNewLevel, nId)
     end

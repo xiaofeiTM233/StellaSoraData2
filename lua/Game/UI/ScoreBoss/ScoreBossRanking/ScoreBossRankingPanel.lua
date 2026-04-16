@@ -4,6 +4,8 @@ ScoreBossRankingPanel._tbDefine = {
 }
 ScoreBossRankingPanel.Awake = function(self)
   -- function num : 0_0
+  self.mapRankDetail = nil
+  self.nGridPos = 0
 end
 
 ScoreBossRankingPanel.OnEnable = function(self)

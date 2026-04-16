@@ -47,6 +47,8 @@ return {
 , 
 {id = 138, icon = "Icon/Head/head_13801_S", name = "닉스", landmark = "필리에 메이스트가 10번지", signature = "휴가 중 복귀일 미정"}
 , 
+{id = 140, icon = "Icon/Head/head_14001_S", name = "***", landmark = "현재 이동 중입니다. 급한 일은 직접 전화 주세요.", signature = "급한 일만 연락 부탁", ver = "1.11.0"}
+, 
 {id = 141, icon = "Icon/Head/head_14101_S", name = "치시아", landmark = "1년 중 4개월은 창오성에", signature = "일류 현사, 부적 필요하면 연락!"}
 , 
 {id = 142, icon = "Icon/Head/head_14201_S", name = "코제트", landmark = "아모르 지리협회", signature = "개인 정보 설정으로 인해 서명을 볼 수 없습니다"}
@@ -54,6 +56,8 @@ return {
 {id = 143, icon = "Icon/Head/head_14301_S", name = "레이스", landmark = "밝힐 수 없음", signature = "더~ 워~", ver = "1.7.0"}
 , 
 {id = 144, icon = "Icon/Head/head_14401_S", name = "치토세", landmark = "「빗소리」 쉼터", signature = "칼은 망설이지 않는다"}
+, 
+{id = 145, icon = "Icon/Head/head_14501_S", name = "오토하", landmark = "모든 곳에 존재한다", signature = "운영 정책 위반으로 인해 계정 이용이 제한되었습니다", ver = "1.9.0"}
 , 
 {id = 147, icon = "Icon/Head/head_14701_S", name = "캐러멜", landmark = "플라비오 근처, 어쩌면", signature = "공연 니즈는 간식 들고 연락 바람 감사!"}
 , 
@@ -69,6 +73,8 @@ return {
 , 
 {id = 159, icon = "Icon/Head/head_15901_S", name = "크루니스(새해)", landmark = "필리에의 ‘진료소’ ", signature = "휴가 중."}
 , 
+{id = 3136, icon = "Icon/Head/head_npc13601_S", name = "루비", landmark = "아그리 유니온 필리에 지사", signature = "가슴에 큰 뜻을 품고 의기양양하게~"}
+, 
 {id = 999, icon = "Icon/Head/head_group_S", name = "일은 끝이 없다", landmark = "", signature = "지금은 근무 시간, 휴대폰 보지 마세요"}
 , 
 {id = 998, icon = "Icon/Head/head_9100_S", name = "==PLAYER_NAME==", landmark = "럭키 오아시스호", signature = "마왕 협정 인재 파견 컴퍼니 대표집행관"}
@@ -77,7 +83,7 @@ return {
 , 
 {id = 996, icon = "Icon/Head/head_group_S", name = "오늘 치킨 반값", landmark = "", signature = "없음"}
 , 
-{id = 995, icon = "Icon/Head/head_anonymity_S", name = "", landmark = "", signature = ""}
+{id = 995, icon = "Icon/Head/head_anonymity_S", name = "익명", landmark = "", signature = ""}
 , 
 {id = 994, icon = "Icon/Head/head_group_S", name = "타니카제 가사 대행-필리에 제1분대", landmark = "", signature = "차를 내어 손님을 맞이하고, 칼로 주군을 호위한다"}
 , 

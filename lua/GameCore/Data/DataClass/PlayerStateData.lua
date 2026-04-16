@@ -37,21 +37,23 @@ PlayerStateData.CacheStateData = function(self, mapMsgData)
     (PlayerData.Quest):UpdateServerQuestRedDot(mapMsgData.TravelerDuelQuest)
     ;
     (PlayerData.Quest):UpdateServerQuestRedDot(mapMsgData.TravelerDuelChallengeQuest)
-    ;
-    (PlayerData.InfinityTower):UpdateBountyRewardState(mapMsgData.InfinityTower)
-    ;
-    (PlayerData.StarTowerBook):UpdateServerRedDot(mapMsgData.StarTowerBook)
-    ;
-    (PlayerData.ScoreBoss):UpdateRedDot(mapMsgData.ScoreBoss)
-    ;
-    (PlayerData.Activity):UpdateActivityState(mapMsgData.Activities)
-    ;
-    (PlayerData.StorySet):UpdateStorySetState(mapMsgData.StorySet)
-    self.nVampireId = mapMsgData.VampireSurvivorId
-  else
-    self.bMailState = false
+    if not mapMsgData.TravelerDuelIdleReward then
+      self.nLastReceiveIdleRewardTime = ((CS.ClientManager).Instance).serverTimeStamp
+      ;
+      (PlayerData.InfinityTower):UpdateBountyRewardState(mapMsgData.InfinityTower)
+      ;
+      (PlayerData.StarTowerBook):UpdateServerRedDot(mapMsgData.StarTowerBook)
+      ;
+      (PlayerData.ScoreBoss):UpdateRedDot(mapMsgData.ScoreBoss)
+      ;
+      (PlayerData.Activity):UpdateActivityState(mapMsgData.Activities)
+      ;
+      (PlayerData.StorySet):UpdateStorySetState(mapMsgData.StorySet)
+      self.nVampireId = mapMsgData.VampireSurvivorId
+      self.bMailState = false
+      -- DECOMPILER ERROR: 5 unprocessed JMP targets
+    end
   end
-  -- DECOMPILER ERROR: 4 unprocessed JMP targets
 end
 
 PlayerStateData.CacheWorldClassRewardState = function(self, WorldClassReward)
@@ -423,6 +425,39 @@ PlayerStateData.RefreshCharAdvanceRewardRedDot = function(self)
     end
   end
   -- DECOMPILER ERROR: 2 unprocessed JMP targets
+end
+
+PlayerStateData.RefreshTrekkerVersusIdleRewardRedDot = function(self, nNewTime)
+  -- function num : 0_25 , upvalues : _ENV
+  local nActId = 0
+  local foreachActData = function(mapData)
+    -- function num : 0_25_0 , upvalues : _ENV, nActId
+    if nActId >= mapData.Id or not mapData.Id then
+      nActId = mapData.ActivityType ~= (GameEnum.activityType).TrekkerVersus or nActId
+    end
+  end
+
+  ForEachTableLine(DataTable.Activity, foreachActData)
+  local actData = (PlayerData.Activity):GetActivityDataById(nActId)
+  local bRedDotOn = false
+  if actData ~= nil then
+    local tbIdleReward = actData:GetIdleReward()
+    if tbIdleReward ~= nil and #tbIdleReward > 0 then
+      if nNewTime ~= nil then
+        self.nLastReceiveIdleRewardTime = nNewTime
+      end
+      local nElapsedTime = ((CS.ClientManager).Instance).serverTimeStamp - self.nLastReceiveIdleRewardTime
+      if 3600 * (ConfigTable.GetConfigNumber)("TrekkerVersusIdleRewardRedDotTime") <= nElapsedTime then
+        bRedDotOn = true
+      end
+    end
+  end
+  do
+    local bInActGroup, nActGroupId = (PlayerData.Activity):IsActivityInActivityGroup(nActId)
+    if bInActGroup then
+      (RedDotManager.SetValid)(RedDotDefine.TrekkerVersusIdleReward, {nActGroupId, nActId}, bRedDotOn)
+    end
+  end
 end
 
 return PlayerStateData

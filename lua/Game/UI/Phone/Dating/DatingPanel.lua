@@ -20,8 +20,7 @@ DatingPanel.OnDisable = function(self)
 end
 
 DatingPanel.OnDestroy = function(self)
-  -- function num : 0_4 , upvalues : GameResourceLoader
-  (GameResourceLoader.Unload)("ImageAvg")
+  -- function num : 0_4
 end
 
 DatingPanel.OnRelease = function(self)

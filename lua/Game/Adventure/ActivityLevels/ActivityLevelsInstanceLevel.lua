@@ -2,13 +2,16 @@ local ActivityLevelsInstanceLevel = class("ActivityLevelsInstanceLevel")
 local Actor2DManager = require("Game.Actor2D.Actor2DManager")
 local AdventureModuleHelper = CS.AdventureModuleHelper
 local TimerManager = require("GameCore.Timer.TimerManager")
-local mapEventConfig = {LoadLevelRefresh = "OnEvent_LoadLevelRefresh", [EventId.AbandonBattle] = "OnEvent_AbandonBattle", AdventureModuleEnter = "OnEvent_AdventureModuleEnter", BattlePause = "OnEvent_Pause", ActivityInstance_Result = "LevelResultChange", ActivityLevelSettle_Failed = "OnEvent_ActivityLevelSettleFailed"}
+local mapEventConfig = {LevelStateChanged = "OnEvent_SendMsgFinishBattle", LoadLevelRefresh = "OnEvent_LoadLevelRefresh", [EventId.AbandonBattle] = "OnEvent_AbandonBattle", AdventureModuleEnter = "OnEvent_AdventureModuleEnter", BattlePause = "OnEvent_Pause", ActivityInstance_Result = "LevelResultChange", ActivityLevelSettle_Failed = "OnEvent_ActivityLevelSettleFailed", ActivityLevels_Instance_Gameplay_Time = "OnEvent_ActivityLevels_Time"}
 ActivityLevelsInstanceLevel.Init = function(self, parent, nActivityId, nLevelId, nBuildId)
   -- function num : 0_0 , upvalues : _ENV
   self.parent = parent
   self.nLevelId = nLevelId
   self.nActivityId = nActivityId
   self.isSettlement = false
+  self.nBuildId = nBuildId
+  self.curFloorIdx = 1
+  self.levelTotalTime = 0
   local GetBuildCallback = function(mapBuildData)
     -- function num : 0_0_0 , upvalues : self, _ENV, nLevelId
     self.mapBuildData = mapBuildData
@@ -32,9 +35,10 @@ ActivityLevelsInstanceLevel.Init = function(self, parent, nActivityId, nLevelId,
     end
     -- DECOMPILER ERROR at PC54: Confused about usage of register: R1 in 'UnsetPending'
 
-    PlayerData.nCurGameType = (AllEnum.WorldMapNodeType).EquipmentInstance
+    PlayerData.nCurGameType = (AllEnum.WorldMapNodeType).ActivityLevels
+    local mapParams = {tostring(self.curFloorIdx), tostring(self.levelTotalTime)}
     ;
-    ((CS.AdventureModuleHelper).EnterActivityLevelsInstance)(nLevelId, self.tbCharId)
+    ((CS.AdventureModuleHelper).EnterActivityLevelsInstance)(nLevelId, self.tbCharId, mapParams)
     ;
     (NovaAPI.EnterModule)("AdventureModuleScene", true, 17)
     -- DECOMPILER ERROR: 2 unprocessed JMP targets
@@ -50,7 +54,7 @@ ActivityLevelsInstanceLevel.OnEvent_LoadLevelRefresh = function(self)
   safe_call_cs_func((CS.AdventureModuleHelper).SetNoteInfo, tbNoteInfo)
   self.mapEftData = (UTILS.AddBuildEffect)(mapAllEft, mapDiscEft, mapNoteEffect)
   ;
-  (EventManager.Hit)("OpenActivityLevelsInstanceRoomInfo", self.nLevelId)
+  (EventManager.Hit)("OpenActivityLevelsInstanceRoomInfo", self.nLevelId, self.levelTotalTime)
 end
 
 ActivityLevelsInstanceLevel.OnEvent_LevelResult = function(self, tbStar, bAbandon)
@@ -76,19 +80,63 @@ ActivityLevelsInstanceLevel.OnEvent_AdventureModuleEnter = function(self)
   -- DECOMPILER ERROR: 2 unprocessed JMP targets
 end
 
-ActivityLevelsInstanceLevel.LevelResultChange = function(self, isWin, totalTime)
+ActivityLevelsInstanceLevel.OnEvent_SendMsgFinishBattle = function(self)
   -- function num : 0_5 , upvalues : _ENV
+  local mapCfg = (ConfigTable.GetData)("ActivityLevelsLevel", self.nLevelId)
+  if self.curFloorIdx < #mapCfg.FloorId then
+    local GetBuildCallback = function(mapBuildData)
+    -- function num : 0_5_0 , upvalues : self, _ENV
+    self.curFloorIdx = self.curFloorIdx + 1
+    self.mapBuildData = mapBuildData
+    self.tbCharId = {}
+    for _,mapChar in ipairs((self.mapBuildData).tbChar) do
+      (table.insert)(self.tbCharId, mapChar.nTid)
+    end
+    self.tbDiscId = {}
+    for _,nDiscId in ipairs((self.mapBuildData).tbDisc) do
+      if nDiscId > 0 then
+        (table.insert)(self.tbDiscId, nDiscId)
+      end
+    end
+    self.mapActorInfo = {}
+    for idx,nTid in ipairs(self.tbCharId) do
+      local stActorInfo = self:CalCharFixedEffect(nTid, idx == 1, self.tbDiscId)
+      -- DECOMPILER ERROR at PC50: Confused about usage of register: R7 in 'UnsetPending'
+
+      ;
+      (self.mapActorInfo)[nTid] = stActorInfo
+    end
+    -- DECOMPILER ERROR at PC57: Confused about usage of register: R1 in 'UnsetPending'
+
+    PlayerData.nCurGameType = (AllEnum.WorldMapNodeType).ActivityLevels
+    local mapParams = {tostring(self.curFloorIdx), tostring(self.levelTotalTime)}
+    ;
+    ((CS.AdventureModuleHelper).EnterActivityLevelsInstance)(self.nLevelId, self.tbCharId, mapParams)
+    ;
+    ((CS.AdventureModuleHelper).LevelStateChanged)(false)
+    self:OnEvent_AdventureModuleEnter()
+    -- DECOMPILER ERROR: 2 unprocessed JMP targets
+  end
+
+    ;
+    (PlayerData.Build):GetBuildDetailData(GetBuildCallback, self.nBuildId)
+    return 
+  end
+end
+
+ActivityLevelsInstanceLevel.LevelResultChange = function(self, isWin, totalTime)
+  -- function num : 0_6 , upvalues : _ENV
   (EventManager.Hit)("ActivityLevelsInstanceBattleEnd")
   self:SettleLevelsInstance(isWin, totalTime)
 end
 
 ActivityLevelsInstanceLevel.RefreshCharDamageData = function(self)
-  -- function num : 0_6 , upvalues : _ENV
+  -- function num : 0_7 , upvalues : _ENV
   self.tbCharDamage = (UTILS.GetCharDamageResult)(self.tbCharId)
 end
 
 ActivityLevelsInstanceLevel.SettleLevelsInstance = function(self, isWin, totalTime)
-  -- function num : 0_7 , upvalues : _ENV
+  -- function num : 0_8 , upvalues : _ENV
   if self.isSettlement then
     return 
   end
@@ -109,7 +157,7 @@ ActivityLevelsInstanceLevel.SettleLevelsInstance = function(self, isWin, totalTi
       end
     end
     local callback = function(taFixed, tbFirstReward, nExp, mapChangeInfo)
-    -- function num : 0_7_0 , upvalues : _ENV, self, starCount, isWin
+    -- function num : 0_8_0 , upvalues : _ENV, self, starCount, isWin
     (NovaAPI.InputEnable)()
     ;
     (EventManager.Hit)("ActivityLevelsInstanceLevelEnd")
@@ -138,7 +186,7 @@ ActivityLevelsInstanceLevel.SettleLevelsInstance = function(self, isWin, totalTi
 end
 
 ActivityLevelsInstanceLevel.OnEvent_ActivityLevelSettleFailed = function(self)
-  -- function num : 0_8 , upvalues : _ENV
+  -- function num : 0_9 , upvalues : _ENV
   (NovaAPI.InputEnable)()
   ;
   (EventManager.Hit)("ActivityLevelsInstanceLevelEnd")
@@ -159,16 +207,18 @@ ActivityLevelsInstanceLevel.OnEvent_ActivityLevelSettleFailed = function(self)
 end
 
 ActivityLevelsInstanceLevel.PlaySuccessPerform = function(self, FixedRewardItems, FirstRewardItems, nExp, starCount, mapChangeInfo)
-  -- function num : 0_9 , upvalues : _ENV
+  -- function num : 0_10 , upvalues : _ENV
   local func_SettlementFinish = function(bSuccess)
-    -- function num : 0_9_0
+    -- function num : 0_10_0
   end
 
   local tbChar = self.tbCharId
   local levelEndCallback = function()
-    -- function num : 0_9_1 , upvalues : _ENV, self, levelEndCallback, tbChar, func_SettlementFinish
+    -- function num : 0_10_1 , upvalues : _ENV, self, levelEndCallback, tbChar, func_SettlementFinish
     (EventManager.Remove)("ADVENTURE_LEVEL_UNLOAD_COMPLETE", self, levelEndCallback)
-    local nType = ((ConfigTable.GetData)("ActivityLevelsFloor", ((ConfigTable.GetData)("ActivityLevelsLevel", self.nLevelId)).FloorId)).Theme
+    local tabFloor = ((ConfigTable.GetData)("ActivityLevelsLevel", self.nLevelId)).FloorId
+    local tabFloorCount = #tabFloor
+    local nType = ((ConfigTable.GetData)("ActivityLevelsFloor", tabFloor[tabFloorCount])).Theme
     local sName = ((ConfigTable.GetData)("EndSceneType", nType)).EndSceneName
     local tbSkin = {}
     for _,nCharId in ipairs(tbChar) do
@@ -183,7 +233,7 @@ ActivityLevelsInstanceLevel.PlaySuccessPerform = function(self, FixedRewardItems
   ;
   (EventManager.Add)("ADVENTURE_LEVEL_UNLOAD_COMPLETE", self, levelEndCallback)
   local openBattleResultPanel = function()
-    -- function num : 0_9_2 , upvalues : _ENV, self, openBattleResultPanel, starCount, FixedRewardItems, FirstRewardItems, nExp, mapChangeInfo
+    -- function num : 0_10_2 , upvalues : _ENV, self, openBattleResultPanel, starCount, FixedRewardItems, FirstRewardItems, nExp, mapChangeInfo
     (EventManager.Remove)("SettlementPerformLoadFinish", self, openBattleResultPanel)
     local sLarge, sSmall = "", ""
     ;
@@ -203,7 +253,7 @@ ActivityLevelsInstanceLevel.PlaySuccessPerform = function(self, FixedRewardItems
 end
 
 ActivityLevelsInstanceLevel.BindEvent = function(self)
-  -- function num : 0_10 , upvalues : _ENV, mapEventConfig
+  -- function num : 0_11 , upvalues : _ENV, mapEventConfig
   if type(mapEventConfig) ~= "table" then
     return 
   end
@@ -216,7 +266,7 @@ ActivityLevelsInstanceLevel.BindEvent = function(self)
 end
 
 ActivityLevelsInstanceLevel.UnBindEvent = function(self)
-  -- function num : 0_11 , upvalues : _ENV, mapEventConfig
+  -- function num : 0_12 , upvalues : _ENV, mapEventConfig
   if type(mapEventConfig) ~= "table" then
     return 
   end
@@ -229,14 +279,14 @@ ActivityLevelsInstanceLevel.UnBindEvent = function(self)
 end
 
 ActivityLevelsInstanceLevel.SetCharFixedAttribute = function(self)
-  -- function num : 0_12 , upvalues : _ENV
+  -- function num : 0_13 , upvalues : _ENV
   for nCharId,stActorInfo in pairs(self.mapActorInfo) do
     safe_call_cs_func((CS.AdventureModuleHelper).SetActorAttribute, nCharId, stActorInfo)
   end
 end
 
 ActivityLevelsInstanceLevel.CalCharFixedEffect = function(self, nCharId, bMainChar, tbDiscId)
-  -- function num : 0_13 , upvalues : _ENV
+  -- function num : 0_14 , upvalues : _ENV
   local stActorInfo = (CS.Lua2CSharpInfo_CharAttribute)()
   ;
   (PlayerData.Char):CalCharacterAttrBattle(nCharId, stActorInfo, bMainChar, tbDiscId, (self.mapBuildData).nBuildId)
@@ -244,7 +294,7 @@ ActivityLevelsInstanceLevel.CalCharFixedEffect = function(self, nCharId, bMainCh
 end
 
 ActivityLevelsInstanceLevel.SetPersonalPerk = function(self)
-  -- function num : 0_14 , upvalues : _ENV
+  -- function num : 0_15 , upvalues : _ENV
   if self.mapBuildData ~= nil then
     for nCharId,tbPerk in pairs((self.mapBuildData).tbPotentials) do
       local mapAddLevel = (PlayerData.Char):GetCharEnhancedPotential(nCharId)
@@ -263,7 +313,7 @@ ActivityLevelsInstanceLevel.SetPersonalPerk = function(self)
 end
 
 ActivityLevelsInstanceLevel.SetDiscInfo = function(self)
-  -- function num : 0_15 , upvalues : _ENV
+  -- function num : 0_16 , upvalues : _ENV
   local tbDiscInfo = {}
   for k,nDiscId in ipairs((self.mapBuildData).tbDisc) do
     if k <= 3 then
@@ -276,8 +326,13 @@ ActivityLevelsInstanceLevel.SetDiscInfo = function(self)
 end
 
 ActivityLevelsInstanceLevel.OnEvent_Pause = function(self)
-  -- function num : 0_16 , upvalues : _ENV
+  -- function num : 0_17 , upvalues : _ENV
   (EventManager.Hit)("OpenActivityLevelsInstancePause", self.nActivityId, self.nLevelId, self.tbCharId)
+end
+
+ActivityLevelsInstanceLevel.OnEvent_ActivityLevels_Time = function(self, nTime)
+  -- function num : 0_18
+  self.levelTotalTime = nTime
 end
 
 return ActivityLevelsInstanceLevel

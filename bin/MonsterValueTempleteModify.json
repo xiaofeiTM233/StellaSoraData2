@@ -3442,7 +3442,7 @@
     "Lv": 35,
     "HpFix": 63646376,
     "AtkFix": 3840,
-    "ToughnessFix": 223611100,
+    "ToughnessFix": 223611111,
     "LvUpEffect": "FX/ActorCommon/fx_common_base_BossRushLevelUp_l"
   },
   "1006036": {
@@ -3479,7 +3479,7 @@
     "Lv": 40,
     "HpFix": 70011013,
     "AtkFix": 4800,
-    "ToughnessFix": 738888900,
+    "ToughnessFix": 738888888,
     "DefFix": 28,
     "LvUpEffect": "FX/ActorCommon/fx_common_base_BossRushLevelUp_l"
   },
@@ -3521,7 +3521,7 @@
     "Lv": 45,
     "HpFix": 76375651,
     "AtkFix": 5760,
-    "ToughnessFix": -58333332,
+    "ToughnessFix": -58333333,
     "DefFix": 64,
     "LvUpEffect": "FX/ActorCommon/fx_common_base_BossRushLevelUp_l"
   },
@@ -3586,7 +3586,7 @@
     "GroupId": 1006,
     "Lv": 55,
     "HpFix": 190939127,
-    "ToughnessFix": 900333300,
+    "ToughnessFix": 900333333,
     "DefFix": 360,
     "LvUpEffect": "FX/ActorCommon/fx_common_base_BossRushLevelUp_l"
   },
@@ -4084,7 +4084,7 @@
     "Lv": 35,
     "HpFix": 63646376,
     "AtkFix": 3840,
-    "ToughnessFix": 223611100,
+    "ToughnessFix": 223611111,
     "LvUpEffect": "FX/ActorCommon/fx_common_base_BossRushLevelUp_l"
   },
   "1007036": {
@@ -4121,7 +4121,7 @@
     "Lv": 40,
     "HpFix": 70011013,
     "AtkFix": 4800,
-    "ToughnessFix": 738888900,
+    "ToughnessFix": 738888888,
     "DefFix": 28,
     "LvUpEffect": "FX/ActorCommon/fx_common_base_BossRushLevelUp_l"
   },
@@ -4163,7 +4163,7 @@
     "Lv": 45,
     "HpFix": 76375651,
     "AtkFix": 5760,
-    "ToughnessFix": -58333332,
+    "ToughnessFix": -58333333,
     "DefFix": 64,
     "LvUpEffect": "FX/ActorCommon/fx_common_base_BossRushLevelUp_l"
   },
@@ -4238,7 +4238,7 @@
     "Lv": 55,
     "HpFix": 190939127,
     "AtkFix": 24000,
-    "ToughnessFix": 900333300,
+    "ToughnessFix": 900333333,
     "DefFix": 360,
     "LvUpEffect": "FX/ActorCommon/fx_common_base_BossRushLevelUp_l"
   },
@@ -4775,7 +4775,7 @@
     "Lv": 35,
     "HpFix": 63646376,
     "AtkFix": 3840,
-    "ToughnessFix": 268333330
+    "ToughnessFix": 268333333
   },
   "1008036": {
     "Id": 1008036,
@@ -4811,7 +4811,7 @@
     "Lv": 40,
     "HpFix": 70011013,
     "AtkFix": 4800,
-    "ToughnessFix": 886666700,
+    "ToughnessFix": 886666666,
     "DefFix": 28
   },
   "1008041": {
@@ -4961,7 +4961,7 @@
     "Lv": 60,
     "HpFix": 381878254,
     "AtkFix": 24000,
-    "ToughnessFix": 2.9E+09,
+    "ToughnessFix": 2900000000,
     "DefFix": 72
   },
   "1008061": {
@@ -4994,7 +4994,7 @@
     "Lv": 65,
     "HpFix": 763756508,
     "AtkFix": 24000,
-    "ToughnessFix": 3.48E+09
+    "ToughnessFix": 3480000000
   },
   "1008066": {
     "Id": 1008066,
@@ -5058,7 +5058,7 @@
     "Lv": 75,
     "HpFix": 2036684021,
     "AtkFix": 24000,
-    "ToughnessFix": 1.16E+09
+    "ToughnessFix": 1160000000
   },
   "1008076": {
     "Id": 1008076,
@@ -5090,7 +5090,7 @@
     "Lv": 80,
     "HpFix": 3182318783,
     "AtkFix": 24000,
-    "ToughnessFix": 2.32E+09
+    "ToughnessFix": 2320000000
   },
   "1008081": {
     "Id": 1008081,
@@ -5122,7 +5122,7 @@
     "Lv": 85,
     "HpFix": 4455246296,
     "AtkFix": 24000,
-    "ToughnessFix": 3.48E+09
+    "ToughnessFix": 3480000000
   },
   "1008086": {
     "Id": 1008086,
@@ -5153,7 +5153,7 @@
     "GroupId": 1008,
     "Lv": 90,
     "AtkFix": 24000,
-    "ToughnessFix": 4.64E+09
+    "ToughnessFix": 4640000000
   },
   "1008091": {
     "Id": 1008091,
@@ -5184,7 +5184,7 @@
     "GroupId": 1008,
     "Lv": 95,
     "AtkFix": 24000,
-    "ToughnessFix": 5.8E+09
+    "ToughnessFix": 5800000000
   },
   "1008096": {
     "Id": 1008096,
@@ -5215,7 +5215,7 @@
     "GroupId": 1008,
     "Lv": 100,
     "AtkFix": 24000,
-    "ToughnessFix": 1.16E+10
+    "ToughnessFix": 11600000000
   },
   "1009001": {
     "Id": 1009001,
@@ -5248,7 +5248,8 @@
     "GroupId": 1009,
     "Lv": 5,
     "HpFix": 636464,
-    "AtkFix": 144
+    "AtkFix": 144,
+    "ENVAMENDFix": 0.5
   },
   "1009006": {
     "Id": 1009006,
@@ -5283,7 +5284,8 @@
     "GroupId": 1009,
     "Lv": 10,
     "HpFix": 1272928,
-    "AtkFix": 240
+    "AtkFix": 240,
+    "ENVAMENDFix": 1
   },
   "1009011": {
     "Id": 1009011,
@@ -5460,7 +5462,7 @@
     "Lv": 35,
     "HpFix": 63646376,
     "AtkFix": 3840,
-    "ToughnessFix": 268333330
+    "ToughnessFix": 268333333
   },
   "1009036": {
     "Id": 1009036,
@@ -5496,112 +5498,97 @@
     "Lv": 40,
     "HpFix": 70011013,
     "AtkFix": 4800,
-    "ToughnessFix": 886666700,
-    "DefFix": 28
+    "ToughnessFix": 886666666
   },
   "1009041": {
     "Id": 1009041,
     "GroupId": 1009,
     "Lv": 41,
     "HpFix": 25458550,
-    "AtkFix": 960,
-    "DefFix": 28
+    "AtkFix": 960
   },
   "1009042": {
     "Id": 1009042,
     "GroupId": 1009,
     "Lv": 42,
     "HpFix": 25458550,
-    "AtkFix": 960,
-    "DefFix": 30
+    "AtkFix": 960
   },
   "1009043": {
     "Id": 1009043,
     "GroupId": 1009,
     "Lv": 43,
     "HpFix": 25458550,
-    "AtkFix": 960,
-    "DefFix": 31
+    "AtkFix": 960
   },
   "1009044": {
     "Id": 1009044,
     "GroupId": 1009,
     "Lv": 44,
     "HpFix": 25458550,
-    "AtkFix": 1056,
-    "DefFix": 32
+    "AtkFix": 1056
   },
   "1009045": {
     "Id": 1009045,
     "GroupId": 1009,
     "Lv": 45,
     "HpFix": 76375651,
-    "AtkFix": 5760,
-    "DefFix": 63
+    "AtkFix": 5760
   },
   "1009046": {
     "Id": 1009046,
     "GroupId": 1009,
     "Lv": 46,
-    "AtkFix": 3840,
-    "DefFix": 69
+    "AtkFix": 3840
   },
   "1009047": {
     "Id": 1009047,
     "GroupId": 1009,
     "Lv": 47,
-    "AtkFix": 3840,
-    "DefFix": 75
+    "AtkFix": 3840
   },
   "1009048": {
     "Id": 1009048,
     "GroupId": 1009,
     "Lv": 48,
-    "AtkFix": 4800,
-    "DefFix": 84
+    "AtkFix": 4800
   },
   "1009049": {
     "Id": 1009049,
     "GroupId": 1009,
     "Lv": 49,
-    "AtkFix": 4800,
-    "DefFix": 92
+    "AtkFix": 4800
   },
   "1009050": {
     "Id": 1009050,
     "GroupId": 1009,
     "Lv": 50,
     "HpFix": 89104926,
-    "AtkFix": 24000,
-    "DefFix": 103
+    "AtkFix": 24000
   },
   "1009051": {
     "Id": 1009051,
     "GroupId": 1009,
     "Lv": 51,
-    "AtkFix": 24000,
-    "DefFix": 116
+    "AtkFix": 24000
   },
   "1009052": {
     "Id": 1009052,
     "GroupId": 1009,
     "Lv": 52,
-    "AtkFix": 24000,
-    "DefFix": 131
+    "AtkFix": 24000
   },
   "1009053": {
     "Id": 1009053,
     "GroupId": 1009,
     "Lv": 53,
-    "AtkFix": 24000,
-    "DefFix": 149
+    "AtkFix": 24000
   },
   "1009054": {
     "Id": 1009054,
     "GroupId": 1009,
     "Lv": 54,
-    "AtkFix": 24000,
-    "DefFix": 172
+    "AtkFix": 24000
   },
   "1009055": {
     "Id": 1009055,
@@ -5609,36 +5596,31 @@
     "Lv": 55,
     "HpFix": 190939127,
     "AtkFix": 24000,
-    "ToughnessFix": 386000000,
-    "DefFix": 366
+    "ToughnessFix": 386000000
   },
   "1009056": {
     "Id": 1009056,
     "GroupId": 1009,
     "Lv": 56,
-    "AtkFix": 24000,
-    "DefFix": 496
+    "AtkFix": 24000
   },
   "1009057": {
     "Id": 1009057,
     "GroupId": 1009,
     "Lv": 57,
-    "AtkFix": 24000,
-    "DefFix": 101
+    "AtkFix": 24000
   },
   "1009058": {
     "Id": 1009058,
     "GroupId": 1009,
     "Lv": 58,
-    "AtkFix": 24000,
-    "DefFix": 108
+    "AtkFix": 24000
   },
   "1009059": {
     "Id": 1009059,
     "GroupId": 1009,
     "Lv": 59,
-    "AtkFix": 24000,
-    "DefFix": 114
+    "AtkFix": 24000
   },
   "1009060": {
     "Id": 1009060,
@@ -5646,8 +5628,7 @@
     "Lv": 60,
     "HpFix": 381878254,
     "AtkFix": 24000,
-    "ToughnessFix": 116000000,
-    "DefFix": 72
+    "ToughnessFix": 116000000
   },
   "1009061": {
     "Id": 1009061,
@@ -6136,7 +6117,7 @@
     "Lv": 35,
     "HpFix": 67808000,
     "AtkFix": 3840,
-    "ToughnessFix": 195833330
+    "ToughnessFix": 195833333
   },
   "1010036": {
     "Id": 1010036,
@@ -6172,7 +6153,7 @@
     "Lv": 40,
     "HpFix": 84760000,
     "AtkFix": 4800,
-    "ToughnessFix": 955666700,
+    "ToughnessFix": 955666667,
     "DefFix": 26
   },
   "1010041": {
@@ -6830,7 +6811,7 @@
     "Lv": 35,
     "HpFix": 67808000,
     "AtkFix": 3840,
-    "ToughnessFix": 175466670
+    "ToughnessFix": 175466667
   },
   "1011036": {
     "Id": 1011036,
@@ -6866,7 +6847,7 @@
     "Lv": 40,
     "HpFix": 84760000,
     "AtkFix": 4800,
-    "ToughnessFix": 899266700,
+    "ToughnessFix": 899266667,
     "DefFix": 26
   },
   "1011041": {
@@ -6907,7 +6888,7 @@
     "Lv": 45,
     "HpFix": 101712000,
     "AtkFix": 5760,
-    "ToughnessFix": 288266660,
+    "ToughnessFix": 288266667,
     "DefFix": 66
   },
   "1011046": {

@@ -2258,19 +2258,75 @@ local compare_roles = function(a, b, sort_priority, bOrder)
   -- DECOMPILER ERROR: 10 unprocessed JMP targets
 end
 
-local SortByPriority = function(items, selected_fields, default_priority, bOrder)
-  -- function num : 0_71 , upvalues : build_priority, _ENV, compare_roles
+local compare_roles_SetFavoriteTop = function(a, b, sort_priority, bOrder)
+  -- function num : 0_71 , upvalues : _ENV
+  local a_isFavorite = a.IsFavorite or false
+  local b_isFavorite = b.IsFavorite or false
+  if a_isFavorite ~= b_isFavorite then
+    if a_isFavorite then
+      do return not b_isFavorite end
+      for i,field in ipairs(sort_priority) do
+        local va, vb = a[field], b[field]
+        if field == "Rare" or field == "nRarity" then
+          if i == 1 and bOrder then
+            if vb >= va then
+              do return va == nil or vb == nil or va == vb end
+              do return va < vb end
+              -- DECOMPILER ERROR at PC56: Unhandled construct in 'MakeBoolean' P3
+
+              if va >= vb then
+                do
+                  do return (i ~= 1 or not bOrder) and field ~= "nEET" end
+                  do return vb < va end
+                  -- DECOMPILER ERROR at PC65: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+                  -- DECOMPILER ERROR at PC65: LeaveBlock: unexpected jumping out IF_STMT
+
+                  -- DECOMPILER ERROR at PC65: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+                  -- DECOMPILER ERROR at PC65: LeaveBlock: unexpected jumping out IF_STMT
+
+                  -- DECOMPILER ERROR at PC65: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+                  -- DECOMPILER ERROR at PC65: LeaveBlock: unexpected jumping out IF_STMT
+
+                  -- DECOMPILER ERROR at PC65: LeaveBlock: unexpected jumping out IF_THEN_STMT
+
+                  -- DECOMPILER ERROR at PC65: LeaveBlock: unexpected jumping out IF_STMT
+
+                end
+              end
+            end
+          end
+        end
+      end
+      do return false end
+      -- DECOMPILER ERROR: 10 unprocessed JMP targets
+    end
+  end
+end
+
+local SortByPriority = function(items, selected_fields, default_priority, bOrder, bSetFavoriteTop)
+  -- function num : 0_72 , upvalues : build_priority, _ENV, compare_roles_SetFavoriteTop, compare_roles
   local sort_priority = build_priority(selected_fields, default_priority)
-  ;
-  (table.sort)(items, function(a, b)
-    -- function num : 0_71_0 , upvalues : compare_roles, sort_priority, bOrder
+  if bSetFavoriteTop then
+    (table.sort)(items, function(a, b)
+    -- function num : 0_72_0 , upvalues : compare_roles_SetFavoriteTop, sort_priority, bOrder
+    return compare_roles_SetFavoriteTop(a, b, sort_priority, bOrder)
+  end
+)
+  else
+    ;
+    (table.sort)(items, function(a, b)
+    -- function num : 0_72_1 , upvalues : compare_roles, sort_priority, bOrder
     return compare_roles(a, b, sort_priority, bOrder)
   end
 )
+  end
 end
 
 local GetDayRefreshTimeOffset = function()
-  -- function num : 0_72 , upvalues : _ENV
+  -- function num : 0_73 , upvalues : _ENV
   local nNewDayTime = (ConfigTable.GetConfigNumber)("DailyRefreshOffsetHour") or 5
   if nNewDayTime > 24 then
     nNewDayTime = nNewDayTime % 24
@@ -2279,7 +2335,7 @@ local GetDayRefreshTimeOffset = function()
 end
 
 local SDK_Logout = function()
-  -- function num : 0_73 , upvalues : _ENV
+  -- function num : 0_74 , upvalues : _ENV
   local SDKManager = (CS.SDKManager).Instance
   if SDKManager:IsSDKInit() ~= true then
     return 
@@ -2288,7 +2344,7 @@ local SDK_Logout = function()
 end
 
 local SDK_ShowAgreement = function()
-  -- function num : 0_74 , upvalues : _ENV
+  -- function num : 0_75 , upvalues : _ENV
   local SDKManager = (CS.SDKManager).Instance
   if SDKManager:IsSDKInit() ~= true then
     return 
@@ -2319,7 +2375,7 @@ local ServerChannel_US = {[1] = "us_android_official", [2] = "us_ios_official", 
 local ServerChannel_KR = {[1] = "kr_android_official", [2] = "kr_ios_official", [4] = "kr_android_onestore", [8] = "kr_pc_official"}
 local ServerChannel_TW = {[1] = "tw_android_official", [2] = "tw_ios_official", [4] = "tw_android_onestore", [8] = "tw_pc_official"}
 local GetChannelConfigList = function()
-  -- function num : 0_75 , upvalues : _ENV, ServerChannel_CN, ServerChannel_JP, ServerChannel_US, ServerChannel_KR, ServerChannel_TW
+  -- function num : 0_76 , upvalues : _ENV, ServerChannel_CN, ServerChannel_JP, ServerChannel_US, ServerChannel_KR, ServerChannel_TW
   local resultList = nil
   local clientPublishRegion = (CS.ClientConfig).ClientPublishRegion
   if clientPublishRegion == (CS.ClientPublishRegion).CN then
@@ -2345,7 +2401,7 @@ local GetChannelConfigList = function()
 end
 
 local CheckChannel = function(channel)
-  -- function num : 0_76 , upvalues : _ENV, GetChannelConfigList
+  -- function num : 0_77 , upvalues : _ENV, GetChannelConfigList
   local fullChannnel = (CS.ClientConfig).FullClientPublishChannelName
   local channelList = GetChannelConfigList()
   if channelList == nil then
@@ -2373,7 +2429,7 @@ local CheckChannel = function(channel)
 end
 
 local CheckChannelList = function(channelList)
-  -- function num : 0_77 , upvalues : _ENV, CheckChannel
+  -- function num : 0_78 , upvalues : _ENV, CheckChannel
   local sCurClientPublishRegion = (CS.ClientConfig).ClientPublishRegion
   if sCurClientPublishRegion == (CS.ClientPublishRegion).Other then
     return true
@@ -2387,7 +2443,7 @@ local CheckChannelList = function(channelList)
 end
 
 local CheckChannelList_Notice = function(channelList)
-  -- function num : 0_78 , upvalues : _ENV, CheckChannel
+  -- function num : 0_79 , upvalues : _ENV, CheckChannel
   local sCurClientPublishRegion = (CS.ClientConfig).ClientPublishRegion
   if sCurClientPublishRegion == (CS.ClientPublishRegion).Other then
     return true
@@ -2401,7 +2457,7 @@ local CheckChannelList_Notice = function(channelList)
 end
 
 local VersionCompare = function(v1, v2, num)
-  -- function num : 0_79 , upvalues : _ENV
+  -- function num : 0_80 , upvalues : _ENV
   local v1List = (string.split)(v1, ".")
   local v2List = (string.split)(v2, ".")
   for i = 1, num do
@@ -2430,7 +2486,7 @@ local VersionCompare = function(v1, v2, num)
 end
 
 local GetBBSUrl = function()
-  -- function num : 0_80 , upvalues : _ENV
+  -- function num : 0_81 , upvalues : _ENV
   local result = false
   local url = ""
   local sChannel = (NovaAPI.GetClientChannel)()
@@ -2447,7 +2503,7 @@ local GetBBSUrl = function()
 end
 
 local GetToolBoxUrl = function()
-  -- function num : 0_81 , upvalues : _ENV
+  -- function num : 0_82 , upvalues : _ENV
   local result = false
   local url = ""
   local sChannel = (NovaAPI.GetClientChannel)()
@@ -2505,7 +2561,7 @@ local GetToolBoxUrl = function()
 end
 
 local GetExchangeCodeUrl = function()
-  -- function num : 0_82 , upvalues : _ENV
+  -- function num : 0_83 , upvalues : _ENV
   local result = false
   local url = ""
   local sChannel = (NovaAPI.GetClientChannel)()
@@ -2552,7 +2608,7 @@ local GetExchangeCodeUrl = function()
   return result, url
 end
 
--- DECOMPILER ERROR at PC475: Confused about usage of register: R57 in 'UnsetPending'
+-- DECOMPILER ERROR at PC476: Confused about usage of register: R58 in 'UnsetPending'
 
 _G.UTILS = {DecodeChangeInfo = DecodeChangeInfo, OpenReceiveByChangeInfo = OpenReceiveByChangeInfo, OpenReceiveByDisplayItem = OpenReceiveByDisplayItem, OpenReceiveByReward = OpenReceiveByReward, GetParamStrLen = GetParamStrLen, ParseByteString = ParseByteString, IsBitSet = IsBitSet, GetBuildAttributeId = GetBuildAttributeId, GetCharacterAttributeId = GetCharacterAttributeId, GetDiscAttributeId = GetDiscAttributeId, GetDiscExtraAttributeId = GetDiscExtraAttributeId, GetPotentialId = GetPotentialId, SubDesc = SubDesc, ParseDesc = ParseDesc, ParseDiscDesc = ParseDiscDesc, ParseParamDesc = ParseParamDesc, ParseLevelQuestTargetDesc = ParseLevelQuestTargetDesc, GetLevelQuestTargetProcess = GetLevelQuestTargetProcess, ParseRewardItemCount = ParseRewardItemCount, GetBezierPointByT = GetBezierPointByT, AddEffect = AddEffect, AddFateCardEft = AddFateCardEft, AddBuildEffect = AddBuildEffect, RemoveEffect = RemoveEffect, GetBattleSamples = GetBattleSamples, GetCharDamageResult = GetCharDamageResult, ClickItemGridWithTips = ClickItemGridWithTips, QueryLevelInfo = QueryLevelInfo, SDK_Logout = SDK_Logout, SDK_ShowAgreement = SDK_ShowAgreement, ParseNoBrokenDesc = ParseNoBrokenDesc, CheckIsTipsPanel = CheckIsTipsPanel, ClickWordLink = ClickWordLink, CheckChannelList = CheckChannelList, VersionCompare = VersionCompare, SortByPriority = SortByPriority, GetDayRefreshTimeOffset = GetDayRefreshTimeOffset, GetBBSUrl = GetBBSUrl, GetToolBoxUrl = GetToolBoxUrl, GetExchangeCodeUrl = GetExchangeCodeUrl, CheckChannelList_Notice = CheckChannelList_Notice, AddKrParticle = AddKrParticle, LanguagePost = LanguagePost, ParseLanguageParam = ParseLanguageParam}
 

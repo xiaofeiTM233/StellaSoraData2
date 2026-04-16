@@ -150,51 +150,59 @@ StarTowerSweepData.Init = function(self, mapMeta, mapRoom, mapBag)
     end
     if (mapRoom.Data).RoomType ~= nil or not -1 then
       self.nRoomType = (mapRoom.Data).RoomType
-      if mapBag ~= nil then
-        for _,mapFateCardEft in ipairs(mapBag.FateCard) do
-          -- DECOMPILER ERROR at PC136: Confused about usage of register: R11 in 'UnsetPending'
+      local mapStarTower = (ConfigTable.GetData)("StarTower", self.nTowerId)
+      if mapStarTower then
+        local nTeamIndex = (PlayerData.StarTower):GetGroupFormation(mapStarTower.GroupId)
+        local nPreselectionId = (PlayerData.Team):GetTeamPreselectionId(nTeamIndex)
+        self.mapPreselectionData = (PlayerData.PotentialPreselection):GetPreselectionById(nPreselectionId)
+      end
+      do
+        if mapBag ~= nil then
+          for _,mapFateCardEft in ipairs(mapBag.FateCard) do
+            -- DECOMPILER ERROR at PC159: Confused about usage of register: R12 in 'UnsetPending'
 
-          (self._mapFateCard)[mapFateCardEft.Tid] = {mapFateCardEft.Remain, mapFateCardEft.Room}
-        end
-        for _,mapPotential in ipairs(mapBag.Potentials) do
-          local nTid = mapPotential.Tid
-          local mapPotentialCfgData = (ConfigTable.GetData)("Potential", nTid)
-          if mapPotentialCfgData == nil then
-            printError("PotentialCfgData Missing" .. nTid)
-          else
-            local nCharId = mapPotentialCfgData.CharId
-            -- DECOMPILER ERROR at PC164: Confused about usage of register: R14 in 'UnsetPending'
-
-            if (self._mapPotential)[nCharId] == nil then
-              (self._mapPotential)[nCharId] = {}
-            end
-            -- DECOMPILER ERROR at PC168: Confused about usage of register: R14 in 'UnsetPending'
-
-            ;
-            ((self._mapPotential)[nCharId])[nTid] = mapPotential.Level
+            (self._mapFateCard)[mapFateCardEft.Tid] = {mapFateCardEft.Remain, mapFateCardEft.Room}
           end
-        end
-        for _,mapItem in ipairs(mapBag.Items) do
-          local mapItemCfgData = (ConfigTable.GetData_Item)(mapItem.Tid)
-          -- DECOMPILER ERROR at PC190: Confused about usage of register: R12 in 'UnsetPending'
+          for _,mapPotential in ipairs(mapBag.Potentials) do
+            local nTid = mapPotential.Tid
+            local mapPotentialCfgData = (ConfigTable.GetData)("Potential", nTid)
+            if mapPotentialCfgData == nil then
+              printError("PotentialCfgData Missing" .. nTid)
+            else
+              local nCharId = mapPotentialCfgData.CharId
+              -- DECOMPILER ERROR at PC187: Confused about usage of register: R15 in 'UnsetPending'
 
-          if mapItemCfgData ~= nil and mapItemCfgData.Stype == (GameEnum.itemStype).SubNoteSkill then
-            (self._mapNote)[mapItem.Tid] = mapItem.Qty
-          else
-            -- DECOMPILER ERROR at PC195: Confused about usage of register: R12 in 'UnsetPending'
+              if (self._mapPotential)[nCharId] == nil then
+                (self._mapPotential)[nCharId] = {}
+              end
+              -- DECOMPILER ERROR at PC191: Confused about usage of register: R15 in 'UnsetPending'
 
-            ;
+              ;
+              ((self._mapPotential)[nCharId])[nTid] = mapPotential.Level
+            end
+          end
+          for _,mapItem in ipairs(mapBag.Items) do
+            local mapItemCfgData = (ConfigTable.GetData_Item)(mapItem.Tid)
+            -- DECOMPILER ERROR at PC213: Confused about usage of register: R13 in 'UnsetPending'
+
+            if mapItemCfgData ~= nil and mapItemCfgData.Stype == (GameEnum.itemStype).SubNoteSkill then
+              (self._mapNote)[mapItem.Tid] = mapItem.Qty
+            else
+              -- DECOMPILER ERROR at PC218: Confused about usage of register: R13 in 'UnsetPending'
+
+              ;
+              (self._mapItem)[mapItem.Tid] = mapItem.Qty
+            end
+          end
+          for _,mapItem in ipairs(mapBag.Res) do
+            -- DECOMPILER ERROR at PC228: Confused about usage of register: R12 in 'UnsetPending'
+
             (self._mapItem)[mapItem.Tid] = mapItem.Qty
           end
         end
-        for _,mapItem in ipairs(mapBag.Res) do
-          -- DECOMPILER ERROR at PC205: Confused about usage of register: R11 in 'UnsetPending'
-
-          (self._mapItem)[mapItem.Tid] = mapItem.Qty
+        do
+          self:InitRoom(mapRoom.Cases)
         end
-      end
-      do
-        self:InitRoom(mapRoom.Cases)
       end
     end
   end
@@ -226,6 +234,8 @@ StarTowerSweepData.BuildCharacterData = function(self, tbCharacterData, tbDiscDa
                 local nGemId = (PlayerData.Equipment):GetGemIdBySlot(mapChar.Id, starTowerEquipment.SlotId)
                 local mapEquipmentInfo = {Lock = false, Attributes = starTowerEquipment.Attributes, 
 AlterAttributes = {}
+, OverlockCount = starTowerEquipment.OverlockCount, 
+AlterOverlockCount = {}
 }
                 local equipmentData = (EquipmentData.new)(mapEquipmentInfo, mapChar.Id, nGemId)
                 ;
@@ -233,11 +243,11 @@ AlterAttributes = {}
                 tbEquipmentSlot[starTowerEquipment.SlotId] = equipmentData
               end
               do
-                -- DECOMPILER ERROR at PC58: LeaveBlock: unexpected jumping out DO_STMT
+                -- DECOMPILER ERROR at PC62: LeaveBlock: unexpected jumping out DO_STMT
 
-                -- DECOMPILER ERROR at PC58: LeaveBlock: unexpected jumping out IF_THEN_STMT
+                -- DECOMPILER ERROR at PC62: LeaveBlock: unexpected jumping out IF_THEN_STMT
 
-                -- DECOMPILER ERROR at PC58: LeaveBlock: unexpected jumping out IF_STMT
+                -- DECOMPILER ERROR at PC62: LeaveBlock: unexpected jumping out IF_STMT
 
               end
             end
@@ -330,23 +340,23 @@ tbAffinityQuests = {}
 , tbActive = tbActive, tbAffinityeffectIds = tbAffinityeffectIds, tbTalentEffect = tbTalentEffect}
           mapCharacter[mapChar.Id] = charData
         end
-        -- DECOMPILER ERROR at PC183: LeaveBlock: unexpected jumping out DO_STMT
+        -- DECOMPILER ERROR at PC187: LeaveBlock: unexpected jumping out DO_STMT
 
       end
     end
   end
   for _,startowerDisc in ipairs(tbDiscData) do
     local l_0_4_55, l_0_4_56, l_0_4_57, _, startowerDisc = nil
-    -- DECOMPILER ERROR at PC190: Confused about usage of register: R11 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC194: Confused about usage of register: R11 in 'UnsetPending'
 
     tbEquipmentSlot = mapChar.Id
-    -- DECOMPILER ERROR at PC192: Confused about usage of register: R11 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC196: Confused about usage of register: R11 in 'UnsetPending'
 
     tbEquipmentSlot = mapChar.Level
-    -- DECOMPILER ERROR at PC195: Confused about usage of register: R11 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC199: Confused about usage of register: R11 in 'UnsetPending'
 
     tbEquipmentSlot = mapChar.Phase
-    -- DECOMPILER ERROR at PC197: Confused about usage of register: R11 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC201: Confused about usage of register: R11 in 'UnsetPending'
 
     tbEquipmentSlot = mapChar.Star
     local mapDiscInfo = nil
@@ -354,7 +364,7 @@ tbAffinityQuests = {}
     tbTalent, tbEquipment = tbEquipment, {Id = tbEquipmentSlot, Level = tbEquipmentSlot, Exp = 0, Phase = tbEquipmentSlot, Star = tbEquipmentSlot, Read = false, CreatTime = 0}
     tbEquipmentSlot = tbEquipmentSlot(tbTalent)
     local discData = nil
-    -- DECOMPILER ERROR at PC204: Confused about usage of register: R11 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC208: Confused about usage of register: R11 in 'UnsetPending'
 
     tbTalent = mapChar.Id
     mapDisc[tbTalent] = tbEquipmentSlot
@@ -2314,34 +2324,63 @@ StarTowerSweepData.GetRecommondPotential = function(self, tbPotentialData)
   for _,mapData in ipairs(tbPotentialData) do
     (table.insert)(tbPotential, mapData.Id)
   end
-  local ret = {}
-  local curRarity = 999
-  for _,nPotentialId in ipairs(tbPotential) do
-    local itemCfg = (ConfigTable.GetData)("Item", nPotentialId)
-    if itemCfg ~= nil then
-      local nRarity = itemCfg.Rarity
-      if itemCfg.Stype == (GameEnum.itemStype).SpecificPotential then
-        nRarity = 0
+  do
+    if self.mapPreselectionData ~= nil then
+      local tbRecommend = {}
+      for k,v in ipairs((self.mapPreselectionData).tbCharPotential) do
+        -- DECOMPILER ERROR at PC31: Unhandled construct in 'MakeBoolean' P1
+
+        if k == 1 and (self.tbTeam)[k] == v.nCharId then
+          for _,potential in ipairs(v.tbPotential) do
+            if (table.indexof)(tbPotential, potential.nId) > 0 then
+              (table.insert)(tbRecommend, {nId = potential.nId, nLevel = potential.nLevel})
+            end
+          end
+        end
+        do
+          if (table.indexof)(self.tbTeam, v.nCharId) > 1 then
+            for _,potential in ipairs(v.tbPotential) do
+              if (table.indexof)(tbPotential, potential.nId) > 0 then
+                (table.insert)(tbRecommend, {nId = potential.nId, nLevel = potential.nLevel})
+              end
+            end
+          end
+          do
+            -- DECOMPILER ERROR at PC80: LeaveBlock: unexpected jumping out DO_STMT
+
+          end
+        end
       end
-      if nRarity < curRarity then
-        ret = {}
-        curRarity = nRarity
-        ;
-        (table.insert)(ret, nPotentialId)
-      else
-        if nRarity == curRarity then
-          (table.insert)(ret, nPotentialId)
+      return tbRecommend
+    end
+    local ret = {}
+    local curRarity = 999
+    for _,nPotentialId in ipairs(tbPotential) do
+      local itemCfg = (ConfigTable.GetData)("Item", nPotentialId)
+      if itemCfg ~= nil then
+        local nRarity = itemCfg.Rarity
+        if itemCfg.Stype == (GameEnum.itemStype).SpecificPotential then
+          nRarity = 0
+        end
+        if nRarity < curRarity then
+          ret = {}
+          curRarity = nRarity
+          ;
+          (table.insert)(ret, {nId = nPotentialId})
+        else
+          if nRarity == curRarity then
+            (table.insert)(ret, {nId = nPotentialId})
+          end
         end
       end
     end
-  end
-  if #ret < 2 then
-    return ret
-  end
-  local ret1 = {}
-  local nCurCharId = 0
-  local nCurCount = -1
-  local GetCharacterPotentialCount = function(nCharId)
+    if #ret < 2 then
+      return ret
+    end
+    local ret1 = {}
+    local nCurCharId = 0
+    local nCurCount = -1
+    local GetCharacterPotentialCount = function(nCharId)
     -- function num : 0_38_0 , upvalues : self, _ENV
     local ret = 0
     if (self._mapPotential)[nCharId] ~= nil then
@@ -2354,40 +2393,41 @@ StarTowerSweepData.GetRecommondPotential = function(self, tbPotentialData)
     end
   end
 
-  for _,nPotentialId in ipairs(ret) do
-    local potentialCfg = (ConfigTable.GetData)("Potential", nPotentialId)
-    if potentialCfg ~= nil then
-      local nCharId = potentialCfg.CharId
-      local nCount = GetCharacterPotentialCount(nCharId)
-      if nCurCount < 0 then
-        nCurCharId = nCharId
-        nCurCount = nCount
-        ;
-        (table.insert)(ret1, nPotentialId)
-      else
-        if nCharId ~= nCurCharId and nCount < nCurCount then
-          ret1 = {}
+    for _,v in ipairs(ret) do
+      local nPotentialId = v.nId
+      local potentialCfg = (ConfigTable.GetData)("Potential", nPotentialId)
+      if potentialCfg ~= nil then
+        local nCharId = potentialCfg.CharId
+        local nCount = GetCharacterPotentialCount(nCharId)
+        if nCurCount < 0 then
           nCurCharId = nCharId
           nCurCount = nCount
           ;
-          (table.insert)(ret1, nPotentialId)
+          (table.insert)(ret1, {nId = nPotentialId})
         else
-          ;
-          (table.insert)(ret1, nPotentialId)
+          if nCharId ~= nCurCharId and nCount < nCurCount then
+            ret1 = {}
+            nCurCharId = nCharId
+            nCurCount = nCount
+            ;
+            (table.insert)(ret1, {nId = nPotentialId})
+          else
+            ;
+            (table.insert)(ret1, {nId = nPotentialId})
+          end
         end
       end
     end
-  end
-  if #ret1 < 1 then
-    return ret
-  end
-  if #ret1 < 2 then
-    return ret1
-  end
-  local ret2 = {}
-  local nCurBuildCount = -1
-  local bHasBuild = false
-  local GetPotentialBuildCount = function(nPotnetialId)
+    if #ret1 < 1 then
+      return ret
+    end
+    if #ret1 < 2 then
+      return ret1
+    end
+    local ret2 = {}
+    local nCurBuildCount = -1
+    local bHasBuild = false
+    local GetPotentialBuildCount = function(nPotnetialId)
     -- function num : 0_38_1 , upvalues : _ENV, self
     local ret = 0
     local retBuild = 0
@@ -2414,78 +2454,81 @@ StarTowerSweepData.GetRecommondPotential = function(self, tbPotentialData)
     end
   end
 
-  for _,nPotentialId in ipairs(ret1) do
-    local nCount, nBuild = GetPotentialBuildCount(nPotentialId)
-    if nCurBuildCount < 0 and nBuild ~= 0 then
-      (table.insert)(ret2, nPotentialId)
-      nCurBuildCount = nCount
-      bHasBuild = nBuild ~= (GameEnum.potentialBuild).PotentialBuildCommon
-    else
-      -- DECOMPILER ERROR at PC157: Unhandled construct in 'MakeBoolean' P1
+    for _,v in ipairs(ret1) do
+      local nPotentialId = v.nId
+      local nCount, nBuild = GetPotentialBuildCount(nPotentialId)
+      if nCurBuildCount < 0 and nBuild ~= 0 then
+        (table.insert)(ret2, {nId = nPotentialId})
+        nCurBuildCount = nCount
+        bHasBuild = nBuild ~= (GameEnum.potentialBuild).PotentialBuildCommon
+      else
+        -- DECOMPILER ERROR at PC237: Unhandled construct in 'MakeBoolean' P1
 
-      if bHasBuild and nBuild ~= (GameEnum.potentialBuild).PotentialBuildCommon then
+        if bHasBuild and nBuild ~= (GameEnum.potentialBuild).PotentialBuildCommon then
+          if nCount == nCurBuildCount then
+            (table.insert)(ret2, {nId = nPotentialId})
+          elseif nCurBuildCount < nCount then
+            ret2 = {}
+            ;
+            (table.insert)(ret2, {nId = nPotentialId})
+            nCurBuildCount = nCount
+            bHasBuild = nBuild ~= (GameEnum.potentialBuild).PotentialBuildCommon
+          end
+        end
+      end
+      if nBuild == (GameEnum.potentialBuild).PotentialBuildCommon then
         if nCount == nCurBuildCount then
-          (table.insert)(ret2, nPotentialId)
+          (table.insert)(ret2, {nId = nPotentialId})
         elseif nCurBuildCount < nCount then
           ret2 = {}
           ;
-          (table.insert)(ret2, nPotentialId)
+          (table.insert)(ret2, {nId = nPotentialId})
           nCurBuildCount = nCount
-          bHasBuild = nBuild ~= (GameEnum.potentialBuild).PotentialBuildCommon
+        end
+      else
+        ret2 = {}
+        ;
+        (table.insert)(ret2, {nId = nPotentialId})
+        nCurBuildCount = nCount
+        bHasBuild = true
+      end
+    end
+    if #ret2 < 1 then
+      return ret1
+    end
+    if #ret2 < 2 then
+      return ret2
+    end
+    local ret3 = {}
+    local curLessPotential = -1
+    for _,v in ipairs(ret2) do
+      local nPotentialId = v.nId
+      local potentialCfg = (ConfigTable.GetData)("Potential", nPotentialId)
+      if potentialCfg ~= nil then
+        local nCharId = potentialCfg.CharId
+        local nCurCount = 0
+        if (self._mapPotential)[nCharId] ~= nil and ((self._mapPotential)[nCharId])[nPotentialId] ~= nil then
+          nCurCount = ((self._mapPotential)[nCharId])[nPotentialId]
+        end
+        if curLessPotential < 0 then
+          (table.insert)(ret3, {nId = nPotentialId})
+          curLessPotential = nCurCount
+        elseif nCurCount == curLessPotential then
+          (table.insert)(ret3, {nId = nPotentialId})
+        elseif nCurCount < curLessPotential then
+          ret3 = {}
+          ;
+          (table.insert)(ret3, {nId = nPotentialId})
+          curLessPotential = nCurCount
         end
       end
     end
-    if nBuild == (GameEnum.potentialBuild).PotentialBuildCommon then
-      if nCount == nCurBuildCount then
-        (table.insert)(ret2, nPotentialId)
-      elseif nCurBuildCount < nCount then
-        ret2 = {}
-        ;
-        (table.insert)(ret2, nPotentialId)
-        nCurBuildCount = nCount
-      end
-    else
-      ret2 = {}
-      ;
-      (table.insert)(ret2, nPotentialId)
-      nCurBuildCount = nCount
-      bHasBuild = true
+    if #ret3 < 1 then
+      return ret2
     end
+    do return ret3 end
+    -- DECOMPILER ERROR: 15 unprocessed JMP targets
   end
-  if #ret2 < 1 then
-    return ret1
-  end
-  if #ret2 < 2 then
-    return ret2
-  end
-  local ret3 = {}
-  local curLessPotential = -1
-  for _,nPotentialId in ipairs(ret2) do
-    local potentialCfg = (ConfigTable.GetData)("Potential", nPotentialId)
-    if potentialCfg ~= nil then
-      local nCharId = potentialCfg.CharId
-      local nCurCount = 0
-      if (self._mapPotential)[nCharId] ~= nil and ((self._mapPotential)[nCharId])[nPotentialId] ~= nil then
-        nCurCount = ((self._mapPotential)[nCharId])[nPotentialId]
-      end
-      if curLessPotential < 0 then
-        (table.insert)(ret3, nPotentialId)
-        curLessPotential = nCurCount
-      elseif nCurCount == curLessPotential then
-        (table.insert)(ret3, nPotentialId)
-      elseif nCurCount < curLessPotential then
-        ret3 = {}
-        ;
-        (table.insert)(ret3, nPotentialId)
-        curLessPotential = nCurCount
-      end
-    end
-  end
-  if #ret3 < 1 then
-    return ret2
-  end
-  do return ret3 end
-  -- DECOMPILER ERROR: 15 unprocessed JMP targets
 end
 
 StarTowerSweepData.GetShopGoods = function(self)

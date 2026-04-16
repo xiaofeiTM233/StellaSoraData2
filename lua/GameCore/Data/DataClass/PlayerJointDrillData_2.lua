@@ -56,12 +56,12 @@ PlayerJointDrillData_2.InitConfig = function(self)
   end
 
   ForEachTableLine((ConfigTable.Get)("JointDrill_2_Level"), funcForeachJointDrillLevel2)
-  local funcForeachJointDrillLevel2 = function(line)
+  local funcForeachJointDrillFloor2 = function(line)
     -- function num : 0_3_1 , upvalues : _ENV
     (CacheTable.SetField)("_JointDrill_2_Floor", line.FloorId, line.BattleLvs, line)
   end
 
-  ForEachTableLine((ConfigTable.Get)("JointDrill_2_Floor"), funcForeachJointDrillLevel2)
+  ForEachTableLine((ConfigTable.Get)("JointDrill_2_Floor"), funcForeachJointDrillFloor2)
   self.nRankCount = 0
   local funcForeachJointDrillRank = function(line)
     -- function num : 0_3_2 , upvalues : self
@@ -135,38 +135,8 @@ PlayerJointDrillData_2.GetMonsterCfg = function(self, nMonsterId)
 end
 
 PlayerJointDrillData_2.GetMonsterMaxHp = function(self, nMonsterId, nDifficulty)
-  -- function num : 0_6 , upvalues : _ENV, ConfigData
-  local nMaxHp = 0
-  local mapMonsterCfg = (ConfigTable.GetData)("Monster", nMonsterId)
-  if mapMonsterCfg == nil then
-    return 0
-  end
-  local mapAdjustCfg = (ConfigTable.GetData)("MonsterValueTempleteAdjust", mapMonsterCfg.Templete)
-  if mapAdjustCfg == nil then
-    return 0
-  end
-  do
-    if next((CacheTable.Get)("_MonsterValueTemplete")) == nil then
-      local funcForeachMonsterValueTemplete = function(line)
-    -- function num : 0_6_0 , upvalues : _ENV
-    (CacheTable.SetField)("_MonsterValueTemplete", line.TemplateId, line.Lv, line.Hp)
-  end
-
-      ForEachTableLine((ConfigTable.Get)("MonsterValueTemplete"), funcForeachMonsterValueTemplete)
-    end
-    local mapCfgList = (CacheTable.GetData)("_MonsterValueTemplete", mapAdjustCfg.TemplateId)
-    if mapCfgList == nil then
-      return 0
-    end
-    local nValue = mapCfgList[nDifficulty]
-    if nValue == nil then
-      return 0
-    end
-    local nRatio = mapAdjustCfg.HpRatio
-    local nFix = mapAdjustCfg.HpFix
-    nMaxHp = (math.floor)(nValue * (1 + nRatio * ConfigData.IntFloatPrecision) + nFix)
-    return nMaxHp
-  end
+  -- function num : 0_6 , upvalues : _ENV
+  return (NovaAPI.GetJointDrillBossMaxHp)(nMonsterId, nDifficulty)
 end
 
 PlayerJointDrillData_2.InitBossInfo = function(self, nGroupId, nDifficulty)
@@ -383,9 +353,10 @@ PlayerJointDrillData_2.RestartBattle = function(self)
   self:EnterJointDrill(self.nCurLevelId, self.nSelectBuildId, self.bSimulate, (AllEnum.JointDrillLevelStartType).Restart, self.nCurLevel)
 end
 
-PlayerJointDrillData_2.ContinueJointDrill = function(self, nBuildId, callback)
+PlayerJointDrillData_2.ContinueJointDrill = function(self, nBuildId, callback, bEditor)
   -- function num : 0_17 , upvalues : LocalData, _ENV
-  local NetCallback = function(_, netMsg)
+  if not bEditor then
+    local NetCallback = function(_, netMsg)
     -- function num : 0_17_0 , upvalues : LocalData, _ENV, self, callback
     local sKey = (LocalData.GetPlayerLocalData)("JointDrillRecordKey") or ""
     if sKey == "" or sKey ~= tostring(self.nStartTime) then
@@ -404,17 +375,25 @@ PlayerJointDrillData_2.ContinueJointDrill = function(self, nBuildId, callback)
     end
   end
 
-  local msg = {BuildId = nBuildId}
-  ;
-  (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_2_continue_req, msg, nil, NetCallback)
+    local msg = {BuildId = nBuildId}
+    ;
+    (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_2_continue_req, msg, nil, NetCallback)
+  else
+    do
+      if callback ~= nil then
+        callback()
+      end
+    end
+  end
 end
 
-PlayerJointDrillData_2.JointDrillGameOver = function(self, callback, bSettle)
+PlayerJointDrillData_2.JointDrillGameOver = function(self, callback, bSettle, bEditor)
   -- function num : 0_18 , upvalues : ClientManager, _ENV
-  self:SetRecorderExcludeIds()
-  self:StopRecord()
-  self._EndTime = ClientManager.serverTimeStamp
-  local NetCallback = function(_, netMsg)
+  if not bEditor then
+    self:SetRecorderExcludeIds()
+    self:StopRecord()
+    self._EndTime = ClientManager.serverTimeStamp
+    local NetCallback = function(_, netMsg)
     -- function num : 0_18_0 , upvalues : self, _ENV, callback, bSettle
     local nScoreOld = 0
     if self.mapSelfRankData ~= nil then
@@ -463,15 +442,36 @@ PlayerJointDrillData_2.JointDrillGameOver = function(self, callback, bSettle)
     end
   end
 
-  ;
-  (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_2_game_over_req, {}, nil, NetCallback)
+    ;
+    (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_2_game_over_req, {}, nil, NetCallback)
+  else
+    do
+      self.bResetLevelSelect = true
+      if callback ~= nil then
+        callback()
+      end
+      if bSettle then
+        local nResultType = (AllEnum.JointDrillResultType).ChallengeEnd
+        local mapScore = {}
+        local mapChange, mapItems = {}, {}
+        local nOld, nNew = 0, 0
+        local mapBossInfo = (self.mapBossInfo)[self.nCurLevel]
+        ;
+        (EventManager.Hit)(EventId.OpenPanel, PanelId.JointDrillResult_2, nResultType, self.nCurLevel, 0, self.nCurLevelId, mapBossInfo, mapScore, mapItems, mapChange, nOld, nNew, self.bSimulate, #self.tbTeams)
+      end
+      do
+        self:ChallengeEnd()
+      end
+    end
+  end
 end
 
-PlayerJointDrillData_2.JointDrillGiveUp = function(self, nLevel, nTime, nDamage, sRecord, callback)
+PlayerJointDrillData_2.JointDrillGiveUp = function(self, nLevel, nTime, nDamage, sRecord, callback, bEditor)
   -- function num : 0_19 , upvalues : _ENV
-  self:SetRecorderExcludeIds()
-  self:StopRecord()
-  local NetCallback = function(_, netMsg)
+  if not bEditor then
+    self:SetRecorderExcludeIds()
+    self:StopRecord()
+    local NetCallback = function(_, netMsg)
     -- function num : 0_19_0 , upvalues : self, sRecord, nLevel, callback
     self.record = sRecord
     self.nCurLevel = nLevel
@@ -483,27 +483,36 @@ PlayerJointDrillData_2.JointDrillGiveUp = function(self, nLevel, nTime, nDamage,
     end
   end
 
-  local tbBossHps = {}
-  local mapBoss = (self.mapBossInfo)[nLevel]
-  if mapBoss ~= nil then
-    for nIndex,v in ipairs(mapBoss) do
-      if v.nBossCfgId ~= 0 then
-        (table.insert)(tbBossHps, {Id = v.nBossCfgId, Hp = v.nHp})
+    local tbBossHps = {}
+    local mapBoss = (self.mapBossInfo)[nLevel]
+    if mapBoss ~= nil then
+      for nIndex,v in ipairs(mapBoss) do
+        if v.nBossCfgId ~= 0 then
+          (table.insert)(tbBossHps, {Id = v.nBossCfgId, Hp = v.nHp})
+        end
+      end
+    end
+    do
+      do
+        local msg = {Floor = nLevel, Time = nTime, Damage = nDamage, BossHps = tbBossHps, Record = sRecord}
+        ;
+        (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_2_give_up_req, msg, nil, NetCallback)
+        self.record = sRecord
+        self.nCurLevel = nLevel
+        if callback ~= nil then
+          callback()
+        end
       end
     end
   end
-  do
-    local msg = {Floor = nLevel, Time = nTime, Damage = nDamage, BossHps = tbBossHps, Record = sRecord}
-    ;
-    (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_2_give_up_req, msg, nil, NetCallback)
-  end
 end
 
-PlayerJointDrillData_2.JointDrillRetreat = function(self, mapBuild, callback)
+PlayerJointDrillData_2.JointDrillRetreat = function(self, mapBuild, callback, bEditor)
   -- function num : 0_20 , upvalues : _ENV
-  self:SetRecorderExcludeIds(true)
-  self:StopRecord()
-  local NetCallback = function(_, netMsg)
+  if not bEditor then
+    self:SetRecorderExcludeIds(true)
+    self:StopRecord()
+    local NetCallback = function(_, netMsg)
     -- function num : 0_20_0 , upvalues : self, mapBuild, callback
     self:RemoveJointDrillTeam(mapBuild)
     if callback ~= nil then
@@ -511,17 +520,26 @@ PlayerJointDrillData_2.JointDrillRetreat = function(self, mapBuild, callback)
     end
   end
 
-  ;
-  (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_2_retreat_req, {}, nil, NetCallback)
+    ;
+    (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_2_retreat_req, {}, nil, NetCallback)
+  else
+    do
+      self:RemoveJointDrillTeam(mapBuild)
+      if callback ~= nil then
+        callback()
+      end
+    end
+  end
 end
 
-PlayerJointDrillData_2.JointDrillSettle = function(self, mapBuild, nTime, nDamage, callback)
+PlayerJointDrillData_2.JointDrillSettle = function(self, mapBuild, nTime, nDamage, callback, bEditor)
   -- function num : 0_21 , upvalues : ClientManager, _ENV, LocalData
-  self:SetRecorderExcludeIds()
-  self:StopRecord()
-  self:AddJointDrillTeam(mapBuild, nTime, nDamage)
-  self._EndTime = ClientManager.serverTimeStamp
-  local NetCallback = function(_, netMsg)
+  if not bEditor then
+    self:SetRecorderExcludeIds()
+    self:StopRecord()
+    self:AddJointDrillTeam(mapBuild, nTime, nDamage)
+    self._EndTime = ClientManager.serverTimeStamp
+    local NetCallback = function(_, netMsg)
     -- function num : 0_21_0 , upvalues : self, _ENV, callback
     self:UploadRecordFile(netMsg.Token)
     do
@@ -544,20 +562,30 @@ PlayerJointDrillData_2.JointDrillSettle = function(self, mapBuild, nTime, nDamag
     end
   end
 
-  local sKey = (LocalData.GetPlayerLocalData)("JointDrillRecordKey") or ""
-  local tbSamples = (UTILS.GetBattleSamples)(sKey)
-  local bSuccess, nCheckSum = (NovaAPI.GetRecorderKey)(sKey)
-  local tbSendSample = {Sample = tbSamples, Checksum = nCheckSum}
-  local msg = {Time = nTime, Damage = nDamage, Sample = tbSendSample, 
+    local sKey = (LocalData.GetPlayerLocalData)("JointDrillRecordKey") or ""
+    local tbSamples = (UTILS.GetBattleSamples)(sKey)
+    local bSuccess, nCheckSum = (NovaAPI.GetRecorderKey)(sKey)
+    local tbSendSample = {Sample = tbSamples, Checksum = nCheckSum}
+    local msg = {Time = nTime, Damage = nDamage, Sample = tbSendSample, 
 Events = {List = (PlayerData.Achievement):GetBattleAchievement((GameEnum.levelType).JointDrill, true)}
 }
-  ;
-  (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_2_settle_req, msg, nil, NetCallback)
+    ;
+    (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_2_settle_req, msg, nil, NetCallback)
+  else
+    do
+      self:AddJointDrillTeam(mapBuild, nTime, nDamage)
+      self.bResetLevelSelect = true
+      if callback ~= nil then
+        callback()
+      end
+    end
+  end
 end
 
-PlayerJointDrillData_2.JointDrillSync = function(self, nLevel, nTime, nDamage, sRecord, callback)
+PlayerJointDrillData_2.JointDrillSync = function(self, nLevel, nTime, nDamage, sRecord, callback, bEditor)
   -- function num : 0_22 , upvalues : _ENV
-  local NetCallback = function(_, netMsg)
+  if not bEditor then
+    local NetCallback = function(_, netMsg)
     -- function num : 0_22_0 , upvalues : self, sRecord, callback
     self.record = sRecord
     if callback ~= nil then
@@ -565,21 +593,28 @@ PlayerJointDrillData_2.JointDrillSync = function(self, nLevel, nTime, nDamage, s
     end
   end
 
-  local tbBossHp = {}
-  local tbBossHpMax = {}
-  if (self.mapBossInfo)[nLevel] ~= nil then
-    for nIndex,v in ipairs((self.mapBossInfo)[nLevel]) do
-      if v.nBossCfgId ~= 0 then
-        (table.insert)(tbBossHp, {Id = v.nBossCfgId, Hp = v.nHp})
-        ;
-        (table.insert)(tbBossHpMax, {Id = v.nBossCfgId, Hp = v.nHpMax})
+    local tbBossHp = {}
+    local tbBossHpMax = {}
+    if (self.mapBossInfo)[nLevel] ~= nil then
+      for nIndex,v in ipairs((self.mapBossInfo)[nLevel]) do
+        if v.nBossCfgId ~= 0 then
+          (table.insert)(tbBossHp, {Id = v.nBossCfgId, Hp = v.nHp})
+          ;
+          (table.insert)(tbBossHpMax, {Id = v.nBossCfgId, Hp = v.nHpMax})
+        end
       end
     end
-  end
-  do
-    local msg = {Floor = nLevel, Time = nTime, Damage = nDamage, BossHps = tbBossHp, BossHpMaxes = tbBossHpMax, Record = sRecord}
-    ;
-    (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_2_sync_req, msg, nil, NetCallback)
+    do
+      do
+        local msg = {Floor = nLevel, Time = nTime, Damage = nDamage, BossHps = tbBossHp, BossHpMaxes = tbBossHpMax, Record = sRecord}
+        ;
+        (HttpNetHandler.SendMsg)((NetMsgId.Id).joint_drill_2_sync_req, msg, nil, NetCallback)
+        self.record = sRecord
+        if callback ~= nil then
+          callback()
+        end
+      end
+    end
   end
 end
 
@@ -698,7 +733,7 @@ end
 PlayerJointDrillData_2.GetBossHpBarNum = function(self)
   -- function num : 0_36 , upvalues : _ENV
   do
-    if self.nCurLevelId ~= nil then
+    if self.nCurLevelId ~= 0 then
       local mapCfg = (ConfigTable.GetData)("JointDrill_2_Level", self.nCurLevelId)
       if mapCfg ~= nil then
         return mapCfg.HpBarNum
@@ -802,7 +837,6 @@ PlayerJointDrillData_2.SetRecorderExcludeIds = function(self, bRemove)
         (table.insert)(tbTemp, 1, nExcludeValue % 2)
         nExcludeValue = (math.floor)(nExcludeValue / 2)
       end
-      printTable(tbTemp)
       for k,v in ipairs(tbTemp) do
         if v == 1 then
           tbFloorId:Add(#tbTemp - k + 1)

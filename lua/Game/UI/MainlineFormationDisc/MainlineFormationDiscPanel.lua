@@ -11,6 +11,7 @@ MainlineFormationDiscPanel.Awake = function(self)
     self.curRoguelikeId = tbParam[1]
     self.nTeamIndex = tbParam[2]
     self.bSweep = tbParam[3]
+    self.nPreselectionId = tbParam[4]
   end
 end
 

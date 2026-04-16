@@ -67,8 +67,7 @@ JointDrillLevelData_1.Init = function(self, parent, nLevelId, nBuildId, nCurLeve
 
       PlayerData.nCurGameType = (AllEnum.WorldMapNodeType).JointDrill
       local mapParams = {tostring(self.nCurLevel), tostring(self.bChangeLevel), tostring(self.nGameTime)}
-      self.bRestart = false
-      if not self.bChangeLevel then
+      if not self.bChangeLevel and not self.bRestart then
         (AdventureModuleHelper.EnterDynamic)(self.nLevelId, self.tbCharId, (GameEnum.dynamicLevelType).JointDrill, mapParams)
         ;
         (NovaAPI.EnterModule)("AdventureModuleScene", true, 17)
@@ -172,41 +171,39 @@ JointDrillLevelData_1.CacheTempData = function(self, bCharacter, bBoss, bChangeT
 
   ;
   (self.mapTempData).mapBossTempData = {}
-  if bCharacter then
-    local id = (AdventureModuleHelper.GetCurrentActivePlayer)()
-    -- DECOMPILER ERROR at PC20: Confused about usage of register: R7 in 'UnsetPending'
+  -- DECOMPILER ERROR at PC18: Confused about usage of register: R6 in 'UnsetPending'
 
-    ;
+  if bCharacter then
     ((self.mapTempData).mapCharacterTempData).hpInfo = {}
-    -- DECOMPILER ERROR at PC24: Confused about usage of register: R7 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC22: Confused about usage of register: R6 in 'UnsetPending'
 
     ;
     ((self.mapTempData).mapCharacterTempData).skillInfo = {}
-    -- DECOMPILER ERROR at PC28: Confused about usage of register: R7 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC26: Confused about usage of register: R6 in 'UnsetPending'
 
     ;
     ((self.mapTempData).mapCharacterTempData).effectInfo = {}
-    -- DECOMPILER ERROR at PC32: Confused about usage of register: R7 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC30: Confused about usage of register: R6 in 'UnsetPending'
 
     ;
     ((self.mapTempData).mapCharacterTempData).buffInfo = {}
-    -- DECOMPILER ERROR at PC36: Confused about usage of register: R7 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC34: Confused about usage of register: R6 in 'UnsetPending'
 
     ;
     ((self.mapTempData).mapCharacterTempData).stateInfo = {}
-    -- DECOMPILER ERROR at PC40: Confused about usage of register: R7 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC38: Confused about usage of register: R6 in 'UnsetPending'
 
     ;
     ((self.mapTempData).mapCharacterTempData).ammoInfo = {}
-    -- DECOMPILER ERROR at PC45: Confused about usage of register: R7 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC43: Confused about usage of register: R6 in 'UnsetPending'
 
     ;
     ((self.mapTempData).mapCharacterTempData).sommonInfo = (AdventureModuleHelper.GetSummonMonsterInfos)()
     self.mapActorInfo = self:GetActorHp()
-    -- DECOMPILER ERROR at PC53: Confused about usage of register: R7 in 'UnsetPending'
+    -- DECOMPILER ERROR at PC50: Confused about usage of register: R6 in 'UnsetPending'
 
     ;
-    ((self.mapTempData).mapCharacterTempData).hpInfo = self:GetActorHp()
+    ((self.mapTempData).mapCharacterTempData).hpInfo = self.mapActorInfo
     local playerids = (AdventureModuleHelper.GetCurrentGroupPlayers)()
     local Count = playerids.Count - 1
     for i = 0, Count do
@@ -233,7 +230,7 @@ JointDrillLevelData_1.CacheTempData = function(self, bCharacter, bBoss, bChangeT
         end
       end
       do
-        -- DECOMPILER ERROR at PC146: Confused about usage of register: R20 in 'UnsetPending'
+        -- DECOMPILER ERROR at PC143: Confused about usage of register: R19 in 'UnsetPending'
 
         ;
         (((self.mapTempData).mapCharacterTempData).effectInfo)[charTid] = {
@@ -249,7 +246,7 @@ mapEffect = {}
               return 
             end
             local nCd = (eftInfo.CD).RawValue
-            -- DECOMPILER ERROR at PC182: Confused about usage of register: R29 in 'UnsetPending'
+            -- DECOMPILER ERROR at PC179: Confused about usage of register: R28 in 'UnsetPending'
 
             if mapEft.Remove then
               (((((self.mapTempData).mapCharacterTempData).effectInfo)[charTid]).mapEffect)[(eftInfo.effectConfig).Id] = {nCount = 0, nCd = nCd}
@@ -259,12 +256,12 @@ mapEffect = {}
         do
           if self.mapEffectTriggerCount ~= nil then
             for nEftId,nCount in pairs(self.mapEffectTriggerCount) do
-              -- DECOMPILER ERROR at PC207: Confused about usage of register: R26 in 'UnsetPending'
+              -- DECOMPILER ERROR at PC204: Confused about usage of register: R25 in 'UnsetPending'
 
               if (((((self.mapTempData).mapCharacterTempData).effectInfo)[charTid]).mapEffect)[nEftId] == nil then
                 (((((self.mapTempData).mapCharacterTempData).effectInfo)[charTid]).mapEffect)[nEftId] = {nCount = nCount, nCd = 0}
               else
-                -- DECOMPILER ERROR at PC215: Confused about usage of register: R26 in 'UnsetPending'
+                -- DECOMPILER ERROR at PC212: Confused about usage of register: R25 in 'UnsetPending'
 
                 ;
                 ((((((self.mapTempData).mapCharacterTempData).effectInfo)[charTid]).mapEffect)[nEftId]).nCount = nCount
@@ -273,7 +270,7 @@ mapEffect = {}
           end
           do
             local tbBuffInfo = (AdventureModuleHelper.GetEntityBuffList)(playerids[i])
-            -- DECOMPILER ERROR at PC225: Confused about usage of register: R22 in 'UnsetPending'
+            -- DECOMPILER ERROR at PC222: Confused about usage of register: R21 in 'UnsetPending'
 
             ;
             (((self.mapTempData).mapCharacterTempData).buffInfo)[charTid] = {}
@@ -292,55 +289,55 @@ mapEffect = {}
             end
             do
               do
-                -- DECOMPILER ERROR at PC272: Confused about usage of register: R22 in 'UnsetPending'
+                -- DECOMPILER ERROR at PC269: Confused about usage of register: R21 in 'UnsetPending'
 
                 ;
                 (((self.mapTempData).mapCharacterTempData).stateInfo)[charTid] = {nState = nStatus, nStateTime = nStatusTime, jsonStr = jsonString}
-                -- DECOMPILER ERROR at PC279: Confused about usage of register: R22 in 'UnsetPending'
+                -- DECOMPILER ERROR at PC276: Confused about usage of register: R21 in 'UnsetPending'
 
                 if tbAmmo ~= nil then
                   (((self.mapTempData).mapCharacterTempData).ammoInfo)[charTid] = {}
-                  -- DECOMPILER ERROR at PC284: Confused about usage of register: R22 in 'UnsetPending'
+                  -- DECOMPILER ERROR at PC281: Confused about usage of register: R21 in 'UnsetPending'
 
                   ;
                   ((((self.mapTempData).mapCharacterTempData).ammoInfo)[charTid]).nCurAmmo = nAmmoType
-                  -- DECOMPILER ERROR at PC290: Confused about usage of register: R22 in 'UnsetPending'
+                  -- DECOMPILER ERROR at PC287: Confused about usage of register: R21 in 'UnsetPending'
 
                   ;
                   ((((self.mapTempData).mapCharacterTempData).ammoInfo)[charTid]).nAmmo1 = tbAmmo[0]
-                  -- DECOMPILER ERROR at PC296: Confused about usage of register: R22 in 'UnsetPending'
+                  -- DECOMPILER ERROR at PC293: Confused about usage of register: R21 in 'UnsetPending'
 
                   ;
                   ((((self.mapTempData).mapCharacterTempData).ammoInfo)[charTid]).nAmmo2 = tbAmmo[1]
-                  -- DECOMPILER ERROR at PC302: Confused about usage of register: R22 in 'UnsetPending'
+                  -- DECOMPILER ERROR at PC299: Confused about usage of register: R21 in 'UnsetPending'
 
                   ;
                   ((((self.mapTempData).mapCharacterTempData).ammoInfo)[charTid]).nAmmo3 = tbAmmo[2]
-                  -- DECOMPILER ERROR at PC308: Confused about usage of register: R22 in 'UnsetPending'
+                  -- DECOMPILER ERROR at PC305: Confused about usage of register: R21 in 'UnsetPending'
 
                   ;
                   ((((self.mapTempData).mapCharacterTempData).ammoInfo)[charTid]).nAmmoMax1 = tbAmmo[3]
-                  -- DECOMPILER ERROR at PC314: Confused about usage of register: R22 in 'UnsetPending'
+                  -- DECOMPILER ERROR at PC311: Confused about usage of register: R21 in 'UnsetPending'
 
                   ;
                   ((((self.mapTempData).mapCharacterTempData).ammoInfo)[charTid]).nAmmoMax2 = tbAmmo[4]
-                  -- DECOMPILER ERROR at PC320: Confused about usage of register: R22 in 'UnsetPending'
+                  -- DECOMPILER ERROR at PC317: Confused about usage of register: R21 in 'UnsetPending'
 
                   ;
                   ((((self.mapTempData).mapCharacterTempData).ammoInfo)[charTid]).nAmmoMax3 = tbAmmo[5]
                 end
-                -- DECOMPILER ERROR at PC330: Confused about usage of register: R22 in 'UnsetPending'
+                -- DECOMPILER ERROR at PC327: Confused about usage of register: R21 in 'UnsetPending'
 
                 if charTid == (self.tbCharId)[1] then
                   ((self.mapTempData).mapCharacterTempData).shieldList = (AdventureModuleHelper.GetEntityShieldList)(playerids[i])
                 end
-                -- DECOMPILER ERROR at PC331: LeaveBlock: unexpected jumping out DO_STMT
+                -- DECOMPILER ERROR at PC328: LeaveBlock: unexpected jumping out DO_STMT
 
-                -- DECOMPILER ERROR at PC331: LeaveBlock: unexpected jumping out DO_STMT
+                -- DECOMPILER ERROR at PC328: LeaveBlock: unexpected jumping out DO_STMT
 
-                -- DECOMPILER ERROR at PC331: LeaveBlock: unexpected jumping out DO_STMT
+                -- DECOMPILER ERROR at PC328: LeaveBlock: unexpected jumping out DO_STMT
 
-                -- DECOMPILER ERROR at PC331: LeaveBlock: unexpected jumping out DO_STMT
+                -- DECOMPILER ERROR at PC328: LeaveBlock: unexpected jumping out DO_STMT
 
               end
             end
@@ -364,17 +361,17 @@ mapEffect = {}
       end
       ;
       (EventManager.HitEntityEvent)("RefreshBossEnergyValueHUD", self.nBossId, bSaveEnergyValue)
-      -- DECOMPILER ERROR at PC362: Confused about usage of register: R8 in 'UnsetPending'
+      -- DECOMPILER ERROR at PC359: Confused about usage of register: R8 in 'UnsetPending'
 
       ;
       (self.mapTempData).mapBossTempData = (AdventureModuleHelper.GetJointDrillBossData)(self.nBossId, bChangeTeam, bSaveEnergyValue, bSaveResilience)
-      -- DECOMPILER ERROR at PC372: Confused about usage of register: R8 in 'UnsetPending'
+      -- DECOMPILER ERROR at PC369: Confused about usage of register: R8 in 'UnsetPending'
 
       if bLockBossHp then
         if ((self.mapTempData).mapBossTempData).nHp <= 0 then
           ((self.mapTempData).mapBossTempData).nHp = 1
         end
-        -- DECOMPILER ERROR at PC380: Confused about usage of register: R8 in 'UnsetPending'
+        -- DECOMPILER ERROR at PC377: Confused about usage of register: R8 in 'UnsetPending'
 
         if ((self.mapTempData).mapBossTempData).nHpMax <= 0 then
           ((self.mapTempData).mapBossTempData).nHpMax = 1
@@ -558,13 +555,25 @@ JointDrillLevelData_1.CheckJointDrillGameOver = function(self)
   local nChallengeCount = (self.parent):GetJointDrillBattleCount()
   local nAllChallengeCount = (self.parent):GetMaxChallengeCount(self.nLevelId)
   if nAllChallengeCount <= nChallengeCount then
-    local callback = function(netMsg)
+    local nHp, nHpMax = 0, 0
+    local data, nDataLength = self:CacheTempData(false, true, true)
+    if self.mapTempData ~= nil and (self.mapTempData).mapBossTempData ~= nil then
+      nHp = ((self.mapTempData).mapBossTempData).nHp
+      nHpMax = ((self.mapTempData).mapBossTempData).nHpMax
+    end
+    local syncCallback = function()
     -- function num : 0_16_0 , upvalues : self, _ENV
-    self:JointDrillFail((AllEnum.JointDrillResultType).ChallengeEnd, netMsg)
-  end
+    local callback = function(netMsg)
+      -- function num : 0_16_0_0 , upvalues : self, _ENV
+      self:JointDrillFail((AllEnum.JointDrillResultType).ChallengeEnd, netMsg)
+    end
 
     ;
     (self.parent):JointDrillGameOver(callback)
+  end
+
+    ;
+    (self.parent):JointDrillSync(self.nCurLevel, self.nGameTime, self.nDamageValue, nHp, nHpMax, data, syncCallback)
   else
     do
       local bBossFloor = (self.mapFloor).FloorType == (GameEnum.JointDrillFloorType).Boss
@@ -694,7 +703,7 @@ JointDrillLevelData_1.OnEvent_MonsterSpawn = function(self, nBossId)
   if self.bChangeLevel then
     return 
   end
-  local data, nDataLength = self:CacheTempData(true, bBoss, true)
+  local data, nDataLength = self:CacheTempData(false, bBoss, true)
   local nHp, nHpMax = 1, 1
   if self.mapTempData ~= nil and (self.mapTempData).mapBossTempData ~= nil then
     nHp = ((self.mapTempData).mapBossTempData).nHp
@@ -711,6 +720,8 @@ JointDrillLevelData_1.OnEvent_BattleLvsToggle = function(self, nBattleLv, nTotal
   if nBattleLv < self.nCurLevel then
     return 
   end
+  self.bChangeLevel = true
+  self.bRestart = false
   nTotalTime = (math.min)((self.mapLevel).BattleTime * 1000, self:GetSyncGameTime(nTotalTime))
   self.nCurLevel = nBattleLv + 1
   self.nDamageValue = self.nDamageValue + nDamageValue
@@ -728,6 +739,8 @@ JointDrillLevelData_1.OnEvent_BattleLvsToggle = function(self, nBattleLv, nTotal
     local syncCallback = function()
       -- function num : 0_25_0_0 , upvalues : _ENV, AdventureModuleHelper
       (PanelManager.InputEnable)()
+      ;
+      (EventManager.Hit)("CloseJointDrillPause")
       local wait = function()
         -- function num : 0_25_0_0_0 , upvalues : _ENV, AdventureModuleHelper
         (coroutine.yield)(((CS.UnityEngine).WaitForEndOfFrame)())
@@ -795,6 +808,7 @@ end
 JointDrillLevelData_1.OnEvent_RestartJointDrill = function(self)
   -- function num : 0_31 , upvalues : AdventureModuleHelper, _ENV
   self.bRestart = true
+  self.bChangeLevel = false
   ;
   (self.parent):SetGameTime(0)
   ;
@@ -808,6 +822,8 @@ JointDrillLevelData_1.OnEvent_RestartJointDrill = function(self)
   (AdventureModuleHelper.LevelStateChanged)(false)
   ;
   (EventManager.Hit)("ResetBossHUD")
+  ;
+  (EventManager.Hit)("JointDrillReset")
 end
 
 JointDrillLevelData_1.OnEvent_RetreatJointDrill = function(self)
@@ -860,15 +876,27 @@ JointDrillLevelData_1.JointDrillTimeOut = function(self)
   self.bInResult = true
   ;
   (NovaAPI.DispatchEventWithData)("JointDrill_Level_TimeOut")
-  local callback = function(netMsg)
+  local nHp, nHpMax = 0, 0
+  local data, nDataLength = self:CacheTempData(false, true, true)
+  if self.mapTempData ~= nil and (self.mapTempData).mapBossTempData ~= nil then
+    nHp = ((self.mapTempData).mapBossTempData).nHp
+    nHpMax = ((self.mapTempData).mapBossTempData).nHpMax
+  end
+  local syncCallback = function()
     -- function num : 0_34_0 , upvalues : self, _ENV
-    self:JointDrillFail((AllEnum.JointDrillResultType).ChallengeEnd, netMsg)
+    local callback = function(netMsg)
+      -- function num : 0_34_0_0 , upvalues : self, _ENV
+      self:JointDrillFail((AllEnum.JointDrillResultType).ChallengeEnd, netMsg)
+    end
+
+    ;
+    (self.parent):AddJointDrillTeam(self.mapBuildData, self.nGameTime, self.nDamageValue)
+    ;
+    (self.parent):JointDrillGameOver(callback)
   end
 
   ;
-  (self.parent):AddJointDrillTeam(self.mapBuildData, self.nGameTime, self.nDamageValue)
-  ;
-  (self.parent):JointDrillGameOver(callback)
+  (self.parent):JointDrillSync(self.nCurLevel, self.nGameTime, self.nDamageValue, nHp, nHpMax, data, syncCallback)
 end
 
 JointDrillLevelData_1.OnEvent_CharDamageValue = function(self, charDamageValue)

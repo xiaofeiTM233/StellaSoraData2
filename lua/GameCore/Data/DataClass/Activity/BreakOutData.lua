@@ -45,37 +45,37 @@ end
 BreakOutData.CacheAllCharacterData = function(self, UnLockedCharacterData)
   -- function num : 0_3 , upvalues : _ENV
   self.tbUnLockedCharacterDataList = {}
+  self.tbUnLockedCharacterDataMap = {}
   for _,v in pairs(UnLockedCharacterData) do
     local CharacterData = {nId = v.Id, nBattleTimes = v.BattleTimes}
     ;
     (table.insert)(self.tbUnLockedCharacterDataList, CharacterData)
+    -- DECOMPILER ERROR at PC20: Confused about usage of register: R8 in 'UnsetPending'
+
+    ;
+    (self.tbUnLockedCharacterDataMap)[v.Id] = CharacterData
   end
 end
 
 BreakOutData.CacheIsUnlocked = function(self, CharacterNid)
-  -- function num : 0_4 , upvalues : _ENV
-  for _,v in pairs(self.tbUnLockedCharacterDataList) do
-    if v.nId == CharacterNid then
-      return true
-    end
+  -- function num : 0_4
+  if (self.tbUnLockedCharacterDataMap)[CharacterNid] then
+    return true
   end
   return false
 end
 
 BreakOutData.GetDataFromBreakOutCharacter = function(self, CharacterNid)
   -- function num : 0_5 , upvalues : _ENV
-  for _,v in pairs(self.tbUnLockedCharacterDataList) do
-    if v.nId == CharacterNid then
-      return (ConfigTable.GetData)("BreakOutCharacter", CharacterNid)
-    end
+  if (self.tbUnLockedCharacterDataMap)[CharacterNid] then
+    return (ConfigTable.GetData)("BreakOutCharacter", CharacterNid)
   end
   return nil
 end
 
 BreakOutData.GetSkillData = function(self, CharacterNid)
   -- function num : 0_6
-  local tbCharacterData = nil
-  self:GetDataFromBreakOutCharacter(CharacterNid)
+  local tbCharacterData = self:GetDataFromBreakOutCharacter(CharacterNid)
   if tbCharacterData == nil then
     return nil
   else
@@ -84,22 +84,27 @@ BreakOutData.GetSkillData = function(self, CharacterNid)
 end
 
 BreakOutData.GetBattleCount = function(self, CharacterNid)
-  -- function num : 0_7 , upvalues : _ENV
-  for _,v in pairs(self.tbUnLockedCharacterDataList) do
-    if v.nId == CharacterNid then
-      return v.nBattleTimes
-    end
+  -- function num : 0_7
+  if (self.tbUnLockedCharacterDataMap)[CharacterNid] ~= nil then
+    return ((self.tbUnLockedCharacterDataMap)[CharacterNid]).nBattleTimes
+  else
+    return 0
   end
-  return 0
 end
 
 BreakOutData.CacheAllLevelData = function(self, levelListData)
   -- function num : 0_8 , upvalues : _ENV
   self.tbLevelDataList = {}
+  self.tbLevelDataMap = {}
   for _,v in pairs(levelListData) do
-    local levelData = {nId = v.Id, bFirstComplete = v.FirstComplete, nDifficultyType = ((ConfigTable.GetData)("BreakOutLevel", v.Id)).Type, nPreLevelId = ((ConfigTable.GetData)("BreakOutLevel", v.Id)).PreLevelId}
+    local config = (ConfigTable.GetData)("BreakOutLevel", v.Id)
+    local levelData = {nId = v.Id, bFirstComplete = v.FirstComplete, nDifficultyType = config.Type, nPreLevelId = config.PreLevelId}
     ;
     (table.insert)(self.tbLevelDataList, levelData)
+    -- DECOMPILER ERROR at PC29: Confused about usage of register: R9 in 'UnsetPending'
+
+    ;
+    (self.tbLevelDataMap)[v.Id] = levelData
   end
 end
 
@@ -120,15 +125,11 @@ end
 
 BreakOutData.GetLevelDataById = function(self, nId)
   -- function num : 0_11 , upvalues : _ENV
-  local levelData = nil
-  for _,v in pairs(self.tbLevelDataList) do
-    if v.nId == nId then
-      levelData = v
-      break
-    end
-  end
-  do
-    return levelData
+  if (self.tbLevelDataMap)[nId] ~= nil then
+    return (self.tbLevelDataMap)[nId]
+  else
+    printLog(nId .. ":Id不存在对应关卡数据")
+    return nil
   end
 end
 
@@ -152,42 +153,31 @@ end
 
 BreakOutData.UpdateCharacterData = function(self, CharacterData)
   -- function num : 0_13 , upvalues : _ENV
-  for _,v in pairs(self.tbUnLockedCharacterDataList) do
-    if v.nId == CharacterData.CharacterNid then
-      v.nBattleTimes = v.nBattleTimes + 1
-      ;
-      (EventManager.Hit)("RefreshCharacterBattleTimes")
-      break
-    end
+  -- DECOMPILER ERROR at PC13: Confused about usage of register: R2 in 'UnsetPending'
+
+  if (self.tbUnLockedCharacterDataMap)[CharacterData.CharacterNid] ~= nil then
+    ((self.tbUnLockedCharacterDataMap)[CharacterData.CharacterNid]).nBattleTimes = ((self.tbUnLockedCharacterDataMap)[CharacterData.CharacterNid]).nBattleTimes + 1
+    ;
+    (EventManager.Hit)("RefreshCharacterBattleTimes")
   end
 end
 
 BreakOutData.GetDetailLevelDataById = function(self, nId)
   -- function num : 0_14 , upvalues : _ENV
-  local levelData = nil
-  for _,v in pairs(self.tbLevelDataList) do
-    if v.nId == nId then
-      levelData = (ConfigTable.GetData)("BreakOutLevel", nId)
-      break
-    end
+  if (self.tbLevelDataMap)[nId] then
+    return (ConfigTable.GetData)("BreakOutLevel", nId)
   end
-  do
-    return levelData
-  end
+  return nil
 end
 
 BreakOutData.GetDetailFloorDataById = function(self, nId)
   -- function num : 0_15 , upvalues : _ENV
-  local FloorData = nil
-  for _,v in pairs(self.tbLevelDataList) do
-    if v.nId == nId then
-      nFloorId = ((ConfigTable.GetData)("BreakOutLevel", nId)).FloorId
-      FloorData = (ConfigTable.GetData)("BreakOutFloor", nFloorId)
-      break
-    end
-  end
   do
-    return FloorData
+    if (self.tbLevelDataMap)[nId] then
+      local nFloorId = ((ConfigTable.GetData)("BreakOutLevel", nId)).FloorId
+      return (ConfigTable.GetData)("BreakOutFloor", nFloorId)
+    end
+    return nil
   end
 end
 
@@ -199,16 +189,13 @@ BreakOutData.GetLevelsByTab = function(self, nTabIndex)
       (table.insert)(levelData, (ConfigTable.GetData)("BreakOutLevel", v.nId))
     end
   end
-  local sortFunc = function(a, b)
-    -- function num : 0_16_0 , upvalues : _ENV
-    local aConfig = (ConfigTable.GetData)("BreakOutLevel", a.Id)
-    local bConfig = (ConfigTable.GetData)("BreakOutLevel", b.Id)
-    do return aConfig.Difficulty < bConfig.Difficulty end
+  ;
+  (table.sort)(levelData, function(a, b)
+    -- function num : 0_16_0
+    do return a.Difficulty < b.Difficulty end
     -- DECOMPILER ERROR: 1 unprocessed JMP targets
   end
-
-  ;
-  (table.sort)(levelData, sortFunc)
+)
   return levelData
 end
 
@@ -359,7 +346,12 @@ end
 
 BreakOutData.IsPreLevelComplete = function(self, nLevelId)
   -- function num : 0_28 , upvalues : _ENV
-  local nPreLevelId = ((ConfigTable.GetData)("BreakOutLevel", nLevelId)).PreLevelId
+  local tbLevelData = (ConfigTable.GetData)("BreakOutLevel", nLevelId)
+  if tbLevelData == nil then
+    printLog(nLevelId .. ":Id不存在对应关卡数据")
+    return false
+  end
+  local nPreLevelId = tbLevelData.PreLevelId
   if nPreLevelId == 0 then
     return true
   end
@@ -372,6 +364,9 @@ BreakOutData.IsLevelComplete = function(self, nLevelId)
     return true
   end
   local nLevelData = self:GetLevelDataById(nLevelId)
+  if nLevelData == nil then
+    return false
+  end
   return nLevelData.bFirstComplete
 end
 
@@ -451,7 +446,7 @@ BreakOutData.RefreshCharacterData = function(self, charId)
   -- function num : 0_36 , upvalues : _ENV
   local bIsLock = true
   for _,v in pairs(self.tbUnLockedCharacterDataList) do
-    if v.Id == charId then
+    if v.nId == charId then
       bIsLock = false
       break
     end
@@ -461,6 +456,10 @@ BreakOutData.RefreshCharacterData = function(self, charId)
       local CharacterData = {nId = charId, nBattleTimes = 0}
       ;
       (table.insert)(self.tbUnLockedCharacterDataList, CharacterData)
+      -- DECOMPILER ERROR at PC23: Confused about usage of register: R4 in 'UnsetPending'
+
+      ;
+      (self.tbUnLockedCharacterDataMap)[charId] = CharacterData
     end
   end
 end

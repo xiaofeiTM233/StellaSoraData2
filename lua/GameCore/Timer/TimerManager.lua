@@ -59,8 +59,7 @@ local ProcUpdateTimer = function()
           if timer._nScaleType == TimerScaleType.RealTime then
             timer:_Run(Time.realtimeSinceStartup, Time.unscaledDeltaTime)
           else
-            ;
-            (timer._Stop)()
+            timer:_Stop()
           end
         end
       end
